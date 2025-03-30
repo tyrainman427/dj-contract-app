@@ -137,27 +137,43 @@ export default function Home() {
             <label>Event Date:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
               <input type="date" name="eventDate" value={formData.eventDate} onChange={handleChange} required style={iconInputStyle} />
-              <FaCalendarAlt style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: '#000', pointerEvents: 'none' }} />
+              <FaCalendarAlt style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'black', pointerEvents: 'none' }} />
             </div>
 
             <label>Start Time:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
               <input type="time" name="startTime" value={formData.startTime} onChange={handleChange} required style={iconInputStyle} />
-              <FaClock style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: '#000', pointerEvents: 'none' }} />
+              <FaClock style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'black', pointerEvents: 'none' }} />
             </div>
 
             <label>End Time:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
               <input type="time" name="endTime" value={formData.endTime} onChange={handleChange} required style={iconInputStyle} />
-              <FaClock style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: '#000', pointerEvents: 'none' }} />
+              <FaClock style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'black', pointerEvents: 'none' }} />
             </div>
 
-            <label><strong>Event Add-Ons:</strong></label>
-            <p style={{ fontSize: '0.9rem', marginTop: '-0.5rem', marginBottom: '1rem' }}>Select additional services to enhance your event experience.</p>
-
+            <p style={{ fontWeight: 'bold', marginTop: '1rem' }}>Event Add-Ons:</p>
             <label><input type="checkbox" name="lighting" checked={formData.lighting} onChange={handleChange} /> Event Lighting (+$100)</label><br />
             <label><input type="checkbox" name="photography" checked={formData.photography} onChange={handleChange} /> Event Photography (+$150)</label><br />
             <label><input type="checkbox" name="videoVisuals" checked={formData.videoVisuals} onChange={handleChange} /> Video Visuals (+$100)</label><br /><br />
 
             <label>Additional Hours ($75/hr):</label>
-            <input type="number" name="additionalHours" value={formData.additionalHours} onChange={handleCha
+            <input type="number" name="additionalHours" value={formData.additionalHours} onChange={handleChange} min="0" style={inputStyle} />
+
+            <label>Payment Method:</label>
+            <select name="paymentMethod" value={formData.paymentMethod} onChange={handleChange} required style={{ ...inputStyle, appearance: 'none', WebkitAppearance: 'none', MozAppearance: 'none', backgroundImage: 'none' }}>
+              <option value="">Select</option>
+              <option value="Venmo">Venmo</option>
+              <option value="Cash App">Cash App</option>
+              <option value="Apple Pay">Apple Pay</option>
+              <option value="Cash">Cash</option>
+            </select>
+
+            <h3>Total Price: ${calculateTotal()}</h3><br />
+            <button type="submit">Submit Contract</button>
+          </form>
+        )}
+      </main>
+    </div>
+  );
+}
