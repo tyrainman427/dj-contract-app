@@ -90,6 +90,18 @@ export default function Home() {
     paddingRight: '40px'
   };
 
+  const buttonStyle = {
+    padding: '12px 24px',
+    fontSize: '16px',
+    fontWeight: 'bold',
+    color: '#fff',
+    backgroundColor: '#10b981',
+    border: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    marginTop: '1rem'
+  };
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -186,7 +198,7 @@ export default function Home() {
             </select>
 
             <h3>Total Price: ${calculateTotal()}</h3><br />
-            <button type="submit">Submit Contract</button>
+            <button type="submit" style={buttonStyle}>Submit Contract</button>
           </form>
         )}
       </main>
