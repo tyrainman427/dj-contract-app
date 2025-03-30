@@ -258,18 +258,17 @@ export default function Home() {
           </div>
         </>
       )}
-
-<main
+      <main
         style={{
           fontFamily: 'Montserrat, sans-serif',
           maxWidth: '640px',
           margin: '40px auto',
-          background: 'rgba(255, 255, 255, 0.92)',
+          background: 'rgba(255, 255, 255, 0.9)',
           borderRadius: '20px',
           padding: '2rem',
           color: '#111',
           boxShadow: '0 12px 50px rgba(0,0,0,0.25)',
-          backdropFilter: 'blur(8px)',
+          backdropFilter: 'blur(10px)',
           position: 'relative',
           zIndex: 1
         }}
@@ -319,6 +318,7 @@ export default function Home() {
 
             <label>Venue Location:</label>
             <input type="text" name="venueLocation" value={formData.venueLocation} onChange={handleChange} required style={inputStyle} />
+
             <label>Event Date:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
               <input type="date" name="eventDate" value={formData.eventDate} onChange={handleChange} required style={iconInputStyle} />
@@ -338,42 +338,39 @@ export default function Home() {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-  <label style={{ fontWeight: 'bold' }}>
-    Standard DJ Package 💰 $350.00
-  </label>
-  {popupIcon('5 Hours (Includes professional DJ/EMCEE, high-quality sound system, wireless microphone, extensive music selection, setup & teardown)')}
-</div>
-
+              <label style={{ fontWeight: 'bold' }}>
+                Standard DJ Package 💰 $350.00
+              </label>
+              {popupIcon('5 Hours (Includes professional DJ/EMCEE, high-quality sound system, wireless microphone, extensive music selection, setup & teardown)')}
+            </div>
 
             <p style={{ fontWeight: 'bold', marginTop: '1rem' }}>Event Add-Ons:</p>
 
-<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-  <label>
-    <input type="checkbox" name="lighting" checked={formData.lighting} onChange={handleChange} />
-    Event Lighting (+$100)
-  </label>
-  {popupIcon('Strobe/party lights. Requires venue access 2 hours before event')}
-</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <label>
+                <input type="checkbox" name="lighting" checked={formData.lighting} onChange={handleChange} />
+                Event Lighting (+$100)
+              </label>
+              {popupIcon('Strobe/party lights. Requires venue access 2 hours before event')}
+            </div>
 
-<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-  <label>
-    <input type="checkbox" name="photography" checked={formData.photography} onChange={handleChange} />
-    Event Photography (+$150)
-  </label>
-  {popupIcon('50 high-quality candid shots, delivered within 48 hours')}
-</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <label>
+                <input type="checkbox" name="photography" checked={formData.photography} onChange={handleChange} />
+                Event Photography (+$150)
+              </label>
+              {popupIcon('50 high-quality candid shots, delivered within 48 hours')}
+            </div>
 
-<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-  <label>
-    <input type="checkbox" name="videoVisuals" checked={formData.videoVisuals} onChange={handleChange} />
-    Video Visuals (+$100)
-  </label>
-  {popupIcon('Slideshows, presentations, etc.')}
-</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <label>
+                <input type="checkbox" name="videoVisuals" checked={formData.videoVisuals} onChange={handleChange} />
+                Video Visuals (+$100)
+              </label>
+              {popupIcon('Slideshows, presentations, etc.')}
+            </div>
 
-<br />
-
-
+            <br />
             <label>Additional Hours ($75/hr):</label>
             <input type="number" name="additionalHours" value={formData.additionalHours} onChange={handleChange} min="0" style={inputStyle} />
 
@@ -387,13 +384,12 @@ export default function Home() {
             </select>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-  <label>
-    <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
-    I agree to the Terms & Conditions
-  </label>
-  {popupIcon(termsText)}
-</div>
-
+              <label>
+                <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
+                I agree to the Terms & Conditions
+              </label>
+              {popupIcon(termsText)}
+            </div>
 
             <h3 style={{ marginTop: '1.5rem' }}>Total Price: ${calculateTotal()}</h3>
             <button type="submit" style={buttonStyle}>Submit Contract</button>
