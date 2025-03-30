@@ -201,7 +201,7 @@ const calculateTotal = () => {
     padding: '10px',
     borderRadius: '6px',
     border: '1px solid #4b5563',
-    backgroundColor: '#C0C0C0',
+    backgroundColor: '#1f2937',
     color: '#ffffff',
     fontSize: '16px'
   }}
