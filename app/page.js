@@ -127,6 +127,17 @@ export default function Home() {
     </span>
   );
 
+  const termsText = `
+• DJ services can extend beyond the contracted time only with venue approval.
+• If the event is canceled by the client, the advance payment deposit is non-refundable.
+• Cancellations within 30 days of the event require full payment of the contracted amount.
+• Cancellations must be submitted in writing via email or text message.
+• LIVE CITY reserves the right to shut down equipment if there is any risk of harm to attendees or property.
+• LIVE CITY cannot be held liable for any amount greater than the contracted fee.
+• Outdoor events must provide access to electricity.
+• Tipping is optional and at the discretion of the client.
+  `;
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -163,11 +174,16 @@ export default function Home() {
           border-radius: 8px;
           z-index: 9999;
           max-width: 90%;
+          max-height: 70vh;
+          overflow-y: auto;
           box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
         .popup-box.hide {
           transform: translate(-50%, -50%) scale(0.8);
           opacity: 0;
+        }
+        .popup-box p {
+          white-space: pre-wrap;
         }
       `}</style>
 
@@ -200,7 +216,6 @@ export default function Home() {
         color: '#000',
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
       }}>
-        {/* HEADER */}
         <h1 style={{ fontSize: '2rem', marginBottom: '1rem', textAlign: 'center' }}>
           Live City DJ Contract
         </h1>
@@ -213,7 +228,6 @@ export default function Home() {
           Please complete the form below to reserve your event date.
         </p>
 
-        {/* FORM OR CONFIRMATION */}
         {submitted ? (
           <div>
             <h2>✅ Contract submitted successfully!</h2>
@@ -228,7 +242,6 @@ export default function Home() {
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
-            {/* FORM FIELDS */}
             <label>Client Name:</label>
             <input type="text" name="clientName" value={formData.clientName} onChange={handleChange} required style={inputStyle} />
 
@@ -250,7 +263,6 @@ export default function Home() {
             <label>Venue Location:</label>
             <input type="text" name="venueLocation" value={formData.venueLocation} onChange={handleChange} required style={inputStyle} />
 
-            {/* DATE & TIME */}
             <label>Event Date:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
               <input type="date" name="eventDate" value={formData.eventDate} onChange={handleChange} required style={iconInputStyle} />
@@ -269,7 +281,6 @@ export default function Home() {
               <FaClock style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'black' }} />
             </div>
 
-            {/* ADD-ONS */}
             <label>
               <strong>Standard DJ Package 💰 $350.00</strong>
               {popupIcon('5 Hours (Includes professional DJ/EMCEE, high-quality sound system, wireless microphone, extensive music selection, setup & teardown)')}
@@ -294,7 +305,7 @@ export default function Home() {
 
             <label>
               <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required /> I agree to the Terms & Conditions
-              {popupIcon('DJ services can extend beyond the contracted time only with venue approval. If the event is canceled by the client, the advance payment deposit is non-refundable. Cancellations within 30 days of the event require full payment of the contracted amount. Cancellations must be submitted in writing via email or text message. LIVE CITY reserves the right to shut down equipment if there is any risk of harm to attendees or property. LIVE CITY cannot be held liable for any amount greater than the contracted fee. Outdoor events must provide access to electricity. Tipping is optional and at the discretion of the client.')}
+              {popupIcon(termsText)}
             </label>
 
             <h3>Total Price: ${calculateTotal()}</h3><br />
