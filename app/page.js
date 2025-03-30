@@ -87,7 +87,6 @@ export default function Home() {
     try {
       await addDoc(collection(db, 'contracts'), formData);
       setSubmitted(true);
-      console.log('Contract submitted:', formData);
     } catch (error) {
       console.error('Error saving contract:', error);
       alert('Error submitting form. Please check console for details.');
@@ -123,10 +122,7 @@ export default function Home() {
   };
 
   const popupIcon = (text) => (
-    <span
-      onClick={() => showPopup(text)}
-      style={{ marginLeft: '8px', color: 'gray', cursor: 'pointer' }}
-    >
+    <span onClick={() => showPopup(text)} style={{ marginLeft: '8px', color: 'gray', cursor: 'pointer' }}>
       <FaInfoCircle />
     </span>
   );
@@ -139,46 +135,46 @@ export default function Home() {
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
       padding: '2rem',
+      position: 'relative'
     }}>
       <Script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places" strategy="beforeInteractive" />
 
-      <main style={{
-        fontFamily: 'Montserrat, sans-serif',
-        maxWidth: '600px',
-        margin: '40px auto',
-        background: 'rgba(255, 255, 255, 0.85)',
-        borderRadius: '12px',
-        padding: '2rem',
-        color: '#000',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-        position: 'relative'
-      }}>
-        <style>{`
-          .popup-box {
-            transition: all 0.3s ease-in-out;
-            transform: scale(1);
-            opacity: 1;
-          }
-          .popup-box.hide {
-            transform: scale(0.8);
-            opacity: 0;
-          }
-        `}</style>
+      <style>{`
+        .popup-backdrop {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          width: 100vw;
+          background-color: rgba(0, 0, 0, 0.5);
+          z-index: 9998;
+        }
+        .popup-box {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+          transition: all 0.3s ease-in-out;
+          background-color: #fff;
+          color: #000;
+          padding: 1rem;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          z-index: 9999;
+          max-width: 90%;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .popup-box.hide {
+          transform: translate(-50%, -50%) scale(0.8);
+          opacity: 0;
+        }
+      `}</style>
 
-        {infoPopup && (
-          <div className={`popup-box ${showPopupBox ? '' : 'hide'}`} style={{
-            position: 'absolute',
-            top: '20px',
-            left: '20px',
-            right: '20px',
-            backgroundColor: '#fff',
-            color: '#000',
-            padding: '1rem',
-            border: '1px solid #ccc',
-            borderRadius: '8px',
-            zIndex: 999,
-            boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
-          }}>
+      {infoPopup && (
+        <>
+          <div className="popup-backdrop" onClick={hidePopup} />
+          <div className={`popup-box ${showPopupBox ? '' : 'hide'}`}>
             <strong>Info:</strong>
             <p>{infoPopup}</p>
             <button onClick={hidePopup} style={{
@@ -191,8 +187,20 @@ export default function Home() {
               cursor: 'pointer'
             }}>Close</button>
           </div>
-        )}
+        </>
+      )}
 
+      <main style={{
+        fontFamily: 'Montserrat, sans-serif',
+        maxWidth: '600px',
+        margin: '40px auto',
+        background: 'rgba(255, 255, 255, 0.85)',
+        borderRadius: '12px',
+        padding: '2rem',
+        color: '#000',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+      }}>
+        {/* HEADER */}
         <h1 style={{ fontSize: '2rem', marginBottom: '1rem', textAlign: 'center' }}>
           Live City DJ Contract
         </h1>
@@ -205,6 +213,7 @@ export default function Home() {
           Please complete the form below to reserve your event date.
         </p>
 
+        {/* FORM OR CONFIRMATION */}
         {submitted ? (
           <div>
             <h2>✅ Contract submitted successfully!</h2>
@@ -219,6 +228,7 @@ export default function Home() {
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
+            {/* FORM FIELDS */}
             <label>Client Name:</label>
             <input type="text" name="clientName" value={formData.clientName} onChange={handleChange} required style={inputStyle} />
 
@@ -240,6 +250,7 @@ export default function Home() {
             <label>Venue Location:</label>
             <input type="text" name="venueLocation" value={formData.venueLocation} onChange={handleChange} required style={inputStyle} />
 
+            {/* DATE & TIME */}
             <label>Event Date:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
               <input type="date" name="eventDate" value={formData.eventDate} onChange={handleChange} required style={iconInputStyle} />
@@ -258,6 +269,7 @@ export default function Home() {
               <FaClock style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'black' }} />
             </div>
 
+            {/* ADD-ONS */}
             <label>
               <strong>Standard DJ Package 💰 $350.00</strong>
               {popupIcon('5 Hours (Includes professional DJ/EMCEE, high-quality sound system, wireless microphone, extensive music selection, setup & teardown)')}
