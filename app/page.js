@@ -236,11 +236,16 @@ const calculateTotal = () => {
     padding: '10px',
     borderRadius: '6px',
     border: '1px solid #4b5563',
-    backgroundColor: '#1f2937',
-    color: '#ffffff',
-    fontSize: '16px'
+    backgroundColor: '#d1d5db',
+    color: '#000000',
+    fontSize: '16px',
+    appearance: 'none',
+    WebkitAppearance: 'none',
+    MozAppearance: 'none',
+    backgroundImage: 'none' // removes the dropdown arrow
   }}
 >
+
   <option value="">Select</option>
   <option value="Venmo">Venmo</option>
   <option value="Cash App">Cash App</option>
