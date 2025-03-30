@@ -102,7 +102,22 @@ const calculateTotal = () => {
 
 
           <label>Client Name:</label><br />
-          <input type="text" name="clientName" onChange={handleChange} required /><br /><br />
+          <input
+  type="text"
+  name="clientName"
+  value={formData.clientName}
+  onChange={handleChange}
+  required
+  style={{
+    padding: '10px',
+    borderRadius: '6px',
+    border: '1px solid #4b5563',
+    backgroundColor: '#1f2937',
+    color: '#ffffff',
+    fontSize: '16px'
+  }}
+/>
+
 
           <label>Email:</label><br />
           <input type="email" name="email" onChange={handleChange} required /><br /><br />
@@ -117,13 +132,27 @@ const calculateTotal = () => {
           <input type="time" name="endTime" onChange={handleChange} required /><br /><br />
 
           <label>Payment Method:</label><br />
-          <select name="paymentMethod" onChange={handleChange} required>
-            <option value="">Select</option>
-            <option value="Venmo">Venmo</option>
-            <option value="Cash App">Cash App</option>
-            <option value="Apple Pay">Apple Pay</option>
-            <option value="Cash">Cash</option>
-          </select><br /><br />
+          <select
+  name="paymentMethod"
+  value={formData.paymentMethod}
+  onChange={handleChange}
+  required
+  style={{
+    padding: '10px',
+    borderRadius: '6px',
+    border: '1px solid #4b5563',
+    backgroundColor: '#1f2937',
+    color: '#ffffff',
+    fontSize: '16px'
+  }}
+>
+  <option value="">Select</option>
+  <option value="Venmo">Venmo</option>
+  <option value="Cash App">Cash App</option>
+  <option value="Apple Pay">Apple Pay</option>
+  <option value="Cash">Cash</option>
+</select>
+
 
           <h3>Optional Add-Ons</h3>
 
