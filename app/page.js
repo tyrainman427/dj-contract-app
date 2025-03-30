@@ -1,10 +1,8 @@
 'use client';
 
-import { FaCalendarAlt, FaClock, FaInfoCircle } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import db from '../lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
-import Script from 'next/script';
 
 export default function Home() {
   const [formData, setFormData] = useState({
@@ -47,7 +45,6 @@ export default function Home() {
   useEffect(() => {
     const canvas = document.getElementById('confetti');
     if (!canvas) return;
-
     const ctx = canvas.getContext('2d');
     let pieces = Array.from({ length: 100 }, () => ({
       x: Math.random() * window.innerWidth,
@@ -59,7 +56,6 @@ export default function Home() {
       tiltAngleIncremental: Math.random() * 0.07 + 0.05,
       tiltAngle: 0
     }));
-
     const update = () => {
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
       pieces.forEach((p, i) => {
@@ -87,6 +83,7 @@ export default function Home() {
     canvas.height = window.innerHeight;
     update();
   }, []);
+
   const BASE_PRICE = 350;
   const LIGHTING_PRICE = 100;
   const PHOTO_PRICE = 150;
@@ -127,7 +124,6 @@ export default function Home() {
       alert('Something went wrong.');
     }
   };
-
   const inputStyle = {
     width: '100%',
     padding: '12px',
@@ -138,12 +134,8 @@ export default function Home() {
     fontSize: '16px',
     marginBottom: '1.2rem',
     boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.08)',
-    transition: 'all 0.2s ease-in-out'
-  };
-
-  const iconInputStyle = {
-    ...inputStyle,
-    paddingRight: '40px'
+    transition: 'all 0.3s ease-in-out',
+    outline: 'none'
   };
 
   const buttonStyle = {
@@ -166,9 +158,13 @@ export default function Home() {
   const popupIcon = (text) => (
     <span
       onClick={() => showPopup(text)}
-      style={{ marginLeft: '8px', color: '#555', cursor: 'pointer' }}
+      style={{
+        marginLeft: '8px',
+        color: '#555',
+        cursor: 'pointer'
+      }}
     >
-      <FaInfoCircle />
+      ⓘ
     </span>
   );
 
@@ -181,88 +177,103 @@ export default function Home() {
 • LIVE CITY cannot be held liable for any amount greater than the contracted fee.
 • Outdoor events must provide access to electricity.
 • Tipping is optional and at the discretion of the client.
-`;
-return (
-  <div
-    style={{
-      minHeight: '100vh',
-      backgroundImage: 'url("/dj-background.jpg")',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      position: 'relative',
-      overflow: 'hidden'
-    }}
-  >
-    <canvas
-      id="confetti"
+  `;
+  return (
+    <div
       style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        zIndex: 0,
-        pointerEvents: 'none'
+        minHeight: '100vh',
+        backgroundImage: 'url("/dj-background.jpg")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        position: 'relative',
+        overflow: 'hidden'
       }}
-    />
+    >
+      <canvas
+        id="confetti"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: 0,
+          pointerEvents: 'none'
+        }}
+      />
 
-    {infoPopup && (
-      <>
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            zIndex: 9998
-          }}
-          onClick={hidePopup}
-        />
-        <div
-          style={{
-            position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            background: '#ffffff',
-            color: '#111827',
-            borderRadius: '8px',
-            padding: '1.5rem',
-            width: '90%',
-            maxWidth: '420px',
-            height: 'auto',
-            maxHeight: '75vh',
-            overflowY: 'auto',
-            zIndex: 9999,
-            boxShadow: '0 0 30px rgba(0,0,0,0.25)',
-            fontSize: '15px',
-            lineHeight: '1.6',
-            whiteSpace: 'pre-wrap',
-            wordWrap: 'break-word'
-          }}
-        >
-          <strong>Info:</strong>
-          <p style={{ marginTop: '10px' }}>{infoPopup}</p>
-          <button
-            onClick={hidePopup}
+      {infoPopup && (
+        <>
+          <div
             style={{
-              marginTop: '14px',
-              padding: '8px 16px',
-              background: '#ef4444',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer'
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              zIndex: 9998
+            }}
+            onClick={hidePopup}
+          />
+          <div
+            style={{
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              background: '#ffffff',
+              color: '#111827',
+              borderRadius: '8px',
+              padding: '1.5rem',
+              width: '90%',
+              maxWidth: '420px',
+              height: 'auto',
+              maxHeight: '75vh',
+              overflowY: 'auto',
+              zIndex: 9999,
+              boxShadow: '0 0 30px rgba(0,0,0,0.25)',
+              fontSize: '15px',
+              lineHeight: '1.6',
+              whiteSpace: 'pre-wrap',
+              wordWrap: 'break-word'
             }}
           >
-            Close
-          </button>
-        </div>
-      </>
-    )}
+            <strong>Info:</strong>
+            <p style={{ marginTop: '10px' }}>{infoPopup}</p>
+            <button
+              onClick={hidePopup}
+              style={{
+                marginTop: '14px',
+                padding: '8px 16px',
+                background: '#ef4444',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer'
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </>
+      )}
+
+      <div style={{ textAlign: 'right', padding: '1rem 2rem', zIndex: 1000, position: 'relative' }}>
+        <button onClick={toggleDarkMode} style={{
+          padding: '6px 12px',
+          fontSize: '14px',
+          backgroundColor: darkMode ? '#f3f4f6' : '#111827',
+          color: darkMode ? '#111827' : '#f3f4f6',
+          borderRadius: '6px',
+          border: 'none',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease'
+        }}>
+          {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+        </button>
+      </div>
       <main
         style={{
           fontFamily: 'Montserrat, sans-serif',
@@ -282,14 +293,13 @@ return (
           Live City DJ Contract
         </h1>
         <p style={{ textAlign: 'center', marginBottom: '1rem', ...textStyle }}>
-  📞 <a href="tel:2036949388" style={{ color: '#2563eb', textDecoration: 'none' }}>
-    (203) 694-9388
-  </a><br />
-  📧 <a href="mailto:therealdjbobbydrake@gmail.com" style={{ color: '#2563eb', textDecoration: 'none' }}>
-    therealdjbobbydrake@gmail.com
-  </a>
-</p>
-
+          📞 <a href="tel:2036949388" style={{ color: '#2563eb', textDecoration: 'none' }}>
+            (203) 694-9388
+          </a><br />
+          📧 <a href="mailto:therealdjbobbydrake@gmail.com" style={{ color: '#2563eb', textDecoration: 'none' }}>
+            therealdjbobbydrake@gmail.com
+          </a>
+        </p>
         <p style={{ marginBottom: '2rem', textAlign: 'center', ...textStyle }}>
           Please complete the form below to reserve your event date.
         </p>
@@ -336,22 +346,13 @@ return (
             <input type="text" name="venueLocation" value={formData.venueLocation} onChange={handleChange} required style={inputStyle} />
 
             <label>Event Date:</label>
-            <div style={{ position: 'relative', marginBottom: '1rem' }}>
-              <input type="date" name="eventDate" value={formData.eventDate} onChange={handleChange} required style={iconInputStyle} />
-              <FaCalendarAlt style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: '#555' }} />
-            </div>
+            <input type="date" name="eventDate" value={formData.eventDate} onChange={handleChange} required style={inputStyle} />
 
             <label>Start Time:</label>
-            <div style={{ position: 'relative', marginBottom: '1rem' }}>
-              <input type="time" name="startTime" value={formData.startTime} onChange={handleChange} required style={iconInputStyle} />
-              <FaClock style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: '#555' }} />
-            </div>
+            <input type="time" name="startTime" value={formData.startTime} onChange={handleChange} required style={inputStyle} />
 
             <label>End Time:</label>
-            <div style={{ position: 'relative', marginBottom: '1rem' }}>
-              <input type="time" name="endTime" value={formData.endTime} onChange={handleChange} required style={iconInputStyle} />
-              <FaClock style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: '#555' }} />
-            </div>
+            <input type="time" name="endTime" value={formData.endTime} onChange={handleChange} required style={inputStyle} />
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <label style={{ fontWeight: 'bold' }}>
