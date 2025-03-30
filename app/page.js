@@ -131,7 +131,7 @@ export default function Home() {
             <label>Number of Guests:</label>
             <input type="number" name="guestCount" value={formData.guestCount} onChange={handleChange} required style={inputStyle} />
 
-            <label>Venue Location:</label>
+            <label>Venue Name/Location:</label>
             <input type="text" name="venueLocation" value={formData.venueLocation} onChange={handleChange} required style={inputStyle} />
 
             <label>Event Date:</label>
