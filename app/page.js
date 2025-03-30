@@ -234,17 +234,20 @@ const calculateTotal = () => {
   required
   style={{
     padding: '10px',
-    borderRadius: '6px',
-    border: '1px solid #4b5563',
-    backgroundColor: '#d1d5db',
-    color: '#000000',
+    border: 'none',
+    borderBottom: '1px solid #ccc',
+    borderRadius: '0',
+    backgroundColor: 'transparent', // ✅ No background
+    color: '#ffffff',
     fontSize: '16px',
     appearance: 'none',
     WebkitAppearance: 'none',
     MozAppearance: 'none',
-    backgroundImage: 'none' // removes the dropdown arrow
+    backgroundImage: 'none',
+    outline: 'none'
   }}
 >
+
 
   <option value="">Select</option>
   <option value="Venmo">Venmo</option>
