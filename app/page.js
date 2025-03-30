@@ -50,7 +50,6 @@ export default function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       await addDoc(collection(db, 'contracts'), formData);
       setSubmitted(true);
@@ -78,28 +77,24 @@ export default function Home() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        backgroundImage: 'url("/dj-background.jpg")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
+    <div style={{
+      minHeight: '100vh',
+      backgroundImage: 'url("/dj-background.jpg")',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      padding: '2rem',
+    }}>
+      <main style={{
+        fontFamily: 'Montserrat, sans-serif',
+        maxWidth: '600px',
+        margin: '40px auto',
+        background: 'rgba(0, 0, 0, 0.6)',
+        borderRadius: '12px',
         padding: '2rem',
-      }}
-    >
-      <main
-        style={{
-          fontFamily: 'Montserrat, sans-serif',
-          maxWidth: '600px',
-          margin: '40px auto',
-          background: 'rgba(0, 0, 0, 0.6)',
-          borderRadius: '12px',
-          padding: '2rem',
-          color: '#fff',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-        }}
-      >
+        color: '#fff',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+      }}>
         <h1 style={{ fontSize: '2rem', marginBottom: '1rem', textAlign: 'center' }}>
           Live City DJ Contract
         </h1>
@@ -121,7 +116,6 @@ export default function Home() {
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
-            <h3>Client Info</h3>
             <label>Client Name:</label>
             <input type="text" name="clientName" value={formData.clientName} onChange={handleChange} required style={inputStyle} />
 
@@ -131,7 +125,6 @@ export default function Home() {
             <label>Contact Phone:</label>
             <input type="tel" name="contactPhone" value={formData.contactPhone} onChange={handleChange} required style={inputStyle} />
 
-            <h3>Event Details</h3>
             <label>Type of Event:</label>
             <input type="text" name="eventType" value={formData.eventType} onChange={handleChange} required style={inputStyle} />
 
@@ -167,8 +160,6 @@ export default function Home() {
               <option value="Apple Pay">Apple Pay</option>
               <option value="Cash">Cash</option>
             </select>
-
-            <h3>Optional Add-Ons</h3>
 
             <label><input type="checkbox" name="lighting" checked={formData.lighting} onChange={handleChange} /> Event Lighting (+$100)</label><br />
             <label><input type="checkbox" name="photography" checked={formData.photography} onChange={handleChange} /> Event Photography (+$150)</label><br />
