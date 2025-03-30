@@ -120,16 +120,75 @@ const calculateTotal = () => {
 
 
           <label>Email:</label><br />
-          <input type="email" name="email" onChange={handleChange} required /><br /><br />
+          <input
+  type="email"
+  name="email"
+  value={formData.email}
+  onChange={handleChange}
+  required
+  style={{
+    padding: '10px',
+    borderRadius: '6px',
+    border: '1px solid #4b5563',
+    backgroundColor: '#1f2937',
+    color: '#ffffff',
+    fontSize: '16px'
+  }}
+/>
+
 
           <label>Event Date:</label><br />
-          <input type="date" name="eventDate" onChange={handleChange} required /><br /><br />
+          <input
+  type="date"
+  name="eventDate"
+  value={formData.eventDate}
+  onChange={handleChange}
+  required
+  style={{
+    padding: '10px',
+    borderRadius: '6px',
+    border: '1px solid #4b5563',
+    backgroundColor: '#1f2937',
+    color: '#ffffff',
+    fontSize: '16px'
+  }}
+/>
+
 
           <label>Start Time:</label><br />
-          <input type="time" name="startTime" onChange={handleChange} required /><br /><br />
+          <input
+  type="time"
+  name="startTime"
+  value={formData.startTime}
+  onChange={handleChange}
+  required
+  style={{
+    padding: '10px',
+    borderRadius: '6px',
+    border: '1px solid #4b5563',
+    backgroundColor: '#1f2937',
+    color: '#ffffff',
+    fontSize: '16px'
+  }}
+/>
+
 
           <label>End Time:</label><br />
-          <input type="time" name="endTime" onChange={handleChange} required /><br /><br />
+          <input
+  type="time"
+  name="endTime"
+  value={formData.endTime}
+  onChange={handleChange}
+  required
+  style={{
+    padding: '10px',
+    borderRadius: '6px',
+    border: '1px solid #4b5563',
+    backgroundColor: '#1f2937',
+    color: '#ffffff',
+    fontSize: '16px'
+  }}
+/>
 
           <label>Payment Method:</label><br />
           <select
