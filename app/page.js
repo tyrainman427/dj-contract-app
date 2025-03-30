@@ -190,6 +190,7 @@ const calculateTotal = () => {
   }}
 />
 
+
           <label>Payment Method:</label><br />
           <select
   name="paymentMethod"
@@ -200,7 +201,7 @@ const calculateTotal = () => {
     padding: '10px',
     borderRadius: '6px',
     border: '1px solid #4b5563',
-    backgroundColor: '#1f2937',
+    backgroundColor: '#C0C0C0',
     color: '#ffffff',
     fontSize: '16px'
   }}
