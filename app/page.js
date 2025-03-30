@@ -4,6 +4,7 @@ import { FaCalendarAlt, FaClock } from 'react-icons/fa';
 import { useState } from 'react';
 import db from '../lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
+import Script from 'next/script';
 
 export default function Home() {
   const [formData, setFormData] = useState({
@@ -48,8 +49,21 @@ export default function Home() {
     }));
   };
 
+  const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
+  const validatePhone = (phone) => /^[0-9]{10}$/.test(phone.replace(/\D/g, ''));
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateEmail(formData.email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+    if (!validatePhone(formData.contactPhone)) {
+      alert('Please enter a valid 10-digit phone number.');
+      return;
+    }
+
     try {
       await addDoc(collection(db, 'contracts'), formData);
       setSubmitted(true);
@@ -85,6 +99,8 @@ export default function Home() {
       backgroundRepeat: 'no-repeat',
       padding: '2rem',
     }}>
+      <Script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places" strategy="beforeInteractive" />
+
       <main style={{
         fontFamily: 'Montserrat, sans-serif',
         maxWidth: '600px',
@@ -123,7 +139,7 @@ export default function Home() {
             <input type="email" name="email" value={formData.email} onChange={handleChange} required style={inputStyle} />
 
             <label>Contact Phone:</label>
-            <input type="tel" name="contactPhone" value={formData.contactPhone} onChange={handleChange} required style={inputStyle} />
+            <input type="tel" name="contactPhone" value={formData.contactPhone} onChange={handleChange} required placeholder="1234567890" style={inputStyle} />
 
             <label>Type of Event:</label>
             <input type="text" name="eventType" value={formData.eventType} onChange={handleChange} required style={inputStyle} />
@@ -132,7 +148,7 @@ export default function Home() {
             <input type="number" name="guestCount" value={formData.guestCount} onChange={handleChange} required style={inputStyle} />
 
             <label>Venue Name/Location:</label>
-            <input type="text" name="venueLocation" value={formData.venueLocation} onChange={handleChange} required style={inputStyle} />
+            <input type="text" name="venueLocation" id="autocomplete" value={formData.venueLocation} onChange={handleChange} required style={inputStyle} />
 
             <label>Event Date:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
