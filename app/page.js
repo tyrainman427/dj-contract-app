@@ -29,6 +29,7 @@ export default function Home() {
 
   const [infoPopup, setInfoPopup] = useState('');
   const [showPopupBox, setShowPopupBox] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const showPopup = (text) => {
     setInfoPopup(text);
@@ -39,7 +40,6 @@ export default function Home() {
     setShowPopupBox(false);
     setTimeout(() => setInfoPopup(''), 300);
   };
-
   const BASE_PRICE = 350;
   const LIGHTING_PRICE = 100;
   const PHOTO_PRICE = 150;
@@ -55,8 +55,6 @@ export default function Home() {
     return total;
   };
 
-  const [submitted, setSubmitted] = useState(false);
-
   const handleChange = (e) => {
     const { name, type, value, checked } = e.target;
     setFormData((prev) => ({
@@ -70,38 +68,30 @@ export default function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validateEmail(formData.email)) {
-      alert('Please enter a valid email address.');
-      return;
-    }
-    if (!validatePhone(formData.contactPhone)) {
-      alert('Please enter a valid 10-digit phone number.');
-      return;
-    }
-    if (!formData.agreeToTerms) {
-      alert('You must agree to the terms and conditions before submitting.');
-      return;
-    }
+    if (!validateEmail(formData.email)) return alert('Please enter a valid email address.');
+    if (!validatePhone(formData.contactPhone)) return alert('Please enter a valid phone number.');
+    if (!formData.agreeToTerms) return alert('You must agree to the terms before submitting.');
 
     try {
       await addDoc(collection(db, 'contracts'), formData);
       setSubmitted(true);
     } catch (error) {
-      console.error('Error saving contract:', error);
-      alert('Error submitting form. Please check console for details.');
+      console.error('Submission error:', error);
+      alert('Something went wrong.');
     }
   };
 
   const inputStyle = {
     width: '100%',
-    padding: '10px',
-    borderRadius: '6px',
-    border: '1px solid #4b5563',
-    backgroundColor: '#1f2937',
-    color: '#ffffff',
+    padding: '12px',
+    borderRadius: '8px',
+    border: '1px solid #ccc',
+    backgroundColor: '#fff',
+    color: '#000',
     fontSize: '16px',
-    marginBottom: '1rem'
+    marginBottom: '1.2rem',
+    transition: 'all 0.2s ease-in-out',
+    boxShadow: '0 2px 6px rgba(0,0,0,0.05)'
   };
 
   const iconInputStyle = {
@@ -110,19 +100,19 @@ export default function Home() {
   };
 
   const buttonStyle = {
-    padding: '12px 24px',
+    padding: '14px 28px',
     fontSize: '16px',
     fontWeight: 'bold',
     color: '#fff',
-    backgroundColor: '#10b981',
+    backgroundColor: '#2563eb',
     border: 'none',
-    borderRadius: '8px',
+    borderRadius: '10px',
     cursor: 'pointer',
-    marginTop: '1rem'
+    transition: 'background-color 0.3s ease, transform 0.2s ease',
+    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.5)'
   };
-
   const popupIcon = (text) => (
-    <span onClick={() => showPopup(text)} style={{ marginLeft: '8px', color: 'gray', cursor: 'pointer' }}>
+    <span onClick={() => showPopup(text)} style={{ marginLeft: '8px', color: '#555', cursor: 'pointer' }}>
       <FaInfoCircle />
     </span>
   );
@@ -146,93 +136,114 @@ export default function Home() {
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
       padding: '2rem',
+      animation: 'fadeIn 0.6s ease-in',
       position: 'relative'
     }}>
       <Script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places" strategy="beforeInteractive" />
 
       <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
         .popup-backdrop {
           position: fixed;
-          top: 0;
-          left: 0;
-          height: 100vh;
-          width: 100vw;
-          background-color: rgba(0, 0, 0, 0.5);
+          top: 0; left: 0;
+          width: 100vw; height: 100vh;
+          background-color: rgba(0,0,0,0.5);
           z-index: 9998;
         }
+
         .popup-box {
           position: fixed;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%) scale(1);
-          opacity: 1;
-          transition: all 0.3s ease-in-out;
-          background-color: #fff;
-          color: #000;
-          padding: 1rem;
-          border: 1px solid #ccc;
-          border-radius: 8px;
-          z-index: 9999;
-          max-width: 90%;
+          background: #ffffff;
+          border-radius: 10px;
+          padding: 1.5rem;
+          width: 90%;
+          max-width: 400px;
           max-height: 70vh;
           overflow-y: auto;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+          box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+          z-index: 9999;
+          transition: all 0.3s ease-in-out;
         }
+
         .popup-box.hide {
-          transform: translate(-50%, -50%) scale(0.8);
+          transform: translate(-50%, -50%) scale(0.9);
           opacity: 0;
         }
+
         .popup-box p {
           white-space: pre-wrap;
+          font-size: 14px;
+          color: #333;
+        }
+
+        .popup-box button {
+          margin-top: 12px;
+          padding: 8px 14px;
+          background-color: #ef4444;
+          color: #fff;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+        }
+
+        .fade-panel {
+          animation: fadeIn 0.8s ease;
+        }
+
+        .form-header {
+          text-align: center;
+          margin-bottom: 2rem;
+        }
+
+        .form-header h1 {
+          font-size: 2rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .form-header p {
+          color: #444;
         }
       `}</style>
-
       {infoPopup && (
         <>
           <div className="popup-backdrop" onClick={hidePopup} />
           <div className={`popup-box ${showPopupBox ? '' : 'hide'}`}>
             <strong>Info:</strong>
             <p>{infoPopup}</p>
-            <button onClick={hidePopup} style={{
-              marginTop: '10px',
-              backgroundColor: '#ef4444',
-              color: '#fff',
-              border: 'none',
-              padding: '8px 12px',
-              borderRadius: '6px',
-              cursor: 'pointer'
-            }}>Close</button>
+            <button onClick={hidePopup}>Close</button>
           </div>
         </>
       )}
 
-      <main style={{
+      <main className="fade-panel" style={{
         fontFamily: 'Montserrat, sans-serif',
         maxWidth: '600px',
-        margin: '40px auto',
-        background: 'rgba(255, 255, 255, 0.85)',
-        borderRadius: '12px',
+        margin: '0 auto',
+        background: 'rgba(255, 255, 255, 0.95)',
+        borderRadius: '16px',
         padding: '2rem',
         color: '#000',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+        boxShadow: '0 8px 40px rgba(0,0,0,0.15)',
+        backdropFilter: 'blur(8px)'
       }}>
-        <h1 style={{ fontSize: '2rem', marginBottom: '1rem', textAlign: 'center' }}>
-          Live City DJ Contract
-        </h1>
-        <p style={{ textAlign: 'center', marginBottom: '1rem' }}>
-          Contact Information:<br />
-          📞 (203) 694-9388<br />
-          📧 therealdjbobbydrake@gmail.com
-        </p>
-        <p style={{ marginBottom: '2rem', textAlign: 'center' }}>
-          Please complete the form below to reserve your event date.
-        </p>
+        <div className="form-header">
+          <h1>Live City DJ Contract</h1>
+          <p>📞 (203) 694-9388<br />📧 therealdjbobbydrake@gmail.com</p>
+          <p style={{ marginTop: '1rem' }}>Please complete the form below to reserve your event date.</p>
+        </div>
 
         {submitted ? (
-          <div>
+          <div style={{ textAlign: 'center' }}>
             <h2>✅ Contract submitted successfully!</h2>
             <p>Please send your payment to confirm the booking:</p>
-            <ul>
+            <ul style={{ textAlign: 'left' }}>
               <li>💸 <strong>Venmo:</strong> @djBobbyDrake</li>
               <li>💵 <strong>Cash App:</strong> $djBobbyDrake</li>
               <li>🍎 <strong>Apple Pay:</strong> (203) 694-9388</li>
@@ -266,19 +277,19 @@ export default function Home() {
             <label>Event Date:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
               <input type="date" name="eventDate" value={formData.eventDate} onChange={handleChange} required style={iconInputStyle} />
-              <FaCalendarAlt style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'black' }} />
+              <FaCalendarAlt style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: '#555' }} />
             </div>
 
             <label>Start Time:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
               <input type="time" name="startTime" value={formData.startTime} onChange={handleChange} required style={iconInputStyle} />
-              <FaClock style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'black' }} />
+              <FaClock style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: '#555' }} />
             </div>
 
             <label>End Time:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
               <input type="time" name="endTime" value={formData.endTime} onChange={handleChange} required style={iconInputStyle} />
-              <FaClock style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'black' }} />
+              <FaClock style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: '#555' }} />
             </div>
 
             <label>
@@ -295,7 +306,7 @@ export default function Home() {
             <input type="number" name="additionalHours" value={formData.additionalHours} onChange={handleChange} min="0" style={inputStyle} />
 
             <label>Payment Method:</label>
-            <select name="paymentMethod" value={formData.paymentMethod} onChange={handleChange} required style={{ ...inputStyle, appearance: 'none', backgroundImage: 'none' }}>
+            <select name="paymentMethod" value={formData.paymentMethod} onChange={handleChange} required style={inputStyle}>
               <option value="">Select</option>
               <option value="Venmo">Venmo</option>
               <option value="Cash App">Cash App</option>
@@ -304,11 +315,11 @@ export default function Home() {
             </select>
 
             <label>
-              <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required /> I agree to the Terms & Conditions
-              {popupIcon(termsText)}
+              <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
+              I agree to the Terms & Conditions {popupIcon(termsText)}
             </label>
 
-            <h3>Total Price: ${calculateTotal()}</h3><br />
+            <h3 style={{ marginTop: '1.5rem' }}>Total Price: ${calculateTotal()}</h3>
             <button type="submit" style={buttonStyle}>Submit Contract</button>
           </form>
         )}
