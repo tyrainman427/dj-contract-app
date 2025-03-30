@@ -115,50 +115,53 @@ export default function Home() {
               }}
             />
 
-            <label>Email:</label><br />
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              style={{
-                padding: '10px',
-                borderRadius: '6px',
-                border: '1px solid #4b5563',
-                backgroundColor: '#1f2937',
-                color: '#ffffff',
-                fontSize: '16px'
-              }}
-            />
+<label>Email:</label><br />
+<input
+  type="email"
+  name="email"
+  value={formData.email}
+  onChange={handleChange}
+  required
+  style={{
+    width: '100%',
+    padding: '10px',
+    borderRadius: '6px',
+    border: '1px solid #4b5563',
+    backgroundColor: '#1f2937',
+    color: '#ffffff',
+    fontSize: '16px',
+    marginBottom: '1rem'
+  }}
+/>
 
-            <label>Event Date:</label>
-            <div style={{ position: 'relative' }}>
-              <input
-                type="date"
-                name="eventDate"
-                value={formData.eventDate}
-                onChange={handleChange}
-                required
-                style={{
-                  width: '100%',
-                  padding: '10px 40px 10px 10px',
-                  borderRadius: '6px',
-                  border: '1px solid #4b5563',
-                  backgroundColor: '#1f2937',
-                  color: '#ffffff',
-                  fontSize: '16px'
-                }}
-              />
-              <FaCalendarAlt style={{
-                position: 'absolute',
-                right: '10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: 'white',
-                pointerEvents: 'none'
-              }} />
-            </div>
+<label>Event Date:</label>
+<div style={{ position: 'relative', marginBottom: '1rem' }}>
+  <input
+    type="date"
+    name="eventDate"
+    value={formData.eventDate}
+    onChange={handleChange}
+    required
+    style={{
+      width: '100%',
+      padding: '10px 40px 10px 10px',
+      borderRadius: '6px',
+      border: '1px solid #4b5563',
+      backgroundColor: '#1f2937',
+      color: '#ffffff',
+      fontSize: '16px'
+    }}
+  />
+  <FaCalendarAlt style={{
+    position: 'absolute',
+    right: '10px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    color: 'white',
+    pointerEvents: 'none'
+  }} />
+</div>
+
 
             <label>Start Time:</label>
             <div style={{ position: 'relative' }}>
