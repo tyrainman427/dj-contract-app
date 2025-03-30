@@ -27,6 +27,19 @@ export default function Home() {
     additionalHours: 0
   });
 
+  const [infoPopup, setInfoPopup] = useState('');
+  const [showPopupBox, setShowPopupBox] = useState(false);
+
+  const showPopup = (text) => {
+    setInfoPopup(text);
+    setShowPopupBox(true);
+  };
+
+  const hidePopup = () => {
+    setShowPopupBox(false);
+    setTimeout(() => setInfoPopup(''), 300);
+  };
+
   const BASE_PRICE = 350;
   const LIGHTING_PRICE = 100;
   const PHOTO_PRICE = 150;
@@ -110,7 +123,10 @@ export default function Home() {
   };
 
   const popupIcon = (text) => (
-    <span title={text} style={{ marginLeft: '8px', color: 'gray', cursor: 'pointer' }}>
+    <span
+      onClick={() => showPopup(text)}
+      style={{ marginLeft: '8px', color: 'gray', cursor: 'pointer' }}
+    >
       <FaInfoCircle />
     </span>
   );
@@ -135,7 +151,48 @@ export default function Home() {
         padding: '2rem',
         color: '#000',
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+        position: 'relative'
       }}>
+        <style>{`
+          .popup-box {
+            transition: all 0.3s ease-in-out;
+            transform: scale(1);
+            opacity: 1;
+          }
+          .popup-box.hide {
+            transform: scale(0.8);
+            opacity: 0;
+          }
+        `}</style>
+
+        {infoPopup && (
+          <div className={`popup-box ${showPopupBox ? '' : 'hide'}`} style={{
+            position: 'absolute',
+            top: '20px',
+            left: '20px',
+            right: '20px',
+            backgroundColor: '#fff',
+            color: '#000',
+            padding: '1rem',
+            border: '1px solid #ccc',
+            borderRadius: '8px',
+            zIndex: 999,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+          }}>
+            <strong>Info:</strong>
+            <p>{infoPopup}</p>
+            <button onClick={hidePopup} style={{
+              marginTop: '10px',
+              backgroundColor: '#ef4444',
+              color: '#fff',
+              border: 'none',
+              padding: '8px 12px',
+              borderRadius: '6px',
+              cursor: 'pointer'
+            }}>Close</button>
+          </div>
+        )}
+
         <h1 style={{ fontSize: '2rem', marginBottom: '1rem', textAlign: 'center' }}>
           Live City DJ Contract
         </h1>
@@ -181,24 +238,24 @@ export default function Home() {
             <input type="text" name="venueName" value={formData.venueName} onChange={handleChange} required style={inputStyle} />
 
             <label>Venue Location:</label>
-            <input type="text" name="venueLocation" id="autocomplete" value={formData.venueLocation} onChange={handleChange} required style={inputStyle} />
+            <input type="text" name="venueLocation" value={formData.venueLocation} onChange={handleChange} required style={inputStyle} />
 
             <label>Event Date:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
               <input type="date" name="eventDate" value={formData.eventDate} onChange={handleChange} required style={iconInputStyle} />
-              <FaCalendarAlt style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'black', pointerEvents: 'none' }} />
+              <FaCalendarAlt style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'black' }} />
             </div>
 
             <label>Start Time:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
               <input type="time" name="startTime" value={formData.startTime} onChange={handleChange} required style={iconInputStyle} />
-              <FaClock style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'black', pointerEvents: 'none' }} />
+              <FaClock style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'black' }} />
             </div>
 
             <label>End Time:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
               <input type="time" name="endTime" value={formData.endTime} onChange={handleChange} required style={iconInputStyle} />
-              <FaClock style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'black', pointerEvents: 'none' }} />
+              <FaClock style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'black' }} />
             </div>
 
             <label>
