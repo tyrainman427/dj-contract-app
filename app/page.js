@@ -1,6 +1,6 @@
 'use client';
 
-import { FaCalendarAlt, FaClock } from 'react-icons/fa';
+import { FaCalendarAlt, FaClock, FaInfoCircle } from 'react-icons/fa';
 import { useState } from 'react';
 import db from '../lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
@@ -13,6 +13,7 @@ export default function Home() {
     contactPhone: '',
     eventType: '',
     guestCount: '',
+    venueName: '',
     venueLocation: '',
     eventDate: '',
     startTime: '',
@@ -21,6 +22,8 @@ export default function Home() {
     lighting: false,
     photography: false,
     videoVisuals: false,
+    standardPackage: true,
+    agreeToTerms: false,
     additionalHours: 0
   });
 
@@ -63,6 +66,10 @@ export default function Home() {
       alert('Please enter a valid 10-digit phone number.');
       return;
     }
+    if (!formData.agreeToTerms) {
+      alert('You must agree to the terms and conditions before submitting.');
+      return;
+    }
 
     try {
       await addDoc(collection(db, 'contracts'), formData);
@@ -102,6 +109,12 @@ export default function Home() {
     marginTop: '1rem'
   };
 
+  const popupIcon = (text) => (
+    <span title={text} style={{ marginLeft: '8px', color: 'gray', cursor: 'pointer' }}>
+      <FaInfoCircle />
+    </span>
+  );
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -126,6 +139,11 @@ export default function Home() {
         <h1 style={{ fontSize: '2rem', marginBottom: '1rem', textAlign: 'center' }}>
           Live City DJ Contract
         </h1>
+        <p style={{ textAlign: 'center', marginBottom: '1rem' }}>
+          Contact Information:<br />
+          📞 (203) 694-9388<br />
+          📧 therealdjbobbydrake@gmail.com
+        </p>
         <p style={{ marginBottom: '2rem', textAlign: 'center' }}>
           Please complete the form below to reserve your event date.
         </p>
@@ -159,7 +177,10 @@ export default function Home() {
             <label>Number of Guests:</label>
             <input type="number" name="guestCount" value={formData.guestCount} onChange={handleChange} required style={inputStyle} />
 
-            <label>Venue Name/Location:</label>
+            <label>Venue Name:</label>
+            <input type="text" name="venueName" value={formData.venueName} onChange={handleChange} required style={inputStyle} />
+
+            <label>Venue Location:</label>
             <input type="text" name="venueLocation" id="autocomplete" value={formData.venueLocation} onChange={handleChange} required style={inputStyle} />
 
             <label>Event Date:</label>
@@ -180,22 +201,32 @@ export default function Home() {
               <FaClock style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'black', pointerEvents: 'none' }} />
             </div>
 
+            <label>
+              <strong>Standard DJ Package 💰 $350.00</strong>
+              {popupIcon('5 Hours (Includes professional DJ/EMCEE, high-quality sound system, wireless microphone, extensive music selection, setup & teardown)')}
+            </label>
+
             <p style={{ fontWeight: 'bold', marginTop: '1rem' }}>Event Add-Ons:</p>
-            <label><input type="checkbox" name="lighting" checked={formData.lighting} onChange={handleChange} /> Event Lighting (+$100)</label><br />
-            <label><input type="checkbox" name="photography" checked={formData.photography} onChange={handleChange} /> Event Photography (+$150)</label><br />
-            <label><input type="checkbox" name="videoVisuals" checked={formData.videoVisuals} onChange={handleChange} /> Video Visuals (+$100)</label><br /><br />
+            <label><input type="checkbox" name="lighting" checked={formData.lighting} onChange={handleChange} /> Event Lighting (+$100){popupIcon('Strobe/party lights. Requires venue access 2 hours before event')}</label><br />
+            <label><input type="checkbox" name="photography" checked={formData.photography} onChange={handleChange} /> Event Photography (+$150){popupIcon('50 high-quality candid shots, delivered within 48 hours')}</label><br />
+            <label><input type="checkbox" name="videoVisuals" checked={formData.videoVisuals} onChange={handleChange} /> Video Visuals (+$100){popupIcon('Slideshows, presentations, etc.')}</label><br /><br />
 
             <label>Additional Hours ($75/hr):</label>
             <input type="number" name="additionalHours" value={formData.additionalHours} onChange={handleChange} min="0" style={inputStyle} />
 
             <label>Payment Method:</label>
-            <select name="paymentMethod" value={formData.paymentMethod} onChange={handleChange} required style={{ ...inputStyle, appearance: 'none', WebkitAppearance: 'none', MozAppearance: 'none', backgroundImage: 'none' }}>
+            <select name="paymentMethod" value={formData.paymentMethod} onChange={handleChange} required style={{ ...inputStyle, appearance: 'none', backgroundImage: 'none' }}>
               <option value="">Select</option>
               <option value="Venmo">Venmo</option>
               <option value="Cash App">Cash App</option>
               <option value="Apple Pay">Apple Pay</option>
               <option value="Cash">Cash</option>
             </select>
+
+            <label>
+              <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required /> I agree to the Terms & Conditions
+              {popupIcon('DJ services can extend beyond the contracted time only with venue approval. If the event is canceled by the client, the advance payment deposit is non-refundable. Cancellations within 30 days of the event require full payment of the contracted amount. Cancellations must be submitted in writing via email or text message. LIVE CITY reserves the right to shut down equipment if there is any risk of harm to attendees or property. LIVE CITY cannot be held liable for any amount greater than the contracted fee. Outdoor events must provide access to electricity. Tipping is optional and at the discretion of the client.')}
+            </label>
 
             <h3>Total Price: ${calculateTotal()}</h3><br />
             <button type="submit" style={buttonStyle}>Submit Contract</button>
