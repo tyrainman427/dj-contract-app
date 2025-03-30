@@ -43,6 +43,7 @@ export default function Home() {
   };
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
+
   useEffect(() => {
     const canvas = document.getElementById('confetti');
     if (!canvas) return;
@@ -126,6 +127,7 @@ export default function Home() {
       alert('Something went wrong.');
     }
   };
+
   const inputStyle = {
     width: '100%',
     padding: '12px',
@@ -160,14 +162,11 @@ export default function Home() {
   const textStyle = {
     textShadow: '0 1px 2px rgba(0,0,0,0.4)'
   };
+
   const popupIcon = (text) => (
     <span
       onClick={() => showPopup(text)}
-      style={{
-        marginLeft: '8px',
-        color: '#555',
-        cursor: 'pointer'
-      }}
+      style={{ marginLeft: '8px', color: '#555', cursor: 'pointer' }}
     >
       <FaInfoCircle />
     </span>
@@ -183,96 +182,93 @@ export default function Home() {
 • Outdoor events must provide access to electricity.
 • Tipping is optional and at the discretion of the client.
 `;
-
-  return (
-    <div
+return (
+  <div
+    style={{
+      minHeight: '100vh',
+      backgroundImage: 'url("/dj-background.jpg")',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      position: 'relative',
+      overflow: 'hidden'
+    }}
+  >
+    <canvas
+      id="confetti"
       style={{
-        minHeight: '100vh',
-        backgroundImage: 'url("/dj-background.jpg")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        position: 'relative',
-        overflow: 'hidden'
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        zIndex: 0,
+        pointerEvents: 'none'
       }}
-    >
-      <canvas
-        id="confetti"
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          zIndex: 0,
-          pointerEvents: 'none'
-        }}
-      />
+    />
 
-      {infoPopup && (
-        <>
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100vw',
-              height: '100vh',
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              zIndex: 9998
-            }}
+    {infoPopup && (
+      <>
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 9998
+          }}
+          onClick={hidePopup}
+        />
+        <div
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            background: '#ffffff',
+            color: '#111827',
+            borderRadius: '8px',
+            padding: '1.5rem',
+            width: '90%',
+            maxWidth: '420px',
+            height: 'auto',
+            maxHeight: '75vh',
+            overflowY: 'auto',
+            zIndex: 9999,
+            boxShadow: '0 0 30px rgba(0,0,0,0.25)',
+            fontSize: '15px',
+            lineHeight: '1.6',
+            whiteSpace: 'pre-wrap',
+            wordWrap: 'break-word'
+          }}
+        >
+          <strong>Info:</strong>
+          <p style={{ marginTop: '10px' }}>{infoPopup}</p>
+          <button
             onClick={hidePopup}
-          />
-         <div
-  style={{
-    position: 'fixed',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    background: '#ffffff',
-    color: '#111827',
-    borderRadius: '8px',
-    padding: '1.5rem',
-    width: '90%',
-    maxWidth: '420px',
-    height: 'auto',
-    maxHeight: '75vh',
-    overflowY: 'auto',
-    zIndex: 9999,
-    boxShadow: '0 0 30px rgba(0,0,0,0.25)',
-    fontSize: '15px',
-    lineHeight: '1.6',
-    whiteSpace: 'pre-wrap',
-    wordWrap: 'break-word'
-  }}
->
-
-
-            <strong>Info:</strong>
-            <p style={{ whiteSpace: 'pre-wrap', marginTop: '10px' }}>{infoPopup}</p>
-            <button
-              onClick={hidePopup}
-              style={{
-                marginTop: '14px',
-                padding: '8px 16px',
-                background: '#ef4444',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer'
-              }}
-            >
-              Close
-            </button>
-          </div>
-        </>
-      )}
+            style={{
+              marginTop: '14px',
+              padding: '8px 16px',
+              background: '#ef4444',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer'
+            }}
+          >
+            Close
+          </button>
+        </div>
+      </>
+    )}
       <main
         style={{
           fontFamily: 'Montserrat, sans-serif',
           maxWidth: '640px',
           margin: '40px auto',
-          background: 'rgba(255, 255, 255, 0.9)',
+          background: 'rgba(255, 255, 255, 0.92)',
           borderRadius: '20px',
           padding: '2rem',
           color: '#111',
@@ -297,12 +293,18 @@ export default function Home() {
           <div style={{ textAlign: 'center', ...textStyle }}>
             <h2>✅ Contract submitted successfully!</h2>
             <p>Please send your payment to confirm the booking:</p>
-            <ul style={{ textAlign: 'left' }}>
-              <li>💸 <strong>Venmo:</strong> @djBobbyDrake</li>
-              <li>💵 <strong>Cash App:</strong> $djBobbyDrake</li>
-              <li>🍎 <strong>Apple Pay:</strong> (203) 694-9388</li>
-            </ul>
-            <p><strong>Total Due:</strong> ${calculateTotal()}</p>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center', marginBottom: '10px' }}>
+              <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Venmo_Logo_2021.svg" alt="Venmo" style={{ height: '24px' }} />
+              <strong>@Bobby-Martin-64</strong>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center' }}>
+              <img src="https://upload.wikimedia.org/wikipedia/commons/0/02/Square_Cash_app_logo.svg" alt="Cash App" style={{ height: '24px' }} />
+              <strong>$LiveCity</strong>
+            </div>
+
+            <p style={{ marginTop: '1rem' }}><strong>Total Due:</strong> ${calculateTotal()}</p>
             <p>A $100 deposit is required to reserve your event date.</p>
           </div>
         ) : (
@@ -386,9 +388,8 @@ export default function Home() {
             <label>Payment Method:</label>
             <select name="paymentMethod" value={formData.paymentMethod} onChange={handleChange} required style={inputStyle}>
               <option value="">Select</option>
-              <option value="Venmo">Venmo</option>
-              <option value="Cash App">Cash App</option>
-              <option value="Apple Pay">Apple Pay</option>
+              <option value="Venmo - @Bobby-Martin-64">Venmo - @Bobby-Martin-64</option>
+              <option value="Cash App - $LiveCity">Cash App - $LiveCity</option>
               <option value="Cash">Cash</option>
             </select>
 
