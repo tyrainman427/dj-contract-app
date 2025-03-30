@@ -115,7 +115,7 @@ export default function Home() {
               }}
             />
 
-<label>Email:</label><br />
+<label style={{ display: 'block', marginBottom: '0.5rem' }}>Email:</label>
 <input
   type="email"
   name="email"
@@ -133,6 +133,7 @@ export default function Home() {
     marginBottom: '1rem'
   }}
 />
+
 
 <label>Event Date:</label>
 <div style={{ position: 'relative', marginBottom: '1rem' }}>
