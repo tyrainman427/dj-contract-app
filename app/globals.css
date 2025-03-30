@@ -30,3 +30,20 @@ body {
 body {
   font-family: 'Montserrat', sans-serif;
 }
+
+input[type="date"],
+input[type="time"] {
+  color-scheme: dark; /* Ensures white icons on supported browsers */
+  background-color: #1f2937;
+  color: #ffffff;
+  border: 1px solid #4b5563;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+/* Optional: Remove native icon and use custom SVG if needed */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1); /* This flips dark to white on WebKit browsers */
+}
