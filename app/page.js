@@ -70,7 +70,7 @@ export default function Home() {
           fontFamily: 'Montserrat, sans-serif',
           maxWidth: '600px',
           margin: '40px auto',
-          background: 'rgba(0, 0, 0, 0.85)',
+          background: 'rgba(0, 0, 0, 0.6)', // translucent to show background
           borderRadius: '12px',
           padding: '2rem',
           color: '#fff',
