@@ -1,7 +1,7 @@
 'use client';
 
 import { FaCalendarAlt, FaClock, FaInfoCircle } from 'react-icons/fa';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import db from '../lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import Script from 'next/script';
@@ -43,6 +43,50 @@ export default function Home() {
   };
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
+
+  useEffect(() => {
+    const canvas = document.getElementById('confetti');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    let pieces = Array.from({ length: 100 }, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      r: Math.random() * 6 + 4,
+      d: Math.random() * 50 + 10,
+      color: `hsl(${Math.random() * 360}, 70%, 60%)`,
+      tilt: Math.random() * 10 - 10,
+      tiltAngleIncremental: Math.random() * 0.07 + 0.05,
+      tiltAngle: 0
+    }));
+
+    const update = () => {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      pieces.forEach((p, i) => {
+        p.tiltAngle += p.tiltAngleIncremental;
+        p.y += Math.cos(p.d) + 1 + p.r / 2;
+        p.tilt = Math.sin(p.tiltAngle - i / 3) * 15;
+
+        ctx.beginPath();
+        ctx.lineWidth = p.r;
+        ctx.strokeStyle = p.color;
+        ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+        ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+        ctx.stroke();
+
+        if (p.y > window.innerHeight) {
+          p.x = Math.random() * window.innerWidth;
+          p.y = -10;
+        }
+      });
+
+      requestAnimationFrame(update);
+    };
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    update();
+  }, []);
   const BASE_PRICE = 350;
   const LIGHTING_PRICE = 100;
   const PHOTO_PRICE = 150;
@@ -71,7 +115,6 @@ export default function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validateEmail(formData.email)) return alert('Please enter a valid email address.');
     if (!validatePhone(formData.contactPhone)) return alert('Please enter a valid phone number.');
     if (!formData.agreeToTerms) return alert('You must agree to the terms before submitting.');
@@ -89,13 +132,14 @@ export default function Home() {
     width: '100%',
     padding: '12px',
     borderRadius: '8px',
-    border: '1px solid #999',
-    backgroundColor: darkMode ? '#1f2937' : '#f3f4f6', // darker background
+    border: '1px solid rgba(255,255,255,0.3)',
+    backgroundColor: darkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
     color: darkMode ? '#f9fafb' : '#111827',
     fontSize: '16px',
     marginBottom: '1.2rem',
+    backdropFilter: 'blur(4px)',
     transition: 'all 0.2s ease-in-out',
-    boxShadow: darkMode ? '0 2px 5px rgba(0,0,0,0.2)' : '0 2px 5px rgba(0,0,0,0.05)'
+    boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.1)'
   };
 
   const iconInputStyle = {
@@ -137,23 +181,20 @@ export default function Home() {
   return (
     <div style={{
       minHeight: '100vh',
-      backgroundColor: darkMode ? '#111827' : '#f3f4f6',
-      backgroundImage: 'url("/dj-background.jpg")',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      padding: '2rem',
       position: 'relative',
-      transition: 'background-color 0.4s ease'
+      overflow: 'hidden'
     }}>
+      <canvas id="confetti" style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        zIndex: 0,
+        pointerEvents: 'none'
+      }} />
+
       <Script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places" strategy="beforeInteractive" />
 
       <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
         .popup-backdrop {
           position: fixed;
           top: 0; left: 0;
@@ -166,7 +207,7 @@ export default function Home() {
           position: fixed;
           top: 50%;
           left: 50%;
-          transform: translate(-50%, -50%) scale(1);
+          transform: translate(-50%, -50%);
           background: #ffffff;
           border-radius: 10px;
           padding: 1.5rem;
@@ -176,12 +217,6 @@ export default function Home() {
           overflow-y: auto;
           box-shadow: 0 8px 30px rgba(0,0,0,0.2);
           z-index: 9999;
-          transition: all 0.3s ease-in-out;
-        }
-
-        .popup-box.hide {
-          transform: translate(-50%, -50%) scale(0.9);
-          opacity: 0;
         }
 
         .popup-box p {
@@ -201,8 +236,7 @@ export default function Home() {
         }
       `}</style>
 
-      {/* Dark Mode Toggle */}
-      <div style={{ textAlign: 'right', marginBottom: '1rem' }}>
+      <div style={{ textAlign: 'right', padding: '0.5rem 2rem', zIndex: 1000 }}>
         <button onClick={toggleDarkMode} style={{
           padding: '6px 12px',
           fontSize: '14px',
@@ -219,7 +253,7 @@ export default function Home() {
       {infoPopup && (
         <>
           <div className="popup-backdrop" onClick={hidePopup} />
-          <div className={`popup-box ${showPopupBox ? '' : 'hide'}`}>
+          <div className="popup-box">
             <strong>Info:</strong>
             <p>{infoPopup}</p>
             <button onClick={hidePopup}>Close</button>
@@ -230,14 +264,16 @@ export default function Home() {
       <main style={{
         fontFamily: 'Montserrat, sans-serif',
         maxWidth: '600px',
-        margin: '0 auto',
-        background: darkMode ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+        margin: '40px auto',
+        background: darkMode ? 'rgba(17, 24, 39, 0.75)' : 'rgba(255, 255, 255, 0.85)',
         borderRadius: '16px',
         padding: '2rem',
         color: darkMode ? '#f9fafb' : '#000',
-        boxShadow: '0 8px 40px rgba(0,0,0,0.15)',
-        backdropFilter: 'blur(10px)',
-        animation: 'fadeIn 0.5s ease'
+        boxShadow: '0 8px 40px rgba(0,0,0,0.3)',
+        backdropFilter: 'blur(8px)',
+        position: 'relative',
+        zIndex: 1,
+        animation: 'fadeIn 0.6s ease-in-out'
       }}>
         <h1 style={{ fontSize: '2rem', marginBottom: '1rem', textAlign: 'center' }}>
           Live City DJ Contract
