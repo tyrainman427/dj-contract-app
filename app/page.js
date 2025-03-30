@@ -1,5 +1,5 @@
 'use client';
-
+import { FaCalendarAlt, FaClock } from 'react-icons/fa';
 import { useState } from 'react';
 import db from '../lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
@@ -136,58 +136,94 @@ const calculateTotal = () => {
 />
 
 
-          <label>Event Date:</label><br />
-          <input
-  type="date"
-  name="eventDate"
-  value={formData.eventDate}
-  onChange={handleChange}
-  required
-  style={{
-    padding: '10px',
-    borderRadius: '6px',
-    border: '1px solid #4b5563',
-    backgroundColor: '#1f2937',
-    color: '#ffffff',
-    fontSize: '16px'
-  }}
-/>
+<label>Event Date:</label>
+<div style={{ position: 'relative' }}>
+  <input
+    type="date"
+    name="eventDate"
+    value={formData.eventDate}
+    onChange={handleChange}
+    required
+    style={{
+      width: '100%',
+      padding: '10px 40px 10px 10px',
+      borderRadius: '6px',
+      border: '1px solid #4b5563',
+      backgroundColor: '#1f2937',
+      color: '#ffffff',
+      fontSize: '16px'
+    }}
+  />
+  <FaCalendarAlt style={{
+    position: 'absolute',
+    right: '10px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    color: 'white',
+    pointerEvents: 'none'
+  }} />
+</div>
 
 
-          <label>Start Time:</label><br />
-          <input
-  type="time"
-  name="startTime"
-  value={formData.startTime}
-  onChange={handleChange}
-  required
-  style={{
-    padding: '10px',
-    borderRadius: '6px',
-    border: '1px solid #4b5563',
-    backgroundColor: '#1f2937',
-    color: '#ffffff',
-    fontSize: '16px'
-  }}
-/>
+
+<label>Start Time:</label>
+<div style={{ position: 'relative' }}>
+  <input
+    type="time"
+    name="startTime"
+    value={formData.startTime}
+    onChange={handleChange}
+    required
+    style={{
+      width: '100%',
+      padding: '10px 40px 10px 10px',
+      borderRadius: '6px',
+      border: '1px solid #4b5563',
+      backgroundColor: '#1f2937',
+      color: '#ffffff',
+      fontSize: '16px'
+    }}
+  />
+  <FaClock style={{
+    position: 'absolute',
+    right: '10px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    color: 'white',
+    pointerEvents: 'none'
+  }} />
+</div>
 
 
-          <label>End Time:</label><br />
-          <input
-  type="time"
-  name="endTime"
-  value={formData.endTime}
-  onChange={handleChange}
-  required
-  style={{
-    padding: '10px',
-    borderRadius: '6px',
-    border: '1px solid #4b5563',
-    backgroundColor: '#1f2937',
-    color: '#ffffff',
-    fontSize: '16px'
-  }}
-/>
+
+<label>End Time:</label>
+<div style={{ position: 'relative' }}>
+  <input
+    type="time"
+    name="endTime"
+    value={formData.endTime}
+    onChange={handleChange}
+    required
+    style={{
+      width: '100%',
+      padding: '10px 40px 10px 10px',
+      borderRadius: '6px',
+      border: '1px solid #4b5563',
+      backgroundColor: '#1f2937',
+      color: '#ffffff',
+      fontSize: '16px'
+    }}
+  />
+  <FaClock style={{
+    position: 'absolute',
+    right: '10px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    color: 'white',
+    pointerEvents: 'none'
+  }} />
+</div>
+
 
 
           <label>Payment Method:</label><br />
