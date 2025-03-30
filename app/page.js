@@ -56,7 +56,18 @@ const calculateTotal = () => {
   };
 
   return (
-    <main style={{ padding: '2rem', fontFamily: 'Arial', maxWidth: '600px', margin: 'auto' }}>
+    <main
+  style={{
+    padding: '2rem',
+    fontFamily: 'Montserrat, sans-serif',
+    maxWidth: '600px',
+    margin: '40px auto',
+    background: '#f8f9fa',
+    borderRadius: '12px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+  }}
+>
+
   <h1 style={{ fontSize: '2rem', marginBottom: '1rem', textAlign: 'center' }}>
     Live City DJ Contract
   </h1>
