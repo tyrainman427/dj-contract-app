@@ -282,9 +282,14 @@ return (
           Live City DJ Contract
         </h1>
         <p style={{ textAlign: 'center', marginBottom: '1rem', ...textStyle }}>
-          📞 (203) 694-9388<br />
-          📧 therealdjbobbydrake@gmail.com
-        </p>
+  📞 <a href="tel:2036949388" style={{ color: '#2563eb', textDecoration: 'none' }}>
+    (203) 694-9388
+  </a><br />
+  📧 <a href="mailto:therealdjbobbydrake@gmail.com" style={{ color: '#2563eb', textDecoration: 'none' }}>
+    therealdjbobbydrake@gmail.com
+  </a>
+</p>
+
         <p style={{ marginBottom: '2rem', textAlign: 'center', ...textStyle }}>
           Please complete the form below to reserve your event date.
         </p>
