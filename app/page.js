@@ -30,6 +30,7 @@ export default function Home() {
   const [infoPopup, setInfoPopup] = useState('');
   const [showPopupBox, setShowPopupBox] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
   const showPopup = (text) => {
     setInfoPopup(text);
@@ -40,6 +41,8 @@ export default function Home() {
     setShowPopupBox(false);
     setTimeout(() => setInfoPopup(''), 300);
   };
+
+  const toggleDarkMode = () => setDarkMode(!darkMode);
   const BASE_PRICE = 350;
   const LIGHTING_PRICE = 100;
   const PHOTO_PRICE = 150;
@@ -68,6 +71,7 @@ export default function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!validateEmail(formData.email)) return alert('Please enter a valid email address.');
     if (!validatePhone(formData.contactPhone)) return alert('Please enter a valid phone number.');
     if (!formData.agreeToTerms) return alert('You must agree to the terms before submitting.');
@@ -85,13 +89,13 @@ export default function Home() {
     width: '100%',
     padding: '12px',
     borderRadius: '8px',
-    border: '1px solid #ccc',
-    backgroundColor: '#fff',
-    color: '#000',
+    border: '1px solid #999',
+    backgroundColor: darkMode ? '#1f2937' : '#f3f4f6', // darker background
+    color: darkMode ? '#f9fafb' : '#111827',
     fontSize: '16px',
     marginBottom: '1.2rem',
     transition: 'all 0.2s ease-in-out',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.05)'
+    boxShadow: darkMode ? '0 2px 5px rgba(0,0,0,0.2)' : '0 2px 5px rgba(0,0,0,0.05)'
   };
 
   const iconInputStyle = {
@@ -104,15 +108,17 @@ export default function Home() {
     fontSize: '16px',
     fontWeight: 'bold',
     color: '#fff',
-    backgroundColor: '#2563eb',
+    backgroundColor: darkMode ? '#4f46e5' : '#2563eb',
     border: 'none',
     borderRadius: '10px',
     cursor: 'pointer',
-    transition: 'background-color 0.3s ease, transform 0.2s ease',
-    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.5)'
+    transition: 'all 0.3s ease',
+    boxShadow: darkMode
+      ? '0 4px 14px rgba(99, 102, 241, 0.6)'
+      : '0 4px 14px rgba(37, 99, 235, 0.5)'
   };
   const popupIcon = (text) => (
-    <span onClick={() => showPopup(text)} style={{ marginLeft: '8px', color: '#555', cursor: 'pointer' }}>
+    <span onClick={() => showPopup(text)} style={{ marginLeft: '8px', color: darkMode ? '#ccc' : '#555', cursor: 'pointer' }}>
       <FaInfoCircle />
     </span>
   );
@@ -126,18 +132,19 @@ export default function Home() {
 • LIVE CITY cannot be held liable for any amount greater than the contracted fee.
 • Outdoor events must provide access to electricity.
 • Tipping is optional and at the discretion of the client.
-  `;
+`;
 
   return (
     <div style={{
       minHeight: '100vh',
+      backgroundColor: darkMode ? '#111827' : '#f3f4f6',
       backgroundImage: 'url("/dj-background.jpg")',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
       padding: '2rem',
-      animation: 'fadeIn 0.6s ease-in',
-      position: 'relative'
+      position: 'relative',
+      transition: 'background-color 0.4s ease'
     }}>
       <Script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places" strategy="beforeInteractive" />
 
@@ -192,25 +199,23 @@ export default function Home() {
           border-radius: 6px;
           cursor: pointer;
         }
-
-        .fade-panel {
-          animation: fadeIn 0.8s ease;
-        }
-
-        .form-header {
-          text-align: center;
-          margin-bottom: 2rem;
-        }
-
-        .form-header h1 {
-          font-size: 2rem;
-          margin-bottom: 0.5rem;
-        }
-
-        .form-header p {
-          color: #444;
-        }
       `}</style>
+
+      {/* Dark Mode Toggle */}
+      <div style={{ textAlign: 'right', marginBottom: '1rem' }}>
+        <button onClick={toggleDarkMode} style={{
+          padding: '6px 12px',
+          fontSize: '14px',
+          backgroundColor: darkMode ? '#f3f4f6' : '#111827',
+          color: darkMode ? '#111827' : '#f3f4f6',
+          borderRadius: '6px',
+          border: 'none',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease'
+        }}>
+          {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+        </button>
+      </div>
       {infoPopup && (
         <>
           <div className="popup-backdrop" onClick={hidePopup} />
@@ -222,22 +227,28 @@ export default function Home() {
         </>
       )}
 
-      <main className="fade-panel" style={{
+      <main style={{
         fontFamily: 'Montserrat, sans-serif',
         maxWidth: '600px',
         margin: '0 auto',
-        background: 'rgba(255, 255, 255, 0.95)',
+        background: darkMode ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)',
         borderRadius: '16px',
         padding: '2rem',
-        color: '#000',
+        color: darkMode ? '#f9fafb' : '#000',
         boxShadow: '0 8px 40px rgba(0,0,0,0.15)',
-        backdropFilter: 'blur(8px)'
+        backdropFilter: 'blur(10px)',
+        animation: 'fadeIn 0.5s ease'
       }}>
-        <div className="form-header">
-          <h1>Live City DJ Contract</h1>
-          <p>📞 (203) 694-9388<br />📧 therealdjbobbydrake@gmail.com</p>
-          <p style={{ marginTop: '1rem' }}>Please complete the form below to reserve your event date.</p>
-        </div>
+        <h1 style={{ fontSize: '2rem', marginBottom: '1rem', textAlign: 'center' }}>
+          Live City DJ Contract
+        </h1>
+        <p style={{ textAlign: 'center', marginBottom: '1rem' }}>
+          📞 (203) 694-9388<br />
+          📧 therealdjbobbydrake@gmail.com
+        </p>
+        <p style={{ marginBottom: '2rem', textAlign: 'center' }}>
+          Please complete the form below to reserve your event date.
+        </p>
 
         {submitted ? (
           <div style={{ textAlign: 'center' }}>
@@ -277,19 +288,19 @@ export default function Home() {
             <label>Event Date:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
               <input type="date" name="eventDate" value={formData.eventDate} onChange={handleChange} required style={iconInputStyle} />
-              <FaCalendarAlt style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: '#555' }} />
+              <FaCalendarAlt style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: darkMode ? '#bbb' : '#555' }} />
             </div>
 
             <label>Start Time:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
               <input type="time" name="startTime" value={formData.startTime} onChange={handleChange} required style={iconInputStyle} />
-              <FaClock style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: '#555' }} />
+              <FaClock style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: darkMode ? '#bbb' : '#555' }} />
             </div>
 
             <label>End Time:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
               <input type="time" name="endTime" value={formData.endTime} onChange={handleChange} required style={iconInputStyle} />
-              <FaClock style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: '#555' }} />
+              <FaClock style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: darkMode ? '#bbb' : '#555' }} />
             </div>
 
             <label>
