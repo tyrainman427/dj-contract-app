@@ -98,190 +98,204 @@ export default function Home() {
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
-            <label>Client Name:</label><br />
-            <input
-              type="text"
-              name="clientName"
-              value={formData.clientName}
-              onChange={handleChange}
-              required
-              style={{
-                padding: '10px',
-                borderRadius: '6px',
-                border: '1px solid #4b5563',
-                backgroundColor: '#1f2937',
-                color: '#ffffff',
-                fontSize: '16px'
-              }}
-            />
-
-<label style={{ display: 'block', marginBottom: '0.5rem' }}>Email:</label>
-<input
-  type="email"
-  name="email"
-  value={formData.email}
-  onChange={handleChange}
-  required
-  style={{
-    width: '100%',
-    padding: '10px',
-    borderRadius: '6px',
-    border: '1px solid #4b5563',
-    backgroundColor: '#1f2937',
-    color: '#ffffff',
-    fontSize: '16px',
-    marginBottom: '1rem'
-  }}
-/>
-
-
-<label>Event Date:</label>
-<div style={{ position: 'relative', marginBottom: '1rem' }}>
+  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Client Name:</label>
   <input
-    type="date"
-    name="eventDate"
-    value={formData.eventDate}
+    type="text"
+    name="clientName"
+    value={formData.clientName}
+    onChange={handleChange}
+    required
+    style={inputStyle}
+  />
+
+  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Email:</label>
+  <input
+    type="email"
+    name="email"
+    value={formData.email}
+    onChange={handleChange}
+    required
+    style={inputStyle}
+  />
+
+  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Contact Phone:</label>
+  <input
+    type="tel"
+    name="contactPhone"
+    value={formData.contactPhone}
+    onChange={handleChange}
+    required
+    style={inputStyle}
+  />
+
+  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Type of Event:</label>
+  <input
+    type="text"
+    name="eventType"
+    value={formData.eventType}
+    onChange={handleChange}
+    required
+    style={inputStyle}
+  />
+
+  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Number of Guests:</label>
+  <input
+    type="number"
+    name="guestCount"
+    value={formData.guestCount}
+    onChange={handleChange}
+    required
+    style={inputStyle}
+  />
+
+  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Venue Location:</label>
+  <input
+    type="text"
+    name="venueLocation"
+    value={formData.venueLocation}
+    onChange={handleChange}
+    required
+    style={inputStyle}
+  />
+
+  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Event Date:</label>
+  <div style={{ position: 'relative', marginBottom: '1rem' }}>
+    <input
+      type="date"
+      name="eventDate"
+      value={formData.eventDate}
+      onChange={handleChange}
+      required
+      style={{
+        ...inputStyle,
+        paddingRight: '40px'
+      }}
+    />
+    <FaCalendarAlt style={{
+      position: 'absolute',
+      right: '10px',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      color: 'white',
+      pointerEvents: 'none'
+    }} />
+  </div>
+
+  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Start Time:</label>
+  <div style={{ position: 'relative', marginBottom: '1rem' }}>
+    <input
+      type="time"
+      name="startTime"
+      value={formData.startTime}
+      onChange={handleChange}
+      required
+      style={{
+        ...inputStyle,
+        paddingRight: '40px'
+      }}
+    />
+    <FaClock style={{
+      position: 'absolute',
+      right: '10px',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      color: 'white',
+      pointerEvents: 'none'
+    }} />
+  </div>
+
+  <label style={{ display: 'block', marginBottom: '0.5rem' }}>End Time:</label>
+  <div style={{ position: 'relative', marginBottom: '1rem' }}>
+    <input
+      type="time"
+      name="endTime"
+      value={formData.endTime}
+      onChange={handleChange}
+      required
+      style={{
+        ...inputStyle,
+        paddingRight: '40px'
+      }}
+    />
+    <FaClock style={{
+      position: 'absolute',
+      right: '10px',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      color: 'white',
+      pointerEvents: 'none'
+    }} />
+  </div>
+
+  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Payment Method:</label>
+  <select
+    name="paymentMethod"
+    value={formData.paymentMethod}
     onChange={handleChange}
     required
     style={{
-      width: '100%',
-      padding: '10px 40px 10px 10px',
-      borderRadius: '6px',
-      border: '1px solid #4b5563',
-      backgroundColor: '#1f2937',
-      color: '#ffffff',
-      fontSize: '16px'
+      ...inputStyle,
+      appearance: 'none',
+      backgroundImage: 'none',
+      WebkitAppearance: 'none',
+      MozAppearance: 'none'
     }}
+  >
+    <option value="">Select</option>
+    <option value="Venmo">Venmo</option>
+    <option value="Cash App">Cash App</option>
+    <option value="Apple Pay">Apple Pay</option>
+    <option value="Cash">Cash</option>
+  </select>
+
+  <h3>Optional Add-Ons</h3>
+
+  <label>
+    <input
+      type="checkbox"
+      name="lighting"
+      checked={formData.lighting}
+      onChange={handleChange}
+    />
+    Event Lighting (+$100)
+  </label><br />
+
+  <label>
+    <input
+      type="checkbox"
+      name="photography"
+      checked={formData.photography}
+      onChange={handleChange}
+    />
+    Event Photography (+$150)
+  </label><br />
+
+  <label>
+    <input
+      type="checkbox"
+      name="videoVisuals"
+      checked={formData.videoVisuals}
+      onChange={handleChange}
+    />
+    Video Visuals (+$100)
+  </label><br /><br />
+
+  <label style={{ display: 'block', marginBottom: '0.5rem' }}>
+    Additional Hours ($75/hr):
+  </label>
+  <input
+    type="number"
+    name="additionalHours"
+    value={formData.additionalHours}
+    onChange={handleChange}
+    min="0"
+    style={inputStyle}
   />
-  <FaCalendarAlt style={{
-    position: 'absolute',
-    right: '10px',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    color: 'white',
-    pointerEvents: 'none'
-  }} />
-</div>
 
+  <h3>Total Price: ${calculateTotal()}</h3><br />
+  <button type="submit">Submit Contract</button>
+</form>
 
-            <label>Start Time:</label>
-            <div style={{ position: 'relative' }}>
-              <input
-                type="time"
-                name="startTime"
-                value={formData.startTime}
-                onChange={handleChange}
-                required
-                style={{
-                  width: '100%',
-                  padding: '10px 40px 10px 10px',
-                  borderRadius: '6px',
-                  border: '1px solid #4b5563',
-                  backgroundColor: '#1f2937',
-                  color: '#ffffff',
-                  fontSize: '16px'
-                }}
-              />
-              <FaClock style={{
-                position: 'absolute',
-                right: '10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: 'white',
-                pointerEvents: 'none'
-              }} />
-            </div>
-
-            <label>End Time:</label>
-            <div style={{ position: 'relative' }}>
-              <input
-                type="time"
-                name="endTime"
-                value={formData.endTime}
-                onChange={handleChange}
-                required
-                style={{
-                  width: '100%',
-                  padding: '10px 40px 10px 10px',
-                  borderRadius: '6px',
-                  border: '1px solid #4b5563',
-                  backgroundColor: '#1f2937',
-                  color: '#ffffff',
-                  fontSize: '16px'
-                }}
-              />
-              <FaClock style={{
-                position: 'absolute',
-                right: '10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: 'white',
-                pointerEvents: 'none'
-              }} />
-            </div>
-
-            <label>Payment Method:</label><br />
-            <select
-              name="paymentMethod"
-              value={formData.paymentMethod}
-              onChange={handleChange}
-              required
-              style={{
-                padding: '10px',
-                border: 'none',
-                borderBottom: '1px solid #ccc',
-                borderRadius: '0',
-                backgroundColor: 'transparent',
-                color: '#ffffff',
-                fontSize: '16px',
-                appearance: 'none',
-                WebkitAppearance: 'none',
-                MozAppearance: 'none',
-                backgroundImage: 'none',
-                outline: 'none'
-              }}
-            >
-              <option value="">Select</option>
-              <option value="Venmo">Venmo</option>
-              <option value="Cash App">Cash App</option>
-              <option value="Apple Pay">Apple Pay</option>
-              <option value="Cash">Cash</option>
-            </select>
-
-            <h3>Optional Add-Ons</h3>
-            <label>
-              <input
-                type="checkbox"
-                name="lighting"
-                checked={formData.lighting}
-                onChange={handleChange}
-              />
-              Event Lighting (+$100)
-            </label><br />
-
-            <label>
-              <input
-                type="checkbox"
-                name="photography"
-                checked={formData.photography}
-                onChange={handleChange}
-              />
-              Event Photography (+$150)
-            </label><br />
-
-            <label>
-              <input
-                type="checkbox"
-                name="videoVisuals"
-                checked={formData.videoVisuals}
-                onChange={handleChange}
-              />
-              Video Visuals (+$100)
-            </label><br /><br />
-
-            <h3>Total Price: ${calculateTotal()}</h3><br />
-            <button type="submit">Submit Contract</button>
-          </form>
         )}
       </main>
     </div>
