@@ -345,20 +345,44 @@ export default function Home() {
             <label>Venue Location:</label>
             <input type="text" name="venueLocation" value={formData.venueLocation} onChange={handleChange} required style={inputStyle} />
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.2rem' }}>
   <div style={{ flex: '1 1 100%' }}>
-    <label>Event Date:</label>
-    <input type="date" name="eventDate" value={formData.eventDate} onChange={handleChange} required style={inputStyle} />
+    <label style={{ display: 'block', marginBottom: '0.5rem' }}>Event Date:</label>
+    <input
+      type="date"
+      name="eventDate"
+      value={formData.eventDate}
+      onChange={handleChange}
+      required
+      style={inputStyle}
+    />
   </div>
+
   <div style={{ flex: '1 1 48%' }}>
-    <label>Start Time:</label>
-    <input type="time" name="startTime" value={formData.startTime} onChange={handleChange} required style={inputStyle} />
+    <label style={{ display: 'block', marginBottom: '0.5rem' }}>Start Time:</label>
+    <input
+      type="time"
+      name="startTime"
+      value={formData.startTime}
+      onChange={handleChange}
+      required
+      style={inputStyle}
+    />
   </div>
+
   <div style={{ flex: '1 1 48%' }}>
-    <label>End Time:</label>
-    <input type="time" name="endTime" value={formData.endTime} onChange={handleChange} required style={inputStyle} />
+    <label style={{ display: 'block', marginBottom: '0.5rem' }}>End Time:</label>
+    <input
+      type="time"
+      name="endTime"
+      value={formData.endTime}
+      onChange={handleChange}
+      required
+      style={inputStyle}
+    />
   </div>
 </div>
+
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <label style={{ fontWeight: 'bold' }}>
