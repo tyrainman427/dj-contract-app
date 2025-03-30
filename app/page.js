@@ -126,19 +126,17 @@ export default function Home() {
       alert('Something went wrong.');
     }
   };
-
   const inputStyle = {
     width: '100%',
     padding: '12px',
     borderRadius: '8px',
-    border: '1px solid rgba(255,255,255,0.2)',
-    backgroundColor: darkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)',
-    color: darkMode ? '#f9fafb' : '#111827',
+    border: '1px solid rgba(0,0,0,0.15)',
+    backgroundColor: '#ffffff',
+    color: '#111827',
     fontSize: '16px',
     marginBottom: '1.2rem',
-    backdropFilter: 'blur(6px)',
-    transition: 'all 0.2s ease-in-out',
-    boxShadow: 'inset 0 1px 4px rgba(0,0,0,0.15)'
+    boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.08)',
+    transition: 'all 0.2s ease-in-out'
   };
 
   const iconInputStyle = {
@@ -151,21 +149,23 @@ export default function Home() {
     fontSize: '16px',
     fontWeight: 'bold',
     color: '#fff',
-    backgroundColor: darkMode ? '#4f46e5' : '#2563eb',
+    backgroundColor: '#2563eb',
     border: 'none',
     borderRadius: '10px',
     cursor: 'pointer',
     transition: 'all 0.3s ease',
-    boxShadow: darkMode
-      ? '0 4px 14px rgba(99, 102, 241, 0.6)'
-      : '0 4px 14px rgba(37, 99, 235, 0.5)'
+    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.5)'
+  };
+
+  const textStyle = {
+    textShadow: '0 1px 2px rgba(0,0,0,0.4)'
   };
   const popupIcon = (text) => (
     <span
       onClick={() => showPopup(text)}
       style={{
         marginLeft: '8px',
-        color: darkMode ? '#ccc' : '#555',
+        color: '#555',
         cursor: 'pointer'
       }}
     >
@@ -259,58 +259,34 @@ export default function Home() {
         </>
       )}
 
-      <div
-        style={{
-          textAlign: 'right',
-          padding: '1rem 2rem',
-          zIndex: 1000,
-          position: 'relative'
-        }}
-      >
-        <button
-          onClick={toggleDarkMode}
-          style={{
-            padding: '6px 12px',
-            fontSize: '14px',
-            backgroundColor: darkMode ? '#f3f4f6' : '#111827',
-            color: darkMode ? '#111827' : '#f3f4f6',
-            borderRadius: '6px',
-            border: 'none',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease'
-          }}
-        >
-          {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
-        </button>
-      </div>
-      <main
+<main
         style={{
           fontFamily: 'Montserrat, sans-serif',
-          maxWidth: '600px',
+          maxWidth: '640px',
           margin: '40px auto',
-          background: darkMode ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.35)',
-          borderRadius: '16px',
+          background: 'rgba(255, 255, 255, 0.92)',
+          borderRadius: '20px',
           padding: '2rem',
-          color: darkMode ? '#f9fafb' : '#000',
-          boxShadow: '0 8px 40px rgba(0,0,0,0.3)',
-          backdropFilter: 'blur(12px)',
+          color: '#111',
+          boxShadow: '0 12px 50px rgba(0,0,0,0.25)',
+          backdropFilter: 'blur(8px)',
           position: 'relative',
           zIndex: 1
         }}
       >
-        <h1 style={{ fontSize: '2rem', marginBottom: '1rem', textAlign: 'center' }}>
+        <h1 style={{ fontSize: '2rem', marginBottom: '1rem', textAlign: 'center', ...textStyle }}>
           Live City DJ Contract
         </h1>
-        <p style={{ textAlign: 'center', marginBottom: '1rem' }}>
+        <p style={{ textAlign: 'center', marginBottom: '1rem', ...textStyle }}>
           📞 (203) 694-9388<br />
           📧 therealdjbobbydrake@gmail.com
         </p>
-        <p style={{ marginBottom: '2rem', textAlign: 'center' }}>
+        <p style={{ marginBottom: '2rem', textAlign: 'center', ...textStyle }}>
           Please complete the form below to reserve your event date.
         </p>
 
         {submitted ? (
-          <div style={{ textAlign: 'center' }}>
+          <div style={{ textAlign: 'center', ...textStyle }}>
             <h2>✅ Contract submitted successfully!</h2>
             <p>Please send your payment to confirm the booking:</p>
             <ul style={{ textAlign: 'left' }}>
@@ -343,23 +319,22 @@ export default function Home() {
 
             <label>Venue Location:</label>
             <input type="text" name="venueLocation" value={formData.venueLocation} onChange={handleChange} required style={inputStyle} />
-
             <label>Event Date:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
               <input type="date" name="eventDate" value={formData.eventDate} onChange={handleChange} required style={iconInputStyle} />
-              <FaCalendarAlt style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: darkMode ? '#bbb' : '#555' }} />
+              <FaCalendarAlt style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: '#555' }} />
             </div>
 
             <label>Start Time:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
               <input type="time" name="startTime" value={formData.startTime} onChange={handleChange} required style={iconInputStyle} />
-              <FaClock style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: darkMode ? '#bbb' : '#555' }} />
+              <FaClock style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: '#555' }} />
             </div>
 
             <label>End Time:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
               <input type="time" name="endTime" value={formData.endTime} onChange={handleChange} required style={iconInputStyle} />
-              <FaClock style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: darkMode ? '#bbb' : '#555' }} />
+              <FaClock style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: '#555' }} />
             </div>
 
             <label>
