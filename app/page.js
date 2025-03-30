@@ -93,12 +93,11 @@ const calculateTotal = () => {
     <p>A $100 deposit is required to reserve your event date.</p>
   </div>
 ) : (
-  <form onSubmit={handleSubmit}>
-    style={{
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '1rem'
-}}
+  <form
+  onSubmit={handleSubmit}
+  
+>
+
 
 
           <label>Client Name:</label><br />
