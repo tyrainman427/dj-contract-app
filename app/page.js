@@ -200,9 +200,16 @@ const calculateTotal = () => {
     padding: '10px',
     borderRadius: '6px',
     border: '1px solid #4b5563',
-    backgroundColor: '#1f2937',
-    color: '#ffffff',
-    fontSize: '16px'
+    backgroundColor: '#d1d5db', // ✅ light gray (Tailwind's gray-300)
+    color: '#000000', // black text to contrast the light background
+    fontSize: '16px',
+    fontWeight: '500',
+    appearance: 'none',
+    WebkitAppearance: 'none',
+    MozAppearance: 'none',
+    backgroundImage: `url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>")`,
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'right 10px center'
   }}
 >
   <option value="">Select</option>
