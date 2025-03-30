@@ -223,22 +223,30 @@ export default function Home() {
             }}
             onClick={hidePopup}
           />
-          <div
+         <div
   style={{
     position: 'fixed',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
     background: '#ffffff',
+    color: '#111827',
     borderRadius: '8px',
-    padding: '1rem 1.25rem',
-    width: '420px',
-    height: '400px',
+    padding: '1.5rem',
+    width: '90%',
+    maxWidth: '420px',
+    height: 'auto',
+    maxHeight: '75vh',
     overflowY: 'auto',
     zIndex: 9999,
-    boxShadow: '0 0 30px rgba(0,0,0,0.25)'
+    boxShadow: '0 0 30px rgba(0,0,0,0.25)',
+    fontSize: '15px',
+    lineHeight: '1.6',
+    whiteSpace: 'pre-wrap',
+    wordWrap: 'break-word'
   }}
 >
+
 
             <strong>Info:</strong>
             <p style={{ whiteSpace: 'pre-wrap', marginTop: '10px' }}>{infoPopup}</p>
