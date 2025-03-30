@@ -62,11 +62,13 @@ const calculateTotal = () => {
     fontFamily: 'Montserrat, sans-serif',
     maxWidth: '600px',
     margin: '40px auto',
-    background: '#f8f9fa',
+    background: '#111827', // Dark gray-black
     borderRadius: '12px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+    color: '#fff', // White text
   }}
 >
+
 
   <h1 style={{ fontSize: '2rem', marginBottom: '1rem', textAlign: 'center' }}>
     Live City DJ Contract
