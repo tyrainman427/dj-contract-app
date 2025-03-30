@@ -337,15 +337,42 @@ export default function Home() {
               <FaClock style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: '#555' }} />
             </div>
 
-            <label>
-              <strong>Standard DJ Package 💰 $350.00</strong>
-              {popupIcon('5 Hours (Includes professional DJ/EMCEE, high-quality sound system, wireless microphone, extensive music selection, setup & teardown)')}
-            </label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+  <label style={{ fontWeight: 'bold' }}>
+    Standard DJ Package 💰 $350.00
+  </label>
+  {popupIcon('5 Hours (Includes professional DJ/EMCEE, high-quality sound system, wireless microphone, extensive music selection, setup & teardown)')}
+</div>
+
 
             <p style={{ fontWeight: 'bold', marginTop: '1rem' }}>Event Add-Ons:</p>
-            <label><input type="checkbox" name="lighting" checked={formData.lighting} onChange={handleChange} /> Event Lighting (+$100){popupIcon('Strobe/party lights. Requires venue access 2 hours before event')}</label><br />
-            <label><input type="checkbox" name="photography" checked={formData.photography} onChange={handleChange} /> Event Photography (+$150){popupIcon('50 high-quality candid shots, delivered within 48 hours')}</label><br />
-            <label><input type="checkbox" name="videoVisuals" checked={formData.videoVisuals} onChange={handleChange} /> Video Visuals (+$100){popupIcon('Slideshows, presentations, etc.')}</label><br /><br />
+
+<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+  <label>
+    <input type="checkbox" name="lighting" checked={formData.lighting} onChange={handleChange} />
+    Event Lighting (+$100)
+  </label>
+  {popupIcon('Strobe/party lights. Requires venue access 2 hours before event')}
+</div>
+
+<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+  <label>
+    <input type="checkbox" name="photography" checked={formData.photography} onChange={handleChange} />
+    Event Photography (+$150)
+  </label>
+  {popupIcon('50 high-quality candid shots, delivered within 48 hours')}
+</div>
+
+<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+  <label>
+    <input type="checkbox" name="videoVisuals" checked={formData.videoVisuals} onChange={handleChange} />
+    Video Visuals (+$100)
+  </label>
+  {popupIcon('Slideshows, presentations, etc.')}
+</div>
+
+<br />
+
 
             <label>Additional Hours ($75/hr):</label>
             <input type="number" name="additionalHours" value={formData.additionalHours} onChange={handleChange} min="0" style={inputStyle} />
@@ -359,10 +386,14 @@ export default function Home() {
               <option value="Cash">Cash</option>
             </select>
 
-            <label>
-              <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
-              I agree to the Terms & Conditions {popupIcon(termsText)}
-            </label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+  <label>
+    <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
+    I agree to the Terms & Conditions
+  </label>
+  {popupIcon(termsText)}
+</div>
+
 
             <h3 style={{ marginTop: '1.5rem' }}>Total Price: ${calculateTotal()}</h3>
             <button type="submit" style={buttonStyle}>Submit Contract</button>
