@@ -94,6 +94,12 @@ const calculateTotal = () => {
   </div>
 ) : (
   <form onSubmit={handleSubmit}>
+    style={{
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1rem'
+}}
+
 
           <label>Client Name:</label><br />
           <input type="text" name="clientName" onChange={handleChange} required /><br /><br />
