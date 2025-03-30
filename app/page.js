@@ -9,25 +9,32 @@ export default function Home() {
   const [formData, setFormData] = useState({
     clientName: '',
     email: '',
+    contactPhone: '',
+    eventType: '',
+    guestCount: '',
+    venueLocation: '',
     eventDate: '',
     startTime: '',
     endTime: '',
     paymentMethod: '',
     lighting: false,
     photography: false,
-    videoVisuals: false
+    videoVisuals: false,
+    additionalHours: 0
   });
 
   const BASE_PRICE = 350;
   const LIGHTING_PRICE = 100;
   const PHOTO_PRICE = 150;
   const VIDEO_PRICE = 100;
+  const ADDITIONAL_HOUR_PRICE = 75;
 
   const calculateTotal = () => {
     let total = BASE_PRICE;
     if (formData.lighting) total += LIGHTING_PRICE;
     if (formData.photography) total += PHOTO_PRICE;
     if (formData.videoVisuals) total += VIDEO_PRICE;
+    total += formData.additionalHours * ADDITIONAL_HOUR_PRICE;
     return total;
   };
 
@@ -37,7 +44,7 @@ export default function Home() {
     const { name, type, value, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : type === 'number' ? parseInt(value) || 0 : value
     }));
   };
 
@@ -52,6 +59,22 @@ export default function Home() {
       console.error('Error saving contract:', error);
       alert('Error submitting form. Please check console for details.');
     }
+  };
+
+  const inputStyle = {
+    width: '100%',
+    padding: '10px',
+    borderRadius: '6px',
+    border: '1px solid #4b5563',
+    backgroundColor: '#1f2937',
+    color: '#ffffff',
+    fontSize: '16px',
+    marginBottom: '1rem'
+  };
+
+  const iconInputStyle = {
+    ...inputStyle,
+    paddingRight: '40px'
   };
 
   return (
@@ -70,7 +93,7 @@ export default function Home() {
           fontFamily: 'Montserrat, sans-serif',
           maxWidth: '600px',
           margin: '40px auto',
-          background: 'rgba(0, 0, 0, 0.6)', // translucent to show background
+          background: 'rgba(0, 0, 0, 0.6)',
           borderRadius: '12px',
           padding: '2rem',
           color: '#fff',
@@ -97,219 +120,66 @@ export default function Home() {
             <p>A $100 deposit is required to reserve your event date.</p>
           </div>
         ) : (
-          const inputStyle = {
-            width: '100%',
-            padding: '10px',
-            borderRadius: '6px',
-            border: '1px solid #4b5563',
-            backgroundColor: '#1f2937',
-            color: '#ffffff',
-            fontSize: '16px',
-            marginBottom: '1rem'
-          };
-          
-          const iconInputStyle = {
-            ...inputStyle,
-            paddingRight: '40px'
-          };
-          
           <form onSubmit={handleSubmit}>
-            {/* CLIENT INFO */}
             <h3>Client Info</h3>
-          
             <label>Client Name:</label>
-            <input
-              type="text"
-              name="clientName"
-              value={formData.clientName}
-              onChange={handleChange}
-              required
-              style={inputStyle}
-            />
-          
+            <input type="text" name="clientName" value={formData.clientName} onChange={handleChange} required style={inputStyle} />
+
             <label>Email:</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              style={inputStyle}
-            />
-          
+            <input type="email" name="email" value={formData.email} onChange={handleChange} required style={inputStyle} />
+
             <label>Contact Phone:</label>
-            <input
-              type="tel"
-              name="contactPhone"
-              value={formData.contactPhone}
-              onChange={handleChange}
-              required
-              style={inputStyle}
-            />
-          
-            {/* EVENT DETAILS */}
+            <input type="tel" name="contactPhone" value={formData.contactPhone} onChange={handleChange} required style={inputStyle} />
+
             <h3>Event Details</h3>
-          
             <label>Type of Event:</label>
-            <input
-              type="text"
-              name="eventType"
-              value={formData.eventType}
-              onChange={handleChange}
-              required
-              style={inputStyle}
-            />
-          
+            <input type="text" name="eventType" value={formData.eventType} onChange={handleChange} required style={inputStyle} />
+
             <label>Number of Guests:</label>
-            <input
-              type="number"
-              name="guestCount"
-              value={formData.guestCount}
-              onChange={handleChange}
-              required
-              style={inputStyle}
-            />
-          
+            <input type="number" name="guestCount" value={formData.guestCount} onChange={handleChange} required style={inputStyle} />
+
             <label>Venue Location:</label>
-            <input
-              type="text"
-              name="venueLocation"
-              value={formData.venueLocation}
-              onChange={handleChange}
-              required
-              style={inputStyle}
-            />
-          
+            <input type="text" name="venueLocation" value={formData.venueLocation} onChange={handleChange} required style={inputStyle} />
+
             <label>Event Date:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
-              <input
-                type="date"
-                name="eventDate"
-                value={formData.eventDate}
-                onChange={handleChange}
-                required
-                style={iconInputStyle}
-              />
-              <FaCalendarAlt style={{
-                position: 'absolute',
-                right: '10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: 'white',
-                pointerEvents: 'none'
-              }} />
+              <input type="date" name="eventDate" value={formData.eventDate} onChange={handleChange} required style={iconInputStyle} />
+              <FaCalendarAlt style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'white', pointerEvents: 'none' }} />
             </div>
-          
+
             <label>Start Time:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
-              <input
-                type="time"
-                name="startTime"
-                value={formData.startTime}
-                onChange={handleChange}
-                required
-                style={iconInputStyle}
-              />
-              <FaClock style={{
-                position: 'absolute',
-                right: '10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: 'white',
-                pointerEvents: 'none'
-              }} />
+              <input type="time" name="startTime" value={formData.startTime} onChange={handleChange} required style={iconInputStyle} />
+              <FaClock style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'white', pointerEvents: 'none' }} />
             </div>
-          
+
             <label>End Time:</label>
             <div style={{ position: 'relative', marginBottom: '1rem' }}>
-              <input
-                type="time"
-                name="endTime"
-                value={formData.endTime}
-                onChange={handleChange}
-                required
-                style={iconInputStyle}
-              />
-              <FaClock style={{
-                position: 'absolute',
-                right: '10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: 'white',
-                pointerEvents: 'none'
-              }} />
+              <input type="time" name="endTime" value={formData.endTime} onChange={handleChange} required style={iconInputStyle} />
+              <FaClock style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'white', pointerEvents: 'none' }} />
             </div>
-          
+
             <label>Payment Method:</label>
-            <select
-              name="paymentMethod"
-              value={formData.paymentMethod}
-              onChange={handleChange}
-              required
-              style={{
-                ...inputStyle,
-                appearance: 'none',
-                backgroundImage: 'none',
-                WebkitAppearance: 'none',
-                MozAppearance: 'none'
-              }}
-            >
+            <select name="paymentMethod" value={formData.paymentMethod} onChange={handleChange} required style={{ ...inputStyle, appearance: 'none', WebkitAppearance: 'none', MozAppearance: 'none', backgroundImage: 'none' }}>
               <option value="">Select</option>
               <option value="Venmo">Venmo</option>
               <option value="Cash App">Cash App</option>
               <option value="Apple Pay">Apple Pay</option>
               <option value="Cash">Cash</option>
             </select>
-          
-            {/* ADD-ONS */}
+
             <h3>Optional Add-Ons</h3>
-          
-            <label>
-              <input
-                type="checkbox"
-                name="lighting"
-                checked={formData.lighting}
-                onChange={handleChange}
-              />
-              {' '}Event Lighting (+$100)
-            </label><br />
-          
-            <label>
-              <input
-                type="checkbox"
-                name="photography"
-                checked={formData.photography}
-                onChange={handleChange}
-              />
-              {' '}Event Photography (+$150)
-            </label><br />
-          
-            <label>
-              <input
-                type="checkbox"
-                name="videoVisuals"
-                checked={formData.videoVisuals}
-                onChange={handleChange}
-              />
-              {' '}Video Visuals (+$100)
-            </label><br /><br />
-          
+
+            <label><input type="checkbox" name="lighting" checked={formData.lighting} onChange={handleChange} /> Event Lighting (+$100)</label><br />
+            <label><input type="checkbox" name="photography" checked={formData.photography} onChange={handleChange} /> Event Photography (+$150)</label><br />
+            <label><input type="checkbox" name="videoVisuals" checked={formData.videoVisuals} onChange={handleChange} /> Video Visuals (+$100)</label><br /><br />
+
             <label>Additional Hours ($75/hr):</label>
-            <input
-              type="number"
-              name="additionalHours"
-              value={formData.additionalHours}
-              onChange={handleChange}
-              min="0"
-              style={inputStyle}
-            />
-          
-            {/* TOTAL + SUBMIT */}
+            <input type="number" name="additionalHours" value={formData.additionalHours} onChange={handleChange} min="0" style={inputStyle} />
+
             <h3>Total Price: ${calculateTotal()}</h3><br />
             <button type="submit">Submit Contract</button>
           </form>
-          
-
         )}
       </main>
     </div>
