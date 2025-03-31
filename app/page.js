@@ -7,11 +7,13 @@ import db from '../lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 
 export default function Home() {
-  // Extract the API key from the environment variable.
-  const googleMapsKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  // Use the environment variable or fallback to the provided API key.
+  const googleMapsKey =
+    process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyC-5o9YY4NS8y8F2ZTg8-zibHYRP_1dOEc';
+
   if (!googleMapsKey) {
     console.error(
-      "Google Maps API key is not defined. Please set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in your .env.local file and restart the server."
+      "Google Maps API key is not defined. Please set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in your .env file and restart the server."
     );
   }
 
@@ -101,8 +103,11 @@ export default function Home() {
   // Initialize the new PlaceAutocompleteElement once the script loads
   const initAutocomplete = () => {
     console.log('Maps loaded?', !!window.google?.maps);
-    console.log('PlaceAutocompleteElement?', window.google?.maps?.places?.PlaceAutocompleteElement);
-  
+    console.log(
+      'PlaceAutocompleteElement?',
+      window.google?.maps?.places?.PlaceAutocompleteElement
+    );
+
     if (
       autocompleteContainerRef.current &&
       window.google?.maps?.places?.PlaceAutocompleteElement
@@ -111,7 +116,7 @@ export default function Home() {
         types: ['geocode'],
         fields: ['formatted_address'],
       });
-  
+
       placeAutocomplete.addEventListener('place_changed', () => {
         const place = placeAutocomplete.getPlace();
         if (place && place.formatted_address) {
@@ -121,14 +126,15 @@ export default function Home() {
           }));
         }
       });
-  
+
       autocompleteContainerRef.current.innerHTML = '';
       autocompleteContainerRef.current.appendChild(placeAutocomplete);
     } else {
-      console.error('❌ PlaceAutocompleteElement is NOT available. Did the beta script load?');
+      console.error(
+        '❌ PlaceAutocompleteElement is NOT available. Did the beta script load?'
+      );
     }
   };
-  
 
   const BASE_PRICE = 350;
   const LIGHTING_PRICE = 100;
@@ -238,7 +244,7 @@ export default function Home() {
     <>
       {/* Load Google Maps script asynchronously using afterInteractive strategy */}
       <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places,marker&v=beta`}
+        src={`https://maps.googleapis.com/maps/api/js?key=${googleMapsKey}&libraries=places,marker&v=beta`}
         strategy="afterInteractive"
         onLoad={initAutocomplete}
       />
