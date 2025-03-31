@@ -129,14 +129,14 @@ export default function Home() {
     padding: '12px',
     borderRadius: '8px',
     border: '1px solid rgba(0,0,0,0.15)',
-    backgroundColor: '#ffffff',
-    color: '#111827',
+    backgroundColor: darkMode ? 'rgba(255,255,255,0.08)' : '#ffffff',
+    color: darkMode ? '#f3f4f6' : '#111827',
     fontSize: '16px',
     marginBottom: '1.2rem',
-    boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.08)',
     transition: 'all 0.3s ease-in-out',
     outline: 'none'
   };
+  
 
   const buttonStyle = {
     padding: '14px 28px',
@@ -151,9 +151,8 @@ export default function Home() {
     boxShadow: '0 4px 14px rgba(37, 99, 235, 0.5)'
   };
 
-  const textStyle = {
-    textShadow: '0 1px 2px rgba(0,0,0,0.4)'
-  };
+  const textStyle = {}; // Or simply remove all references to it
+
 
   const popupIcon = (text) => (
     <span
@@ -275,20 +274,21 @@ export default function Home() {
         </button>
       </div>
       <main
-        style={{
-          fontFamily: 'Montserrat, sans-serif',
-          maxWidth: '640px',
-          margin: '40px auto',
-          background: 'rgba(255, 255, 255, 0.92)',
-          borderRadius: '20px',
-          padding: '2rem',
-          color: '#111',
-          boxShadow: '0 12px 50px rgba(0,0,0,0.25)',
-          backdropFilter: 'blur(10px)',
-          position: 'relative',
-          zIndex: 1
-        }}
-      >
+  style={{
+    fontFamily: 'Montserrat, sans-serif',
+    maxWidth: '640px',
+    margin: '40px auto',
+    background: darkMode ? 'rgba(30, 30, 30, 0.85)' : 'rgba(255, 255, 255, 0.92)',
+    borderRadius: '20px',
+    padding: '2rem',
+    color: darkMode ? '#f3f4f6' : '#111',
+    boxShadow: darkMode ? '0 12px 40px rgba(0,0,0,0.6)' : '0 12px 40px rgba(0,0,0,0.25)',
+    backdropFilter: 'blur(10px)',
+    position: 'relative',
+    zIndex: 1
+  }}
+>
+
         <h1 style={{ fontSize: '2rem', marginBottom: '1rem', textAlign: 'center', ...textStyle }}>
           Live City DJ Contract
         </h1>
