@@ -100,6 +100,9 @@ export default function Home() {
 
   // Initialize the new PlaceAutocompleteElement once the script loads
   const initAutocomplete = () => {
+    console.log('Maps loaded?', !!window.google?.maps);
+    console.log('PlaceAutocompleteElement?', window.google?.maps?.places?.PlaceAutocompleteElement);
+  
     if (
       autocompleteContainerRef.current &&
       window.google?.maps?.places?.PlaceAutocompleteElement
@@ -108,7 +111,7 @@ export default function Home() {
         types: ['geocode'],
         fields: ['formatted_address'],
       });
-
+  
       placeAutocomplete.addEventListener('place_changed', () => {
         const place = placeAutocomplete.getPlace();
         if (place && place.formatted_address) {
@@ -118,13 +121,14 @@ export default function Home() {
           }));
         }
       });
-      // Clear any previous content and append the new element.
+  
       autocompleteContainerRef.current.innerHTML = '';
       autocompleteContainerRef.current.appendChild(placeAutocomplete);
     } else {
-      console.error('PlaceAutocompleteElement is not available.');
+      console.error('❌ PlaceAutocompleteElement is NOT available. Did the beta script load?');
     }
   };
+  
 
   const BASE_PRICE = 350;
   const LIGHTING_PRICE = 100;
@@ -234,10 +238,11 @@ export default function Home() {
     <>
       {/* Load Google Maps script asynchronously using lazyOnload strategy */}
       <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${googleMapsKey}&libraries=places`}
-        strategy="lazyOnload"
-        onLoad={initAutocomplete}
-      />
+  src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places,marker&v=beta`}
+  strategy="lazyOnload"
+  onLoad={initAutocomplete}
+/>
+
 
       <div
         style={{
