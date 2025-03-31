@@ -31,7 +31,9 @@ export default function Home() {
   const [showPopupBox, setShowPopupBox] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const locationRef = useRef(null);
+  
+  // Replace the old ref for a plain input with a container ref
+  const autocompleteContainerRef = useRef(null);
 
   const showPopup = (text) => {
     setInfoPopup(text);
@@ -88,18 +90,17 @@ export default function Home() {
     update();
   }, []);
 
-  // Initialize Google Places Autocomplete when the script loads
+  // Initialize the PlaceAutocompleteElement when the script loads
   const initAutocomplete = () => {
-    if (locationRef.current && window.google) {
-      const autocomplete = new window.google.maps.places.Autocomplete(
-        locationRef.current,
-        {
-          types: ['geocode'],
-          fields: ['formatted_address']
-        }
-      );
-      autocomplete.addListener('place_changed', () => {
-        const place = autocomplete.getPlace();
+    if (autocompleteContainerRef.current && window.google?.maps?.places?.PlaceAutocompleteElement) {
+      // Create the new autocomplete element with options
+      const placeAutocomplete = new window.google.maps.places.PlaceAutocompleteElement({
+        types: ['geocode'],
+        fields: ['formatted_address']
+      });
+      // Listen for the place_changed event and update state accordingly
+      placeAutocomplete.addEventListener('place_changed', () => {
+        const place = placeAutocomplete.getPlace();
         if (place && place.formatted_address) {
           setFormData((prev) => ({
             ...prev,
@@ -107,6 +108,11 @@ export default function Home() {
           }));
         }
       });
+      // Append the custom element to your container. It will render an input internally.
+      autocompleteContainerRef.current.innerHTML = ''; // clear any previous content
+      autocompleteContainerRef.current.appendChild(placeAutocomplete);
+    } else {
+      console.error('PlaceAutocompleteElement is not available.');
     }
   };
 
@@ -160,6 +166,7 @@ export default function Home() {
     }
   };
 
+  // Reuse inputStyle for the autocomplete container to match other fields
   const inputStyle = {
     width: '100%',
     padding: '12px',
@@ -470,14 +477,12 @@ export default function Home() {
                 style={inputStyle}
               />
 
+              {/* Venue Location now uses the custom PlaceAutocompleteElement */}
               <label>Venue Location:</label>
-              <input
-                type="text"
-                name="venueLocation"
-                ref={locationRef}
-                placeholder="Enter address..."
-                required
+              <div
+                ref={autocompleteContainerRef}
                 style={inputStyle}
+                // Optionally add a minHeight or placeholder text via CSS
               />
 
               <div
