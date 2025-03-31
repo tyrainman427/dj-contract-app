@@ -47,6 +47,7 @@ export default function Home() {
   useEffect(() => {
     const canvas = document.getElementById('confetti');
     if (!canvas) return;
+
     const ctx = canvas.getContext('2d');
     let pieces = Array.from({ length: 100 }, () => ({
       x: Math.random() * window.innerWidth,
@@ -78,6 +79,7 @@ export default function Home() {
           p.y = -10;
         }
       });
+
       requestAnimationFrame(update);
     };
 
@@ -368,8 +370,6 @@ export default function Home() {
               <input
                 type="text"
                 name="venueLocation"
-                value={formData.venueLocation}
-                onChange={handleChange}
                 ref={locationRef}
                 placeholder="Enter address..."
                 required
