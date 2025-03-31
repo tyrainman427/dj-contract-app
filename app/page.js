@@ -177,6 +177,11 @@ export default function Home() {
 • Outdoor events must provide access to electricity.
 • Tipping is optional and at the discretion of the client.
   `;
+  <Script
+  src={`https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places`}
+  strategy="beforeInteractive"
+/>
+
   return (
     <div
       style={{
