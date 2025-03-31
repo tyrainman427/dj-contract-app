@@ -7,11 +7,11 @@ import db from '../lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 
 export default function Home() {
-  // Ensure your API key is available
+  // Extract the API key from the environment variable.
   const googleMapsKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   if (!googleMapsKey) {
     console.error(
-      "Google Maps API key is not defined. Please set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in your .env file and restart the server."
+      "Google Maps API key is not defined. Please set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in your .env.local file and restart the server."
     );
   }
 
@@ -32,7 +32,7 @@ export default function Home() {
     videoVisuals: false,
     standardPackage: true,
     agreeToTerms: false,
-    additionalHours: 0
+    additionalHours: 0,
   });
 
   const [infoPopup, setInfoPopup] = useState('');
@@ -40,7 +40,7 @@ export default function Home() {
   const [submitted, setSubmitted] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
 
-  // Use a container ref to host the PlaceAutocompleteElement
+  // Container ref to host the PlaceAutocompleteElement.
   const autocompleteContainerRef = useRef(null);
 
   const showPopup = (text) => {
@@ -68,7 +68,7 @@ export default function Home() {
       color: `hsl(${Math.random() * 360}, 70%, 60%)`,
       tilt: Math.random() * 10 - 10,
       tiltAngleIncremental: Math.random() * 0.07 + 0.05,
-      tiltAngle: 0
+      tiltAngle: 0,
     }));
 
     const update = () => {
@@ -98,7 +98,7 @@ export default function Home() {
     update();
   }, []);
 
-  // Initialize the PlaceAutocompleteElement once the script loads
+  // Initialize the new PlaceAutocompleteElement once the script loads
   const initAutocomplete = () => {
     if (
       autocompleteContainerRef.current &&
@@ -106,18 +106,19 @@ export default function Home() {
     ) {
       const placeAutocomplete = new window.google.maps.places.PlaceAutocompleteElement({
         types: ['geocode'],
-        fields: ['formatted_address']
+        fields: ['formatted_address'],
       });
+
       placeAutocomplete.addEventListener('place_changed', () => {
         const place = placeAutocomplete.getPlace();
         if (place && place.formatted_address) {
           setFormData((prev) => ({
             ...prev,
-            venueLocation: place.formatted_address
+            venueLocation: place.formatted_address,
           }));
         }
       });
-      // Clear any previous content and append the new element
+      // Clear any previous content and append the new element.
       autocompleteContainerRef.current.innerHTML = '';
       autocompleteContainerRef.current.appendChild(placeAutocomplete);
     } else {
@@ -149,7 +150,7 @@ export default function Home() {
           ? checked
           : type === 'number'
           ? parseInt(value) || 0
-          : value
+          : value,
     }));
   };
 
@@ -175,7 +176,7 @@ export default function Home() {
     }
   };
 
-  // Reuse inputStyle for the autocomplete container to match other fields
+  // Reuse inputStyle for the autocomplete container to match other fields.
   const inputStyle = {
     width: '100%',
     padding: '12px',
@@ -189,7 +190,7 @@ export default function Home() {
     marginBottom: '1.2rem',
     transition: 'all 0.3s ease-in-out',
     outline: 'none',
-    boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.08)'
+    boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.08)',
   };
 
   const buttonStyle = {
@@ -202,7 +203,7 @@ export default function Home() {
     borderRadius: '10px',
     cursor: 'pointer',
     transition: 'all 0.3s ease',
-    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.5)'
+    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.5)',
   };
 
   const popupIcon = (text) => (
@@ -211,7 +212,7 @@ export default function Home() {
       style={{
         marginLeft: '8px',
         color: darkMode ? '#ccc' : '#555',
-        cursor: 'pointer'
+        cursor: 'pointer',
       }}
     >
       ℹ️
@@ -231,6 +232,7 @@ export default function Home() {
 
   return (
     <>
+      {/* Load Google Maps script asynchronously using lazyOnload strategy */}
       <Script
         src={`https://maps.googleapis.com/maps/api/js?key=${googleMapsKey}&libraries=places`}
         strategy="lazyOnload"
@@ -245,7 +247,7 @@ export default function Home() {
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           position: 'relative',
-          overflow: 'hidden'
+          overflow: 'hidden',
         }}
       >
         <canvas
@@ -257,7 +259,7 @@ export default function Home() {
             width: '100vw',
             height: '100vh',
             zIndex: 0,
-            pointerEvents: 'none'
+            pointerEvents: 'none',
           }}
         />
 
@@ -271,7 +273,7 @@ export default function Home() {
                 width: '100vw',
                 height: '100vh',
                 backgroundColor: 'rgba(0,0,0,0.5)',
-                zIndex: 9998
+                zIndex: 9998,
               }}
               onClick={hidePopup}
             />
@@ -292,7 +294,7 @@ export default function Home() {
                 boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
                 fontSize: '15px',
                 lineHeight: '1.6',
-                whiteSpace: 'pre-wrap'
+                whiteSpace: 'pre-wrap',
               }}
             >
               <strong>Info:</strong>
@@ -306,7 +308,7 @@ export default function Home() {
                   color: '#fff',
                   border: 'none',
                   borderRadius: '6px',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 }}
               >
                 Close
@@ -320,7 +322,7 @@ export default function Home() {
             textAlign: 'right',
             padding: '1rem 2rem',
             zIndex: 1000,
-            position: 'relative'
+            position: 'relative',
           }}
         >
           <button
@@ -333,7 +335,7 @@ export default function Home() {
               borderRadius: '6px',
               border: 'none',
               cursor: 'pointer',
-              transition: 'all 0.3s ease'
+              transition: 'all 0.3s ease',
             }}
           >
             {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
@@ -353,14 +355,14 @@ export default function Home() {
             boxShadow: '0 12px 50px rgba(0,0,0,0.25)',
             backdropFilter: 'blur(10px)',
             position: 'relative',
-            zIndex: 1
+            zIndex: 1,
           }}
         >
           <h1
             style={{
               fontSize: '2rem',
               marginBottom: '1rem',
-              textAlign: 'center'
+              textAlign: 'center',
             }}
           >
             Live City DJ Contract
@@ -399,7 +401,7 @@ export default function Home() {
                   alignItems: 'center',
                   gap: '10px',
                   justifyContent: 'center',
-                  marginBottom: '10px'
+                  marginBottom: '10px',
                 }}
               >
                 <Image src="/venmo.svg" alt="Venmo" width={24} height={24} />
@@ -411,7 +413,7 @@ export default function Home() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '10px',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
                 }}
               >
                 <Image src="/cashapp.svg" alt="Cash App" width={24} height={24} />
@@ -486,7 +488,7 @@ export default function Home() {
                 style={inputStyle}
               />
 
-              {/* Venue Location now uses PlaceAutocompleteElement */}
+              {/* Venue Location now uses the PlaceAutocompleteElement */}
               <label>Venue Location:</label>
               <div ref={autocompleteContainerRef} style={inputStyle} />
 
@@ -495,7 +497,7 @@ export default function Home() {
                   display: 'flex',
                   flexWrap: 'wrap',
                   gap: '1rem',
-                  marginBottom: '1.2rem'
+                  marginBottom: '1.2rem',
                 }}
               >
                 <div style={{ flex: '1 1 100%' }}>
@@ -544,7 +546,7 @@ export default function Home() {
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  marginBottom: '1rem'
+                  marginBottom: '1rem',
                 }}
               >
                 <label style={{ fontWeight: 'bold' }}>
@@ -562,7 +564,7 @@ export default function Home() {
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'center'
+                  alignItems: 'center',
                 }}
               >
                 <label>
@@ -583,7 +585,7 @@ export default function Home() {
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'center'
+                  alignItems: 'center',
                 }}
               >
                 <label>
@@ -604,7 +606,7 @@ export default function Home() {
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'center'
+                  alignItems: 'center',
                 }}
               >
                 <label>
@@ -652,7 +654,7 @@ export default function Home() {
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'center'
+                  alignItems: 'center',
                 }}
               >
                 <label>
