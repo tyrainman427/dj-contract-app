@@ -7,6 +7,14 @@ import db from '../lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 
 export default function Home() {
+  // Ensure your API key is available
+  const googleMapsKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  if (!googleMapsKey) {
+    console.error(
+      "Google Maps API key is not defined. Please set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in your .env file and restart the server."
+    );
+  }
+
   const [formData, setFormData] = useState({
     clientName: '',
     email: '',
@@ -31,8 +39,8 @@ export default function Home() {
   const [showPopupBox, setShowPopupBox] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  
-  // Replace the old ref for a plain input with a container ref
+
+  // Use a container ref to host the PlaceAutocompleteElement
   const autocompleteContainerRef = useRef(null);
 
   const showPopup = (text) => {
@@ -90,15 +98,16 @@ export default function Home() {
     update();
   }, []);
 
-  // Initialize the PlaceAutocompleteElement when the script loads
+  // Initialize the PlaceAutocompleteElement once the script loads
   const initAutocomplete = () => {
-    if (autocompleteContainerRef.current && window.google?.maps?.places?.PlaceAutocompleteElement) {
-      // Create the new autocomplete element with options
+    if (
+      autocompleteContainerRef.current &&
+      window.google?.maps?.places?.PlaceAutocompleteElement
+    ) {
       const placeAutocomplete = new window.google.maps.places.PlaceAutocompleteElement({
         types: ['geocode'],
         fields: ['formatted_address']
       });
-      // Listen for the place_changed event and update state accordingly
       placeAutocomplete.addEventListener('place_changed', () => {
         const place = placeAutocomplete.getPlace();
         if (place && place.formatted_address) {
@@ -108,8 +117,8 @@ export default function Home() {
           }));
         }
       });
-      // Append the custom element to your container. It will render an input internally.
-      autocompleteContainerRef.current.innerHTML = ''; // clear any previous content
+      // Clear any previous content and append the new element
+      autocompleteContainerRef.current.innerHTML = '';
       autocompleteContainerRef.current.appendChild(placeAutocomplete);
     } else {
       console.error('PlaceAutocompleteElement is not available.');
@@ -223,8 +232,8 @@ export default function Home() {
   return (
     <>
       <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
-        strategy="afterInteractive"
+        src={`https://maps.googleapis.com/maps/api/js?key=${googleMapsKey}&libraries=places`}
+        strategy="lazyOnload"
         onLoad={initAutocomplete}
       />
 
@@ -477,13 +486,9 @@ export default function Home() {
                 style={inputStyle}
               />
 
-              {/* Venue Location now uses the custom PlaceAutocompleteElement */}
+              {/* Venue Location now uses PlaceAutocompleteElement */}
               <label>Venue Location:</label>
-              <div
-                ref={autocompleteContainerRef}
-                style={inputStyle}
-                // Optionally add a minHeight or placeholder text via CSS
-              />
+              <div ref={autocompleteContainerRef} style={inputStyle} />
 
               <div
                 style={{
