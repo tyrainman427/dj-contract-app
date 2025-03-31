@@ -1,4 +1,4 @@
-const functions = require('firebase-functions');
+const { onSchedule } = require('firebase-functions/v2/scheduler');
 const admin = require('firebase-admin');
 const emailjs = require('@emailjs/nodejs');
 require('dotenv').config();
@@ -6,60 +6,52 @@ require('dotenv').config();
 admin.initializeApp();
 const db = admin.firestore();
 
-exports.sendReminderEmails = functions.pubsub
-  .schedule('every 24 hours')
-  .onRun(async () => {
-    // ✅ Step 1: Set today's date (testing mode: today, production: +14 days)
-    const today = new Date();
-    
-    // ⚠️ FOR TESTING: use today's date
-    const reminderDate = new Date(today); // 👈 Use this to test right now
+exports.sendReminderEmails = onSchedule('every 24 hours', async (event) => {
+  const today = new Date();
 
-    // ✅ Format it as YYYY-MM-DD
-    const year = reminderDate.getFullYear();
-    const month = String(reminderDate.getMonth() + 1).padStart(2, '0');
-    const day = String(reminderDate.getDate()).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}`;
+  // 🧪 FOR TESTING: Use today's date
+  const reminderDate = new Date(today); // 🔄 Change to +14 days later after testing
 
-    console.log(`Looking for events on: ${formattedDate}`);
+  const year = reminderDate.getFullYear();
+  const month = String(reminderDate.getMonth() + 1).padStart(2, '0');
+  const day = String(reminderDate.getDate()).padStart(2, '0');
+  const formattedDate = `${year}-${month}-${day}`;
 
-    // ✅ Step 2: Query Firestore for matching eventDate
+  console.log(`📅 Looking for events on: ${formattedDate}`);
+
+  try {
     const snapshot = await db.collection('contracts')
       .where('eventDate', '==', formattedDate)
       .get();
 
     if (snapshot.empty) {
       console.log('No reminders to send today.');
-      return null;
+      return;
     }
 
-    // ✅ Step 3: Loop through matching contracts
     for (const doc of snapshot.docs) {
       const data = doc.data();
 
-      try {
-        // ✅ Step 4: Send EmailJS reminder
-        await emailjs.send(
-          process.env.EMAILJS_SERVICE_ID,
-          process.env.EMAILJS_TEMPLATE_ID,
-          {
-            client_name: data.clientName,
-            client_email: data.email,
-            event_date: data.eventDate,
-            event_type: data.eventType,
-            total_due: `$${calculateTotal(data)}`,
-          },
-          { publicKey: process.env.EMAILJS_USER_ID }
-        );
+      await emailjs.send(
+        process.env.EMAILJS_SERVICE_ID,
+        process.env.EMAILJS_TEMPLATE_ID,
+        {
+          client_name: data.clientName,
+          client_email: data.email,
+          event_date: data.eventDate,
+          event_type: data.eventType,
+          total_due: `$${calculateTotal(data)}`,
+        },
+        { privateKey: process.env.EMAILJS_PRIVATE_KEY }
+      );
+      
 
-        console.log(`✅ Reminder sent to ${data.email}`);
-      } catch (err) {
-        console.error(`❌ Error sending reminder to ${data.email}`, err);
-      }
+      console.log(`✅ Reminder sent to ${data.email}`);
     }
-
-    return null;
-  });
+  } catch (err) {
+    console.error('❌ Error checking contracts or sending reminders:', err);
+  }
+});
 
 function calculateTotal(data) {
   let total = 350;
