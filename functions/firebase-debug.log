@@ -139,3 +139,12 @@
 [info] i  functions: You are using a version of firebase-functions SDK (4.9.0) that does not have support for the newest Firebase Extensions features. Please update firebase-functions SDK to >=5.1.0 to use them correctly 
 [debug] [2025-03-31T23:10:21.163Z] Could not find functions.yaml. Must use http discovery
 [debug] [2025-03-31T23:10:21.168Z] Found firebase-functions binary at 'C:\Users\B.Martin\dj-contract-app\functions\node_modules\.bin\firebase-functions'
+[info] Serving at port 8552
+
+[debug] [2025-03-31T23:10:21.481Z] Got response from /__/functions.yaml {"endpoints":{"sendReminderEmails":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"scheduleTrigger":{"schedule":"every 24 hours","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetrySeconds":null,"minBackoffSeconds":null,"maxBackoffSeconds":null},"timeZone":null},"entryPoint":"sendReminderEmails"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[debug] [2025-03-31T23:10:25.514Z] [functions] Loaded functions definitions from source: sendReminderEmails.
+[debug] [2025-03-31T23:10:25.514Z] DEBUG: [worker-pool] Shutting down IDLE worker (us-central1-sendReminderEmails)
+[debug] [2025-03-31T23:10:25.514Z] DEBUG: [worker-us-central1-sendReminderEmails-f498b62f-f0ff-4226-924f-9e05c0e4ea95]: FINISHING
+[debug] [2025-03-31T23:10:25.528Z] DEBUG: [worker-us-central1-sendReminderEmails-f498b62f-f0ff-4226-924f-9e05c0e4ea95]: exited
+[debug] [2025-03-31T23:10:25.528Z] DEBUG: [worker-us-central1-sendReminderEmails-f498b62f-f0ff-4226-924f-9e05c0e4ea95]: FINISHED
+[debug] [2025-03-31T23:10:40.907Z] DEBUG: File C:\Users\B.Martin\dj-contract-app\functions\index.js changed, reloading triggers
