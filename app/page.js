@@ -1,6 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import Script from 'next/script';
+import Image from 'next/image';
 import db from '../lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 
@@ -29,6 +31,7 @@ export default function Home() {
   const [showPopupBox, setShowPopupBox] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const locationRef = useRef(null);
 
   const showPopup = (text) => {
     setInfoPopup(text);
@@ -41,7 +44,6 @@ export default function Home() {
   };
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
-
   useEffect(() => {
     const canvas = document.getElementById('confetti');
     if (!canvas) return;
@@ -56,6 +58,7 @@ export default function Home() {
       tiltAngleIncremental: Math.random() * 0.07 + 0.05,
       tiltAngle: 0
     }));
+
     const update = () => {
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
       pieces.forEach((p, i) => {
@@ -75,13 +78,31 @@ export default function Home() {
           p.y = -10;
         }
       });
-
       requestAnimationFrame(update);
     };
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     update();
+  }, []);
+
+  useEffect(() => {
+    if (!window.google || !locationRef.current) return;
+
+    const autocomplete = new window.google.maps.places.Autocomplete(locationRef.current, {
+      types: ['geocode'],
+      fields: ['formatted_address']
+    });
+
+    autocomplete.addListener('place_changed', () => {
+      const place = autocomplete.getPlace();
+      if (place && place.formatted_address) {
+        setFormData((prev) => ({
+          ...prev,
+          venueLocation: place.formatted_address
+        }));
+      }
+    });
   }, []);
 
   const BASE_PRICE = 350;
@@ -128,15 +149,15 @@ export default function Home() {
     width: '100%',
     padding: '12px',
     borderRadius: '8px',
-    border: '1px solid rgba(0,0,0,0.15)',
-    backgroundColor: darkMode ? 'rgba(255,255,255,0.08)' : '#ffffff',
-    color: darkMode ? '#f3f4f6' : '#111827',
+    border: darkMode ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(0,0,0,0.15)',
+    backgroundColor: darkMode ? 'rgba(255,255,255,0.06)' : '#ffffff',
+    color: darkMode ? '#f9fafb' : '#111827',
     fontSize: '16px',
     marginBottom: '1.2rem',
     transition: 'all 0.3s ease-in-out',
-    outline: 'none'
+    outline: 'none',
+    boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.08)'
   };
-  
 
   const buttonStyle = {
     padding: '14px 28px',
@@ -151,19 +172,16 @@ export default function Home() {
     boxShadow: '0 4px 14px rgba(37, 99, 235, 0.5)'
   };
 
-  const textStyle = {}; // Or simply remove all references to it
-
-
   const popupIcon = (text) => (
     <span
       onClick={() => showPopup(text)}
       style={{
         marginLeft: '8px',
-        color: '#555',
+        color: darkMode ? '#ccc' : '#555',
         cursor: 'pointer'
       }}
     >
-      ⓘ
+      ℹ️
     </span>
   );
 
@@ -177,276 +195,260 @@ export default function Home() {
 • Outdoor events must provide access to electricity.
 • Tipping is optional and at the discretion of the client.
   `;
-  <Script
-  src={`https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places`}
-  strategy="beforeInteractive"
-/>
-
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        backgroundImage: 'url("/dj-background.jpg")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        position: 'relative',
-        overflow: 'hidden'
-      }}
-    >
-      <canvas
-        id="confetti"
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          zIndex: 0,
-          pointerEvents: 'none'
-        }}
+    <>
+      <Script
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
+        strategy="beforeInteractive"
       />
 
-      {infoPopup && (
-        <>
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100vw',
-              height: '100vh',
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              zIndex: 9998
-            }}
-            onClick={hidePopup}
-          />
-          <div
-            style={{
-              position: 'fixed',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              background: '#ffffff',
-              color: '#111827',
-              borderRadius: '8px',
-              padding: '1.5rem',
-              width: '90%',
-              maxWidth: '420px',
-              height: 'auto',
-              maxHeight: '75vh',
-              overflowY: 'auto',
-              zIndex: 9999,
-              boxShadow: '0 0 30px rgba(0,0,0,0.25)',
-              fontSize: '15px',
-              lineHeight: '1.6',
-              whiteSpace: 'pre-wrap',
-              wordWrap: 'break-word'
-            }}
-          >
-            <strong>Info:</strong>
-            <p style={{ marginTop: '10px' }}>{infoPopup}</p>
-            <button
-              onClick={hidePopup}
+      <div
+        style={{
+          minHeight: '100vh',
+          backgroundImage: 'url("/dj-background.jpg")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+      >
+        <canvas
+          id="confetti"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            zIndex: 0,
+            pointerEvents: 'none'
+          }}
+        />
+
+        {infoPopup && (
+          <>
+            <div
               style={{
-                marginTop: '14px',
-                padding: '8px 16px',
-                background: '#ef4444',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer'
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100vw',
+                height: '100vh',
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                zIndex: 9998
+              }}
+              onClick={hidePopup}
+            />
+            <div
+              style={{
+                position: 'fixed',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                background: '#fff',
+                color: '#111',
+                borderRadius: '10px',
+                padding: '1.5rem',
+                maxWidth: '90%',
+                maxHeight: '70vh',
+                overflowY: 'auto',
+                zIndex: 9999,
+                boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                fontSize: '15px',
+                lineHeight: '1.6',
+                whiteSpace: 'pre-wrap'
               }}
             >
-              Close
-            </button>
-          </div>
-        </>
-      )}
-
-      <div style={{ textAlign: 'right', padding: '1rem 2rem', zIndex: 1000, position: 'relative' }}>
-        <button onClick={toggleDarkMode} style={{
-          padding: '6px 12px',
-          fontSize: '14px',
-          backgroundColor: darkMode ? '#f3f4f6' : '#111827',
-          color: darkMode ? '#111827' : '#f3f4f6',
-          borderRadius: '6px',
-          border: 'none',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease'
-        }}>
-          {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
-        </button>
-      </div>
-      <main
-  style={{
-    fontFamily: 'Montserrat, sans-serif',
-    maxWidth: '640px',
-    margin: '40px auto',
-    background: darkMode ? 'rgba(30, 30, 30, 0.85)' : 'rgba(255, 255, 255, 0.92)',
-    borderRadius: '20px',
-    padding: '2rem',
-    color: darkMode ? '#f3f4f6' : '#111',
-    boxShadow: darkMode ? '0 12px 40px rgba(0,0,0,0.6)' : '0 12px 40px rgba(0,0,0,0.25)',
-    backdropFilter: 'blur(10px)',
-    position: 'relative',
-    zIndex: 1
-  }}
->
-
-        <h1 style={{ fontSize: '2rem', marginBottom: '1rem', textAlign: 'center', ...textStyle }}>
-          Live City DJ Contract
-        </h1>
-        <p style={{ textAlign: 'center', marginBottom: '1rem', ...textStyle }}>
-          📞 <a href="tel:2036949388" style={{ color: '#2563eb', textDecoration: 'none' }}>
-            (203) 694-9388
-          </a><br />
-          📧 <a href="mailto:therealdjbobbydrake@gmail.com" style={{ color: '#2563eb', textDecoration: 'none' }}>
-            therealdjbobbydrake@gmail.com
-          </a>
-        </p>
-        <p style={{ marginBottom: '2rem', textAlign: 'center', ...textStyle }}>
-          Please complete the form below to reserve your event date.
-        </p>
-
-        {submitted ? (
-          <div style={{ textAlign: 'center', ...textStyle }}>
-            <h2>✅ Contract submitted successfully!</h2>
-            <p>Please send your payment to confirm the booking:</p>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center', marginBottom: '10px' }}>
-              <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Venmo_Logo_2021.svg" alt="Venmo" style={{ height: '24px' }} />
-              <strong>@Bobby-Martin-64</strong>
+              <strong>Info:</strong>
+              <p style={{ marginTop: '10px' }}>{infoPopup}</p>
+              <button
+                onClick={hidePopup}
+                style={{
+                  marginTop: '14px',
+                  padding: '8px 16px',
+                  background: '#ef4444',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer'
+                }}
+              >
+                Close
+              </button>
             </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center' }}>
-              <img src="https://upload.wikimedia.org/wikipedia/commons/0/02/Square_Cash_app_logo.svg" alt="Cash App" style={{ height: '24px' }} />
-              <strong>$LiveCity</strong>
-            </div>
-
-            <p style={{ marginTop: '1rem' }}><strong>Total Due:</strong> ${calculateTotal()}</p>
-            <p>A $100 deposit is required to reserve your event date.</p>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            <label>Client Name:</label>
-            <input type="text" name="clientName" value={formData.clientName} onChange={handleChange} required style={inputStyle} />
-
-            <label>Email:</label>
-            <input type="email" name="email" value={formData.email} onChange={handleChange} required style={inputStyle} />
-
-            <label>Contact Phone:</label>
-            <input type="tel" name="contactPhone" value={formData.contactPhone} onChange={handleChange} required placeholder="1234567890" style={inputStyle} />
-
-            <label>Type of Event:</label>
-            <input type="text" name="eventType" value={formData.eventType} onChange={handleChange} required style={inputStyle} />
-
-            <label>Number of Guests:</label>
-            <input type="number" name="guestCount" value={formData.guestCount} onChange={handleChange} required style={inputStyle} />
-
-            <label>Venue Name:</label>
-            <input type="text" name="venueName" value={formData.venueName} onChange={handleChange} required style={inputStyle} />
-
-            <label>Venue Location:</label>
-            <input type="text" name="venueLocation" value={formData.venueLocation} onChange={handleChange} required style={inputStyle} />
-
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.2rem' }}>
-  <div style={{ flex: '1 1 100%' }}>
-    <label style={{ display: 'block', marginBottom: '0.5rem' }}>Event Date:</label>
-    <input
-      type="date"
-      name="eventDate"
-      value={formData.eventDate}
-      onChange={handleChange}
-      required
-      style={inputStyle}
-    />
-  </div>
-
-  <div style={{ flex: '1 1 48%' }}>
-    <label style={{ display: 'block', marginBottom: '0.5rem' }}>Start Time:</label>
-    <input
-      type="time"
-      name="startTime"
-      value={formData.startTime}
-      onChange={handleChange}
-      required
-      style={inputStyle}
-    />
-  </div>
-
-  <div style={{ flex: '1 1 48%' }}>
-    <label style={{ display: 'block', marginBottom: '0.5rem' }}>End Time:</label>
-    <input
-      type="time"
-      name="endTime"
-      value={formData.endTime}
-      onChange={handleChange}
-      required
-      style={inputStyle}
-    />
-  </div>
-</div>
-
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <label style={{ fontWeight: 'bold' }}>
-                Standard DJ Package 💰 $350.00
-              </label>
-              {popupIcon('5 Hours (Includes professional DJ/EMCEE, high-quality sound system, wireless microphone, extensive music selection, setup & teardown)')}
-            </div>
-
-            <p style={{ fontWeight: 'bold', marginTop: '1rem' }}>Event Add-Ons:</p>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <label>
-                <input type="checkbox" name="lighting" checked={formData.lighting} onChange={handleChange} />
-                Event Lighting (+$100)
-              </label>
-              {popupIcon('Strobe/party lights. Requires venue access 2 hours before event')}
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <label>
-                <input type="checkbox" name="photography" checked={formData.photography} onChange={handleChange} />
-                Event Photography (+$150)
-              </label>
-              {popupIcon('50 high-quality candid shots, delivered within 48 hours')}
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <label>
-                <input type="checkbox" name="videoVisuals" checked={formData.videoVisuals} onChange={handleChange} />
-                Video Visuals (+$100)
-              </label>
-              {popupIcon('Slideshows, presentations, etc.')}
-            </div>
-
-            <br />
-            <label>Additional Hours ($75/hr):</label>
-            <input type="number" name="additionalHours" value={formData.additionalHours} onChange={handleChange} min="0" style={inputStyle} />
-
-            <label>Payment Method:</label>
-            <select name="paymentMethod" value={formData.paymentMethod} onChange={handleChange} required style={inputStyle}>
-              <option value="">Select</option>
-              <option value="Venmo - @Bobby-Martin-64">Venmo - @Bobby-Martin-64</option>
-              <option value="Cash App - $LiveCity">Cash App - $LiveCity</option>
-              <option value="Cash">Cash</option>
-            </select>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <label>
-                <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
-                I agree to the Terms & Conditions
-              </label>
-              {popupIcon(termsText)}
-            </div>
-
-            <h3 style={{ marginTop: '1.5rem' }}>Total Price: ${calculateTotal()}</h3>
-            <button type="submit" style={buttonStyle}>Submit Contract</button>
-          </form>
+          </>
         )}
-      </main>
-    </div>
+
+        <div style={{ textAlign: 'right', padding: '1rem 2rem', zIndex: 1000, position: 'relative' }}>
+          <button onClick={toggleDarkMode} style={{
+            padding: '6px 12px',
+            fontSize: '14px',
+            backgroundColor: darkMode ? '#f3f4f6' : '#111827',
+            color: darkMode ? '#111827' : '#f3f4f6',
+            borderRadius: '6px',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}>
+            {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+          </button>
+        </div>
+        <main
+          style={{
+            fontFamily: 'Montserrat, sans-serif',
+            maxWidth: '640px',
+            margin: '40px auto',
+            background: darkMode ? 'rgba(17, 17, 17, 0.88)' : 'rgba(255, 255, 255, 0.92)',
+            borderRadius: '20px',
+            padding: '2rem',
+            color: darkMode ? '#f9fafb' : '#111',
+            boxShadow: '0 12px 50px rgba(0,0,0,0.25)',
+            backdropFilter: 'blur(10px)',
+            position: 'relative',
+            zIndex: 1
+          }}
+        >
+          <h1 style={{ fontSize: '2rem', marginBottom: '1rem', textAlign: 'center' }}>
+            Live City DJ Contract
+          </h1>
+
+          <p style={{ textAlign: 'center', marginBottom: '1rem' }}>
+            📞 <a href="tel:2036949388" style={{ color: '#2563eb', textDecoration: 'none' }}>
+              (203) 694-9388
+            </a><br />
+            📧 <a href="mailto:therealdjbobbydrake@gmail.com" style={{ color: '#2563eb', textDecoration: 'none' }}>
+              therealdjbobbydrake@gmail.com
+            </a>
+          </p>
+
+          <p style={{ marginBottom: '2rem', textAlign: 'center' }}>
+            Please complete the form below to reserve your event date.
+          </p>
+
+          {submitted ? (
+            <div style={{ textAlign: 'center' }}>
+              <h2>✅ Contract submitted successfully!</h2>
+              <p>Please send your payment to confirm the booking:</p>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center', marginBottom: '10px' }}>
+                <Image src="/venmo.svg" alt="Venmo" width={24} height={24} />
+                <strong>@Bobby-Martin-64</strong>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center' }}>
+                <Image src="/cashapp.svg" alt="Cash App" width={24} height={24} />
+                <strong>$LiveCity</strong>
+              </div>
+
+              <p style={{ marginTop: '1rem' }}><strong>Total Due:</strong> ${calculateTotal()}</p>
+              <p>A $100 deposit is required to reserve your event date.</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <label>Client Name:</label>
+              <input type="text" name="clientName" value={formData.clientName} onChange={handleChange} required style={inputStyle} />
+
+              <label>Email:</label>
+              <input type="email" name="email" value={formData.email} onChange={handleChange} required style={inputStyle} />
+
+              <label>Contact Phone:</label>
+              <input type="tel" name="contactPhone" value={formData.contactPhone} onChange={handleChange} required placeholder="1234567890" style={inputStyle} />
+
+              <label>Type of Event:</label>
+              <input type="text" name="eventType" value={formData.eventType} onChange={handleChange} required style={inputStyle} />
+
+              <label>Number of Guests:</label>
+              <input type="number" name="guestCount" value={formData.guestCount} onChange={handleChange} required style={inputStyle} />
+
+              <label>Venue Name:</label>
+              <input type="text" name="venueName" value={formData.venueName} onChange={handleChange} required style={inputStyle} />
+
+              <label>Venue Location:</label>
+              <input
+                type="text"
+                name="venueLocation"
+                value={formData.venueLocation}
+                onChange={handleChange}
+                ref={locationRef}
+                placeholder="Enter address..."
+                required
+                style={inputStyle}
+              />
+
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.2rem' }}>
+                <div style={{ flex: '1 1 100%' }}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Event Date:</label>
+                  <input type="date" name="eventDate" value={formData.eventDate} onChange={handleChange} required style={inputStyle} />
+                </div>
+                <div style={{ flex: '1 1 48%' }}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem' }}>Start Time:</label>
+                  <input type="time" name="startTime" value={formData.startTime} onChange={handleChange} required style={inputStyle} />
+                </div>
+                <div style={{ flex: '1 1 48%' }}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem' }}>End Time:</label>
+                  <input type="time" name="endTime" value={formData.endTime} onChange={handleChange} required style={inputStyle} />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <label style={{ fontWeight: 'bold' }}>
+                  Standard DJ Package 💰 $350.00
+                </label>
+                {popupIcon('5 Hours (Includes professional DJ/EMCEE, high-quality sound system, wireless microphone, extensive music selection, setup & teardown)')}
+              </div>
+              <p style={{ fontWeight: 'bold', marginTop: '1rem' }}>Event Add-Ons:</p>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label>
+                  <input type="checkbox" name="lighting" checked={formData.lighting} onChange={handleChange} />
+                  Event Lighting (+$100)
+                </label>
+                {popupIcon('Strobe/party lights. Requires venue access 2 hours before event')}
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label>
+                  <input type="checkbox" name="photography" checked={formData.photography} onChange={handleChange} />
+                  Event Photography (+$150)
+                </label>
+                {popupIcon('50 high-quality candid shots, delivered within 48 hours')}
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label>
+                  <input type="checkbox" name="videoVisuals" checked={formData.videoVisuals} onChange={handleChange} />
+                  Video Visuals (+$100)
+                </label>
+                {popupIcon('Slideshows, presentations, etc.')}
+              </div>
+
+              <br />
+              <label>Additional Hours ($75/hr):</label>
+              <input type="number" name="additionalHours" value={formData.additionalHours} onChange={handleChange} min="0" style={inputStyle} />
+
+              <label>Payment Method:</label>
+              <select name="paymentMethod" value={formData.paymentMethod} onChange={handleChange} required style={inputStyle}>
+                <option value="">Select</option>
+                <option value="Venmo - @Bobby-Martin-64">Venmo - @Bobby-Martin-64</option>
+                <option value="Cash App - $LiveCity">Cash App - $LiveCity</option>
+                <option value="Cash">Cash</option>
+              </select>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label>
+                  <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
+                  I agree to the Terms & Conditions
+                </label>
+                {popupIcon(termsText)}
+              </div>
+
+              <h3 style={{ marginTop: '1.5rem' }}>Total Price: ${calculateTotal()}</h3>
+              <button type="submit" style={buttonStyle}>Submit Contract</button>
+            </form>
+          )}
+        </main>
+      </div>
+    </>
   );
 }
