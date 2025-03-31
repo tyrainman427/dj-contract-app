@@ -13,7 +13,7 @@ export default function Home() {
     eventType: '',
     guestCount: '',
     venueName: '',
-    // Plain text input for venue location.
+    // Venue Location is now a plain text field.
     venueLocation: '',
     eventDate: '',
     startTime: '',
@@ -28,7 +28,6 @@ export default function Home() {
   });
 
   const [infoPopup, setInfoPopup] = useState('');
-  const [showPopupBox, setShowPopupBox] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
 
@@ -77,12 +76,10 @@ export default function Home() {
 
   const showPopup = (text) => {
     setInfoPopup(text);
-    setShowPopupBox(true);
   };
 
   const hidePopup = () => {
-    setShowPopupBox(false);
-    setTimeout(() => setInfoPopup(''), 300);
+    setInfoPopup('');
   };
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
@@ -216,25 +213,23 @@ export default function Home() {
       />
 
       {infoPopup && (
-        <>
+        <div
+          onClick={hidePopup}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 9998,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <div
             style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100vw',
-              height: '100vh',
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              zIndex: 9998,
-            }}
-            onClick={hidePopup}
-          />
-          <div
-            style={{
-              position: 'fixed',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
               background: '#fff',
               color: '#111',
               borderRadius: '10px',
@@ -266,7 +261,7 @@ export default function Home() {
               Close
             </button>
           </div>
-        </>
+        </div>
       )}
 
       <div
@@ -293,6 +288,7 @@ export default function Home() {
           {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
         </button>
       </div>
+
       <main
         style={{
           fontFamily: 'Montserrat, sans-serif',
