@@ -31,7 +31,7 @@ export default function Home() {
   const [submitted, setSubmitted] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
 
-  // Confetti effect (unchanged)
+  // Confetti effect
   useEffect(() => {
     const canvas = document.getElementById('confetti');
     if (!canvas) return;
@@ -84,6 +84,7 @@ export default function Home() {
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
+  // Pricing constants
   const BASE_PRICE = 350;
   const LIGHTING_PRICE = 100;
   const PHOTO_PRICE = 150;
@@ -101,6 +102,7 @@ export default function Home() {
 
   const handleChange = (e) => {
     const { name, type, value, checked } = e.target;
+    console.log(`Field ${name} changed to:`, type === 'checkbox' ? checked : value);
     setFormData((prev) => ({
       ...prev,
       [name]:
@@ -436,7 +438,7 @@ export default function Home() {
               style={inputStyle}
             />
 
-            {/* Venue Location is now a plain text field */}
+            {/* Venue Location as a plain text field */}
             <label>Venue Location:</label>
             <input
               type="text"
