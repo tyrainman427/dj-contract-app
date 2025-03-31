@@ -5,7 +5,6 @@ import Script from 'next/script';
 import { collection, addDoc } from 'firebase/firestore';
 import db from '../lib/firebase';
 import emailjs from '@emailjs/browser';
-import confetti from 'canvas-confetti';
 
 export default function DJContractForm() {
   const [formData, setFormData] = useState({
@@ -79,6 +78,19 @@ export default function DJContractForm() {
     return total;
   };
 
+  const triggerConfetti = () => {
+    if (typeof window !== 'undefined') {
+      import('canvas-confetti').then((module) => {
+        const confetti = module.default;
+        confetti({
+          particleCount: 120,
+          spread: 70,
+          origin: { y: 0.6 },
+        });
+      });
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateEmail(formData.email)) return alert('Enter a valid email.');
@@ -86,10 +98,8 @@ export default function DJContractForm() {
     if (!formData.agreeToTerms) return alert('Please agree to the terms.');
 
     try {
-      // Save to Firestore
       await addDoc(collection(db, 'contracts'), formData);
 
-      // Send EmailJS Confirmation
       await emailjs.send(
         'service_9z9konq',
         'template_p87ey1j',
@@ -104,7 +114,7 @@ export default function DJContractForm() {
       );
 
       setSubmitted(true);
-      confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
+      triggerConfetti();
     } catch (err) {
       console.error('Submission error:', err);
       alert('Something went wrong.');
@@ -140,6 +150,7 @@ export default function DJContractForm() {
         backgroundImage: "url('/bg-dj.jpg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
+        backgroundColor: darkMode ? '#111' : '#1a1a1a', // fallback if image fails
         padding: '2rem',
       }}>
         <div style={{
