@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import Script from 'next/script';
-import Image from 'next/image';
-import emailjs from '@emailjs/browser'; // 📩 Add EmailJS
+import { collection, addDoc } from 'firebase/firestore';
 import db from '../lib/firebase';
-import { collection, addDoc, Timestamp } from 'firebase/firestore';
+import emailjs from '@emailjs/browser';
+import confetti from 'canvas-confetti';
 
-export default function Home() {
+export default function DJContractForm() {
   const [formData, setFormData] = useState({
     clientName: '',
     email: '',
@@ -23,258 +23,230 @@ export default function Home() {
     lighting: false,
     photography: false,
     videoVisuals: false,
-    standardPackage: true,
     agreeToTerms: false,
-    additionalHours: 0
+    additionalHours: 0,
   });
 
-  const locationRef = useRef(null);
   const [submitted, setSubmitted] = useState(false);
-  const [infoPopup, setInfoPopup] = useState('');
-  const [showPopupBox, setShowPopupBox] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const autocompleteContainerRef = useRef(null);
 
-  const BASE_PRICE = 350;
-  const LIGHTING_PRICE = 100;
-  const PHOTO_PRICE = 150;
-  const VIDEO_PRICE = 100;
-  const ADDITIONAL_HOUR_PRICE = 75;
+  const toggleDarkMode = () => setDarkMode(!darkMode);
 
+  const initAutocomplete = () => {
+    if (
+      autocompleteContainerRef.current &&
+      window.google?.maps?.places?.PlaceAutocompleteElement
+    ) {
+      const placeAutocomplete = new window.google.maps.places.PlaceAutocompleteElement({
+        fields: ['formatted_address'],
+        types: ['geocode'],
+      });
+
+      placeAutocomplete.addEventListener('place_changed', () => {
+        const place = placeAutocomplete.getPlace();
+        if (place?.formatted_address) {
+          setFormData((prev) => ({
+            ...prev,
+            venueLocation: place.formatted_address,
+          }));
+        }
+      });
+
+      autocompleteContainerRef.current.innerHTML = '';
+      autocompleteContainerRef.current.appendChild(placeAutocomplete);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, type, value, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : type === 'number' ? parseInt(value) || 0 : value,
+    }));
+  };
+
+  const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
+  const validatePhone = (phone) => /^[0-9]{10}$/.test(phone.replace(/\D/g, ''));
+
+  const BASE = 350, LIGHTING = 100, PHOTO = 150, VIDEO = 100, EXTRA_HOUR = 75;
   const calculateTotal = () => {
-    let total = BASE_PRICE;
-    if (formData.lighting) total += LIGHTING_PRICE;
-    if (formData.photography) total += PHOTO_PRICE;
-    if (formData.videoVisuals) total += VIDEO_PRICE;
-    total += formData.additionalHours * ADDITIONAL_HOUR_PRICE;
+    let total = BASE;
+    if (formData.lighting) total += LIGHTING;
+    if (formData.photography) total += PHOTO;
+    if (formData.videoVisuals) total += VIDEO;
+    total += formData.additionalHours * EXTRA_HOUR;
     return total;
   };
 
-  const sendEmailConfirmation = async () => {
-    const templateParams = {
-      clientName: formData.clientName,
-      email: formData.email,
-      venueName: formData.venueName,
-      venueLocation: formData.venueLocation,
-      eventDate: formData.eventDate,
-      total: calculateTotal(),
-    };
-
-    try {
-      await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
-        {
-          clientName: formData.clientName,
-          email: formData.email,
-          eventDate: formData.eventDate,
-          venueLocation: formData.venueLocation,
-          total: calculateTotal(),
-        },
-        process.env.NEXT_PUBLIC_EMAILJS_USER_ID
-      );
-      
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validation
-    if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      alert('Please enter a valid email address.');
-      return;
-    }
-
-    if (!/^[0-9]{10}$/.test(formData.contactPhone.replace(/\D/g, ''))) {
-      alert('Please enter a valid 10-digit phone number.');
-      return;
-    }
-
-    if (!formData.agreeToTerms) {
-      alert('You must agree to the terms and conditions before submitting.');
-      return;
-    }
+    if (!validateEmail(formData.email)) return alert('Enter a valid email.');
+    if (!validatePhone(formData.contactPhone)) return alert('Enter a valid phone number.');
+    if (!formData.agreeToTerms) return alert('Please agree to the terms.');
 
     try {
       // Save to Firestore
-      await addDoc(collection(db, 'contracts'), {
-        ...formData,
-        total: calculateTotal(),
-        createdAt: Timestamp.now(),
-        eventTimestamp: Timestamp.fromDate(new Date(formData.eventDate))
-      });
+      await addDoc(collection(db, 'contracts'), formData);
 
-      // Send confirmation email
-      await sendEmailConfirmation();
+      // Send EmailJS Confirmation
+      await emailjs.send(
+        'service_9z9konq',
+        'template_p87ey1j',
+        {
+          client_name: formData.clientName,
+          client_email: formData.email,
+          event_date: formData.eventDate,
+          event_type: formData.eventType,
+          total_due: `$${calculateTotal()}`,
+        },
+        'NdEqZMAfDI3DOObLT'
+      );
 
-      // Mark as submitted
       setSubmitted(true);
-      console.log('✅ Contract submitted and email sent:', formData);
-    } catch (error) {
-      console.error('❌ Error submitting form or sending email:', error);
-      alert('Something went wrong while submitting the form.');
+      confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
+    } catch (err) {
+      console.error('Submission error:', err);
+      alert('Something went wrong.');
     }
   };
+
+  const inputStyle = {
+    width: '100%',
+    padding: '12px',
+    marginBottom: '1rem',
+    borderRadius: '8px',
+    border: darkMode ? '1px solid #333' : '1px solid #ccc',
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    color: '#111',
+    boxShadow: '0 0 4px rgba(0,0,0,0.2)',
+  };
+
+  const labelStyle = {
+    color: darkMode ? '#fff' : '#111',
+    textShadow: '1px 1px 3px rgba(0,0,0,0.4)',
+  };
+
   return (
     <>
       <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
-        strategy="beforeInteractive"
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places,marker&v=beta`}
+        strategy="lazyOnload"
+        onLoad={initAutocomplete}
       />
 
-      <div
-        style={{
-          minHeight: '100vh',
-          backgroundImage: 'url("/dj-background.jpg")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          position: 'relative',
-          overflow: 'hidden'
-        }}
-      >
-        <canvas
-          id="confetti"
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            zIndex: 0,
-            pointerEvents: 'none'
-          }}
-        />
-
-        {submitted ? (
-          <main
+      <div style={{
+        minHeight: '100vh',
+        backgroundImage: "url('/bg-dj.jpg')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        padding: '2rem',
+      }}>
+        <div style={{
+          backdropFilter: 'blur(6px)',
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          borderRadius: '1rem',
+          padding: '2rem',
+        }}>
+          <button
+            onClick={toggleDarkMode}
             style={{
-              fontFamily: 'Montserrat, sans-serif',
-              maxWidth: '640px',
-              margin: '40px auto',
-              background: 'rgba(255,255,255,0.92)',
-              borderRadius: '20px',
-              padding: '2rem',
-              color: '#111',
-              boxShadow: '0 12px 50px rgba(0,0,0,0.25)',
-              position: 'relative',
-              zIndex: 1,
-              textAlign: 'center'
+              float: 'right',
+              marginBottom: '1rem',
+              padding: '8px 16px',
+              backgroundColor: darkMode ? '#f3f4f6' : '#111',
+              color: darkMode ? '#111' : '#f3f4f6',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
             }}
           >
-            <h2>✅ Contract submitted successfully!</h2>
-            <p>We've emailed you a confirmation with event and balance details.</p>
-            <p>To secure your booking, please send your deposit using:</p>
+            {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+          </button>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center', marginBottom: '10px' }}>
-              <Image src="/venmo.svg" alt="Venmo" width={24} height={24} />
-              <strong>@Bobby-Martin-64</strong>
+          <h1 style={{ textAlign: 'center', color: '#fff', textShadow: '2px 2px 4px #000' }}>🎧 DJ Contract Form</h1>
+
+          {submitted ? (
+            <div style={{ textAlign: 'center', marginTop: '2rem', color: '#fff' }}>
+              <h2>✅ Submitted!</h2>
+              <p>Total Due: <strong>${calculateTotal()}</strong></p>
+              <p>Send payment to confirm your booking:</p>
+              <p>Venmo: @Bobby-Martin-64</p>
+              <p>Cash App: $LiveCity</p>
             </div>
+          ) : (
+            <form onSubmit={handleSubmit} style={{ maxWidth: '600px', margin: '2rem auto' }}>
+              <label style={labelStyle}>Client Name:</label>
+              <input name="clientName" required style={inputStyle} value={formData.clientName} onChange={handleChange} />
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'center' }}>
-              <Image src="/cashapp.svg" alt="Cash App" width={24} height={24} />
-              <strong>$LiveCity</strong>
-            </div>
+              <label style={labelStyle}>Email:</label>
+              <input type="email" name="email" required style={inputStyle} value={formData.email} onChange={handleChange} />
 
-            <p style={{ marginTop: '1rem' }}><strong>Total Due:</strong> ${calculateTotal()}</p>
-            <p>A $100 deposit is required to reserve your event date.</p>
-          </main>
-        ) : (
-          // 👇 Form continues here in next chunk
-          <form onSubmit={handleSubmit} style={{
-            fontFamily: 'Montserrat, sans-serif',
-            maxWidth: '640px',
-            margin: '40px auto',
-            background: 'rgba(255,255,255,0.92)',
-            borderRadius: '20px',
-            padding: '2rem',
-            color: '#111',
-            boxShadow: '0 12px 50px rgba(0,0,0,0.25)',
-            position: 'relative',
-            zIndex: 1
-          }}>
-            <h1 style={{ fontSize: '2rem', marginBottom: '1rem', textAlign: 'center' }}>
-              Live City DJ Contract
-            </h1>
+              <label style={labelStyle}>Phone:</label>
+              <input name="contactPhone" required style={inputStyle} value={formData.contactPhone} onChange={handleChange} />
 
-            <label>Client Name:</label>
-            <input type="text" name="clientName" value={formData.clientName} onChange={handleChange} required style={inputStyle} />
+              <label style={labelStyle}>Event Type:</label>
+              <input name="eventType" required style={inputStyle} value={formData.eventType} onChange={handleChange} />
 
-            <label>Email:</label>
-            <input type="email" name="email" value={formData.email} onChange={handleChange} required style={inputStyle} />
+              <label style={labelStyle}>Guest Count:</label>
+              <input type="number" name="guestCount" required style={inputStyle} value={formData.guestCount} onChange={handleChange} />
 
-            <label>Contact Phone:</label>
-            <input type="tel" name="contactPhone" value={formData.contactPhone} onChange={handleChange} required placeholder="1234567890" style={inputStyle} />
+              <label style={labelStyle}>Venue Name:</label>
+              <input name="venueName" required style={inputStyle} value={formData.venueName} onChange={handleChange} />
 
-            <label>Type of Event:</label>
-            <input type="text" name="eventType" value={formData.eventType} onChange={handleChange} required style={inputStyle} />
+              <label style={labelStyle}>Venue Location:</label>
+              <div ref={autocompleteContainerRef} style={inputStyle} />
 
-            <label>Number of Guests:</label>
-            <input type="number" name="guestCount" value={formData.guestCount} onChange={handleChange} required style={inputStyle} />
+              <label style={labelStyle}>Event Date:</label>
+              <input type="date" name="eventDate" required style={inputStyle} value={formData.eventDate} onChange={handleChange} />
 
-            <label>Venue Name:</label>
-            <input type="text" name="venueName" value={formData.venueName} onChange={handleChange} required style={inputStyle} />
+              <label style={labelStyle}>Start Time:</label>
+              <input type="time" name="startTime" required style={inputStyle} value={formData.startTime} onChange={handleChange} />
 
-            <label>Venue Location:</label>
-            <input
-              type="text"
-              name="venueLocation"
-              ref={locationRef}
-              placeholder="Enter address..."
-              required
-              style={inputStyle}
-            />
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.2rem' }}>
-              <div style={{ flex: '1 1 100%' }}>
-                <label style={{ display: 'block', marginBottom: '0.5rem' }}>Event Date:</label>
-                <input type="date" name="eventDate" value={formData.eventDate} onChange={handleChange} required style={inputStyle} />
-              </div>
-              <div style={{ flex: '1 1 48%' }}>
-                <label style={{ display: 'block', marginBottom: '0.5rem' }}>Start Time:</label>
-                <input type="time" name="startTime" value={formData.startTime} onChange={handleChange} required style={inputStyle} />
-              </div>
-              <div style={{ flex: '1 1 48%' }}>
-                <label style={{ display: 'block', marginBottom: '0.5rem' }}>End Time:</label>
-                <input type="time" name="endTime" value={formData.endTime} onChange={handleChange} required style={inputStyle} />
-              </div>
-            </div>
+              <label style={labelStyle}>End Time:</label>
+              <input type="time" name="endTime" required style={inputStyle} value={formData.endTime} onChange={handleChange} />
 
-            <label><strong>Standard DJ Package 💰 $350.00</strong></label>
+              <label style={labelStyle}>Payment Method:</label>
+              <select name="paymentMethod" required style={inputStyle} value={formData.paymentMethod} onChange={handleChange}>
+                <option value="">Choose one</option>
+                <option value="Venmo - @Bobby-Martin-64">Venmo</option>
+                <option value="Cash App - $LiveCity">Cash App</option>
+                <option value="Cash">Cash</option>
+              </select>
 
-            <p style={{ fontWeight: 'bold', marginTop: '1rem' }}>Event Add-Ons:</p>
+              <label style={labelStyle}>
+                <input type="checkbox" name="lighting" checked={formData.lighting} onChange={handleChange} /> Event Lighting (+$100)
+              </label><br />
 
-            <label>
-              <input type="checkbox" name="lighting" checked={formData.lighting} onChange={handleChange} />
-              Event Lighting (+$100)
-            </label><br />
+              <label style={labelStyle}>
+                <input type="checkbox" name="photography" checked={formData.photography} onChange={handleChange} /> Photography (+$150)
+              </label><br />
 
-            <label>
-              <input type="checkbox" name="photography" checked={formData.photography} onChange={handleChange} />
-              Event Photography (+$150)
-            </label><br />
+              <label style={labelStyle}>
+                <input type="checkbox" name="videoVisuals" checked={formData.videoVisuals} onChange={handleChange} /> Video Visuals (+$100)
+              </label><br />
 
-            <label>
-              <input type="checkbox" name="videoVisuals" checked={formData.videoVisuals} onChange={handleChange} />
-              Video Visuals (+$100)
-            </label><br /><br />
+              <label style={labelStyle}>Additional Hours ($75/hr):</label>
+              <input type="number" name="additionalHours" min="0" style={inputStyle} value={formData.additionalHours} onChange={handleChange} />
 
-            <label>Additional Hours ($75/hr):</label>
-            <input type="number" name="additionalHours" value={formData.additionalHours} onChange={handleChange} min="0" style={inputStyle} />
+              <label style={{ ...labelStyle, display: 'block', marginTop: '1rem' }}>
+                <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
+                {' '}I agree to the terms & conditions.
+              </label>
 
-            <label>Payment Method:</label>
-            <select name="paymentMethod" value={formData.paymentMethod} onChange={handleChange} required style={inputStyle}>
-              <option value="">Select</option>
-              <option value="Venmo - @Bobby-Martin-64">Venmo - @Bobby-Martin-64</option>
-              <option value="Cash App - $LiveCity">Cash App - $LiveCity</option>
-              <option value="Cash">Cash</option>
-            </select>
-
-            <label>
-              <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
-              I agree to the Terms & Conditions
-            </label>
-
-            <h3 style={{ marginTop: '1.5rem' }}>Total Price: ${calculateTotal()}</h3>
-            <button type="submit" style={buttonStyle}>Submit Contract</button>
-          </form>
-        )}
+              <h3 style={{ color: '#fff', textShadow: '1px 1px 3px #000' }}>Total: ${calculateTotal()}</h3>
+              <button type="submit" style={{
+                ...inputStyle,
+                backgroundColor: '#10b981',
+                color: '#fff',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+              }}>
+                Submit Contract
+              </button>
+            </form>
+          )}
+        </div>
       </div>
     </>
   );
