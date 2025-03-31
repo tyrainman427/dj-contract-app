@@ -148,3 +148,40 @@
 [debug] [2025-03-31T23:10:25.528Z] DEBUG: [worker-us-central1-sendReminderEmails-f498b62f-f0ff-4226-924f-9e05c0e4ea95]: exited
 [debug] [2025-03-31T23:10:25.528Z] DEBUG: [worker-us-central1-sendReminderEmails-f498b62f-f0ff-4226-924f-9e05c0e4ea95]: FINISHED
 [debug] [2025-03-31T23:10:40.907Z] DEBUG: File C:\Users\B.Martin\dj-contract-app\functions\index.js changed, reloading triggers
+[debug] [2025-03-31T23:10:41.915Z] Validating nodejs source
+[warn] !  functions: package.json indicates an outdated version of firebase-functions. Please upgrade using npm install --save firebase-functions@latest in your functions directory. 
+[warn] !  functions: Please note that there will be breaking changes when you upgrade. 
+[debug] [2025-03-31T23:10:42.707Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "lint": "echo Skipping lint step"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@emailjs/nodejs": "^5.0.2",
+    "dotenv": "^16.4.7",
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^4.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2025-03-31T23:10:42.708Z] Building nodejs source
+[debug] [2025-03-31T23:10:42.708Z] Failed to find version of module node: reached end of search path C:\Users\B.Martin\dj-contract-app\functions\node_modules
+[info] +  functions: Using node@22 from host. 
+[info] i  functions: Loaded environment variables from .env. 
+[info] i  functions: You are using a version of firebase-functions SDK (4.9.0) that does not have support for the newest Firebase Extensions features. Please update firebase-functions SDK to >=5.1.0 to use them correctly 
+[debug] [2025-03-31T23:10:42.709Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-03-31T23:10:42.713Z] Found firebase-functions binary at 'C:\Users\B.Martin\dj-contract-app\functions\node_modules\.bin\firebase-functions'
+[info] Serving at port 8027
+
+[debug] [2025-03-31T23:10:43.037Z] Got response from /__/functions.yaml {"endpoints":{"sendReminderEmails":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"scheduleTrigger":{"schedule":"every 24 hours","retryConfig":{"retryCount":null,"maxDoublings":null,"maxRetrySeconds":null,"minBackoffSeconds":null,"maxBackoffSeconds":null},"timeZone":null},"entryPoint":"sendReminderEmails"}},"specVersion":"v1alpha1","requiredAPIs":[{"api":"cloudscheduler.googleapis.com","reason":"Needed for scheduled functions."}]}
+[debug] [2025-03-31T23:10:47.069Z] [functions] Loaded functions definitions from source: sendReminderEmails.
