@@ -43,11 +43,11 @@ exports.sendReminderEmails = onSchedule('every 24 hours', async (event) => {
           total_due: `$${calculateTotal(data)}`,
         },
         {
-          privateKey: process.env.EMAILJS_PRIVATE_KEY // ✅ NOT publicKey
+          privateKey: process.env.EMAILJS_PRIVATE_KEY  // ✅ CORRECT
         }
       );
       
-      
+          
 
       console.log(`✅ Reminder sent to ${data.email}`);
     }

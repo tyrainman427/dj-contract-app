@@ -252,3 +252,4 @@
 [debug] [2025-03-31T23:13:30.383Z] DEBUG: [worker-us-central1-sendReminderEmails-a37543f9-8791-4728-8b33-a9310a668516]: FINISHING
 [debug] [2025-03-31T23:13:30.395Z] DEBUG: [worker-us-central1-sendReminderEmails-a37543f9-8791-4728-8b33-a9310a668516]: exited
 [debug] [2025-03-31T23:13:30.395Z] DEBUG: [worker-us-central1-sendReminderEmails-a37543f9-8791-4728-8b33-a9310a668516]: FINISHED
+[debug] [2025-03-31T23:19:39.120Z] DEBUG: File C:\Users\B.Martin\dj-contract-app\functions\index.js changed, reloading triggers
