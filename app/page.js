@@ -42,8 +42,8 @@ export default function Home() {
   const [submitted, setSubmitted] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
 
-  // Container ref to host the PlaceAutocompleteElement.
-  const autocompleteContainerRef = useRef(null);
+  // Ref for the input field that will host the autocomplete.
+  const autocompleteRef = useRef(null);
 
   const showPopup = (text) => {
     setInfoPopup(text);
@@ -100,25 +100,15 @@ export default function Home() {
     update();
   }, []);
 
-  // Initialize the new PlaceAutocompleteElement once the script loads
+  // Initialize the Google Maps Autocomplete on the input field.
   const initAutocomplete = () => {
-    console.log('Maps loaded?', !!window.google?.maps);
-    console.log(
-      'PlaceAutocompleteElement?',
-      window.google?.maps?.places?.PlaceAutocompleteElement
-    );
-
-    if (
-      autocompleteContainerRef.current &&
-      window.google?.maps?.places?.PlaceAutocompleteElement
-    ) {
-      const placeAutocomplete = new window.google.maps.places.PlaceAutocompleteElement({
-        types: ['geocode'],
-        fields: ['formatted_address'],
-      });
-
-      placeAutocomplete.addEventListener('place_changed', () => {
-        const place = placeAutocomplete.getPlace();
+    if (autocompleteRef.current && window.google?.maps?.places) {
+      const autocomplete = new window.google.maps.places.Autocomplete(
+        autocompleteRef.current,
+        { types: ['geocode'], fields: ['formatted_address'] }
+      );
+      autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace();
         if (place && place.formatted_address) {
           setFormData((prev) => ({
             ...prev,
@@ -126,13 +116,8 @@ export default function Home() {
           }));
         }
       });
-
-      autocompleteContainerRef.current.innerHTML = '';
-      autocompleteContainerRef.current.appendChild(placeAutocomplete);
     } else {
-      console.error(
-        '❌ PlaceAutocompleteElement is NOT available. Did the beta script load?'
-      );
+      console.error('Google Maps Places library not loaded.');
     }
   };
 
@@ -186,7 +171,7 @@ export default function Home() {
     }
   };
 
-  // Reuse inputStyle for the autocomplete container to match other fields.
+  // Reuse inputStyle for consistency.
   const inputStyle = {
     width: '100%',
     padding: '12px',
@@ -498,9 +483,15 @@ export default function Home() {
                 style={inputStyle}
               />
 
-              {/* Venue Location now uses the PlaceAutocompleteElement */}
+              {/* Venue Location field using Google Places Autocomplete */}
               <label>Venue Location:</label>
-              <div ref={autocompleteContainerRef} style={inputStyle} />
+              <input
+                ref={autocompleteRef}
+                name="venueLocation"
+                type="text"
+                placeholder="Enter venue location"
+                style={inputStyle}
+              />
 
               <div
                 style={{
