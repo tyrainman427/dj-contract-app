@@ -1,4 +1,4 @@
-// DJContractForm.js — final version using react-google-places-autocomplete
+// DJContractForm.js — final working version with Google Maps autocomplete fully wired up
 
 'use client';
 
@@ -10,7 +10,6 @@ import confetti from 'canvas-confetti';
 import Tippy from '@tippyjs/react/headless';
 import { motion } from 'framer-motion';
 import { FaInfoCircle } from 'react-icons/fa';
-import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 
 export default function DJContractForm() {
   const [formData, setFormData] = useState({
@@ -33,6 +32,30 @@ export default function DJContractForm() {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const autocompleteRef = useRef(null);
+
+  useEffect(() => {
+    const setupAutocomplete = async () => {
+      if (!window.google || !autocompleteRef.current) return;
+      try {
+        const { PlaceAutocompleteElement } = await window.google.maps.importLibrary('places');
+        if (!customElements.get('place-autocomplete')) {
+          customElements.define('place-autocomplete', PlaceAutocompleteElement);
+        }
+
+        const input = autocompleteRef.current;
+        input.addEventListener('placechanged', () => {
+          setFormData(prev => ({ ...prev, venueLocation: input.value }));
+        });
+      } catch (err) {
+        console.error('Google Autocomplete failed:', err);
+      }
+    };
+
+    if (window.google) {
+      setupAutocomplete();
+    }
+  }, []);
 
   useEffect(() => {
     if (submitted) {
@@ -151,142 +174,136 @@ export default function DJContractForm() {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      padding: '2rem',
-      backgroundImage: "url('/dj-background.jpg')",
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      fontFamily: 'Helvetica Neue, Segoe UI, Roboto, sans-serif'
-    }}>
-      <div style={{ maxWidth: '700px', margin: '0 auto', backgroundColor: 'rgba(255,255,255,0.9)', padding: '2.5rem', borderRadius: '20px', boxShadow: '0 8px 30px rgba(0,0,0,0.2)' }}>
-        <h1 style={{ textAlign: 'center', fontSize: '2.25rem', color: '#000' }}>🎧 Live City DJ Contract</h1>
+    <>
+      <Script
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&v=beta`}
+        strategy="beforeInteractive"
+      />
 
-        <p style={{ textAlign: 'center', color: '#111', marginBottom: '0.5rem' }}>
-          Please complete the contract form below to reserve your event date.
-        </p>
+      <div style={{
+        minHeight: '100vh',
+        padding: '2rem',
+        backgroundImage: "url('/dj-background.jpg')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        fontFamily: 'Helvetica Neue, Segoe UI, Roboto, sans-serif'
+      }}>
+        <div style={{ maxWidth: '700px', margin: '0 auto', backgroundColor: 'rgba(255,255,255,0.9)', padding: '2.5rem', borderRadius: '20px', boxShadow: '0 8px 30px rgba(0,0,0,0.2)' }}>
+          <h1 style={{ textAlign: 'center', fontSize: '2.25rem', color: '#000' }}>🎧 Live City DJ Contract</h1>
 
-        <p style={{ textAlign: 'center', color: '#111', marginBottom: '1.5rem' }}>
-          📞 <a href="tel:+12036949388" style={{ color: '#0070f3' }}>(203) 694-9388</a> ·
-          📧 <a href="mailto:therealdjbobbydrake@gmail.com" style={{ color: '#0070f3' }}>therealdjbobbydrake@gmail.com</a>
-        </p>
+          <p style={{ textAlign: 'center', color: '#111', marginBottom: '0.5rem' }}>
+            Please complete the contract form below to reserve your event date.
+          </p>
 
-        {!submitted ? (
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
-            {["clientName", "email", "contactPhone", "eventType", "guestCount", "venueName"].map((field) => (
-              <div key={field}>
-                <label style={labelStyle}>{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</label>
-                <input
-                  name={field}
-                  type={field.includes('guest') ? 'number' : 'text'}
-                  required
+          <p style={{ textAlign: 'center', color: '#111', marginBottom: '1.5rem' }}>
+            📞 <a href="tel:+12036949388" style={{ color: '#0070f3' }}>(203) 694-9388</a> ·
+            📧 <a href="mailto:therealdjbobbydrake@gmail.com" style={{ color: '#0070f3' }}>therealdjbobbydrake@gmail.com</a>
+          </p>
+
+          {!submitted ? (
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
+              {["clientName", "email", "contactPhone", "eventType", "guestCount", "venueName"].map((field) => (
+                <div key={field}>
+                  <label style={labelStyle}>{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</label>
+                  <input
+                    name={field}
+                    type={field.includes('guest') ? 'number' : 'text'}
+                    required
+                    style={inputStyle}
+                    value={formData[field]}
+                    onChange={handleChange}
+                  />
+                </div>
+              ))}
+
+              <div>
+                <label style={labelStyle}>Venue Location:</label>
+                <place-autocomplete
+                  id="autocomplete"
+                  placeholder="Enter venue address"
+                  ref={autocompleteRef}
                   style={inputStyle}
-                  value={formData[field]}
-                  onChange={handleChange}
                 />
               </div>
-            ))}
 
-            {/* ✅ Venue Location using react-google-places-autocomplete */}
-            <div>
-              <label style={labelStyle}>Venue Location:</label>
-              <GooglePlacesAutocomplete
-                apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
-                selectProps={{
-                  placeholder: 'Enter venue address...',
-                  styles: {
-                    control: (base) => ({
-                      ...base,
-                      backgroundColor: 'rgba(255,255,255,0.85)',
-                      borderColor: '#ccc',
-                      borderRadius: '8px',
-                      fontSize: '16px'
-                    })
-                  },
-                  onChange: (val) => {
-                    setFormData(prev => ({ ...prev, venueLocation: val?.label || '' }));
-                  }
-                }}
-              />
-            </div>
+              {["eventDate", "startTime", "endTime"].map((field) => (
+                <div key={field}>
+                  <label style={labelStyle}>{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</label>
+                  <input
+                    name={field}
+                    type={field.includes("Date") ? "date" : "time"}
+                    required
+                    style={inputStyle}
+                    value={formData[field]}
+                    onChange={handleChange}
+                  />
+                </div>
+              ))}
 
-            {["eventDate", "startTime", "endTime"].map((field) => (
-              <div key={field}>
-                <label style={labelStyle}>{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</label>
-                <input
-                  name={field}
-                  type={field.includes("Date") ? "date" : "time"}
-                  required
-                  style={inputStyle}
-                  value={formData[field]}
-                  onChange={handleChange}
-                />
+              {[{
+                name: "lighting",
+                label: "Event Lighting (+$100)",
+                description: "Includes setup 2 hours early and dance floor lighting."
+              }, {
+                name: "photography",
+                label: "Photography (+$150)",
+                description: "Includes 50 high-quality candid shots delivered within 48 hours."
+              }, {
+                name: "videoVisuals",
+                label: "Video Visuals (+$100)",
+                description: "Includes slideshow or music video projections."
+              }].map(({ name, label, description }) => (
+                <div key={name}>
+                  <label style={labelStyle}>{label}{tooltip(description)}</label>
+                  <input type="checkbox" name={name} checked={formData[name]} onChange={handleChange} />
+                </div>
+              ))}
+
+              <div>
+                <label style={labelStyle}>Additional Hours ($75/hr):</label>
+                <input type="number" name="additionalHours" min="0" style={inputStyle} value={formData.additionalHours} onChange={handleChange} />
               </div>
-            ))}
 
-            {[{
-              name: "lighting",
-              label: "Event Lighting (+$100)",
-              description: "Includes setup 2 hours early and dance floor lighting."
-            }, {
-              name: "photography",
-              label: "Photography (+$150)",
-              description: "Includes 50 high-quality candid shots delivered within 48 hours."
-            }, {
-              name: "videoVisuals",
-              label: "Video Visuals (+$100)",
-              description: "Includes slideshow or music video projections."
-            }].map(({ name, label, description }) => (
-              <div key={name}>
-                <label style={labelStyle}>{label}{tooltip(description)}</label>
-                <input type="checkbox" name={name} checked={formData[name]} onChange={handleChange} />
+              <div>
+                <label style={labelStyle}>Payment Method:{tooltip('Select your preferred payment method for booking confirmation.')}</label>
+                <select name="paymentMethod" required style={inputStyle} value={formData.paymentMethod} onChange={handleChange}>
+                  <option value="">Choose one</option>
+                  <option value="Venmo - @Bobby-Martin-64">Venmo</option>
+                  <option value="Cash App - $LiveCity">Cash App</option>
+                  <option value="Cash">Cash</option>
+                </select>
               </div>
-            ))}
 
-            <div>
-              <label style={labelStyle}>Additional Hours ($75/hr):</label>
-              <input type="number" name="additionalHours" min="0" style={inputStyle} value={formData.additionalHours} onChange={handleChange} />
-            </div>
+              <div>
+                <label style={labelStyle}>Terms & Conditions {tooltip('Non-refundable $100 deposit required. Remaining balance due 2 weeks before event. Cancellations within 30 days require full payment.')}</label>
+                <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
+              </div>
 
-            <div>
-              <label style={labelStyle}>Payment Method:{tooltip('Select your preferred payment method for booking confirmation.')}</label>
-              <select name="paymentMethod" required style={inputStyle} value={formData.paymentMethod} onChange={handleChange}>
-                <option value="">Choose one</option>
-                <option value="Venmo - @Bobby-Martin-64">Venmo</option>
-                <option value="Cash App - $LiveCity">Cash App</option>
-                <option value="Cash">Cash</option>
-              </select>
-            </div>
-
-            <div>
-              <label style={labelStyle}>Terms & Conditions {tooltip('Non-refundable $100 deposit required. Remaining balance due 2 weeks before event. Cancellations within 30 days require full payment.')}</label>
-              <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
-            </div>
-
-            {itemizedTotal()}
-            <button type="submit" style={{ ...inputStyle, backgroundColor: '#2563eb', color: '#fff', cursor: 'pointer' }}>
-              Submit Contract
-            </button>
-          </form>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            style={{ textAlign: 'center', color: '#000' }}
-          >
-            <h2>✅ Submitted!</h2>
-            <p style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '1rem' }}>
-              🎉 Congratulations on successfully booking your event. Please submit your deposit or full payment to reserve your date.
-            </p>
-            {itemizedTotal()}
-            <p>Send payment to confirm your booking:</p>
-            <a href="https://venmo.com/Bobby-Martin-64" target="_blank" rel="noopener noreferrer" style={linkButtonStyle}>Pay with Venmo</a>
-            <a href="https://cash.app/$LiveCity" target="_blank" rel="noopener noreferrer" style={linkButtonStyle}>Pay with Cash App</a>
-          </motion.div>
-        )}
+              {itemizedTotal()}
+              <button type="submit" style={{ ...inputStyle, backgroundColor: '#2563eb', color: '#fff', cursor: 'pointer' }}>
+                Submit Contract
+              </button>
+            </form>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              style={{ textAlign: 'center', color: '#000' }}
+            >
+              <h2>✅ Submitted!</h2>
+              <p style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '1rem' }}>
+                🎉 Congratulations on successfully booking your event. Please submit your deposit or full payment to reserve your date.
+              </p>
+              {itemizedTotal()}
+              <p>Send payment to confirm your booking:</p>
+              <a href="https://venmo.com/Bobby-Martin-64" target="_blank" rel="noopener noreferrer" style={linkButtonStyle}>Pay with Venmo</a>
+              <a href="https://cash.app/$LiveCity" target="_blank" rel="noopener noreferrer" style={linkButtonStyle}>Pay with Cash App</a>
+            </motion.div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
