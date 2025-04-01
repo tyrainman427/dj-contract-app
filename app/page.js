@@ -1,8 +1,8 @@
-// DJContractForm.js — final working version with Google Maps autocomplete fully wired up
+// DJContractForm.js — cleaned version with Google autocomplete fully removed and plain input restored
 
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Script from 'next/script';
 import { collection, addDoc } from 'firebase/firestore';
 import db from '../lib/firebase';
@@ -32,30 +32,6 @@ export default function DJContractForm() {
   });
 
   const [submitted, setSubmitted] = useState(false);
-  const autocompleteRef = useRef(null);
-
-  useEffect(() => {
-    const setupAutocomplete = async () => {
-      if (!window.google || !autocompleteRef.current) return;
-      try {
-        const { PlaceAutocompleteElement } = await window.google.maps.importLibrary('places');
-        if (!customElements.get('place-autocomplete')) {
-          customElements.define('place-autocomplete', PlaceAutocompleteElement);
-        }
-
-        const input = autocompleteRef.current;
-        input.addEventListener('placechanged', () => {
-          setFormData(prev => ({ ...prev, venueLocation: input.value }));
-        });
-      } catch (err) {
-        console.error('Google Autocomplete failed:', err);
-      }
-    };
-
-    if (window.google) {
-      setupAutocomplete();
-    }
-  }, []);
 
   useEffect(() => {
     if (submitted) {
@@ -175,11 +151,6 @@ export default function DJContractForm() {
 
   return (
     <>
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&v=beta`}
-        strategy="beforeInteractive"
-      />
-
       <div style={{
         minHeight: '100vh',
         padding: '2rem',
@@ -203,36 +174,12 @@ export default function DJContractForm() {
 
           {!submitted ? (
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
-              {["clientName", "email", "contactPhone", "eventType", "guestCount", "venueName"].map((field) => (
+              {["clientName", "email", "contactPhone", "eventType", "guestCount", "venueName", "venueLocation", "eventDate", "startTime", "endTime"].map((field) => (
                 <div key={field}>
                   <label style={labelStyle}>{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</label>
                   <input
                     name={field}
-                    type={field.includes('guest') ? 'number' : 'text'}
-                    required
-                    style={inputStyle}
-                    value={formData[field]}
-                    onChange={handleChange}
-                  />
-                </div>
-              ))}
-
-              <div>
-                <label style={labelStyle}>Venue Location:</label>
-                <place-autocomplete
-                  id="autocomplete"
-                  placeholder="Enter venue address"
-                  ref={autocompleteRef}
-                  style={inputStyle}
-                />
-              </div>
-
-              {["eventDate", "startTime", "endTime"].map((field) => (
-                <div key={field}>
-                  <label style={labelStyle}>{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</label>
-                  <input
-                    name={field}
-                    type={field.includes("Date") ? "date" : "time"}
+                    type={field.includes('Date') ? 'date' : field.includes('Time') ? 'time' : field.includes('guest') ? 'number' : 'text'}
                     required
                     style={inputStyle}
                     value={formData[field]}
