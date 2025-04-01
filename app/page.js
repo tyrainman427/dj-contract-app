@@ -37,8 +37,8 @@ export default function DJContractForm() {
     if (!window.google || !autocompleteInputRef.current) return;
 
     const autocomplete = new window.google.maps.places.Autocomplete(autocompleteInputRef.current, {
-      types: ['address'],
-      fields: ['formatted_address']
+      types: ['geocode'],
+      fields: ['formatted_address'],
     });
 
     autocomplete.addListener('place_changed', () => {
@@ -51,19 +51,12 @@ export default function DJContractForm() {
 
   useEffect(() => {
     if (submitted) {
-      const duration = 2 * 1000;
-      const end = Date.now() + duration;
-
-      const interval = setInterval(() => {
-        if (Date.now() > end) return clearInterval(interval);
-
-        confetti({
-          particleCount: 50,
-          spread: 70,
-          origin: { x: Math.random(), y: Math.random() - 0.2 },
-          zIndex: 9999
-        });
-      }, 250);
+      confetti({
+        particleCount: 200,
+        spread: 80,
+        origin: { y: 0.6 },
+        zIndex: 9999,
+      });
     }
   }, [submitted]);
 
@@ -109,10 +102,9 @@ export default function DJContractForm() {
     marginBottom: '1rem',
     borderRadius: '8px',
     border: '1px solid #ccc',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
     color: '#000',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
-    fontSize: '16px'
+    fontSize: '16px',
   };
 
   const pageStyle = {
@@ -123,7 +115,6 @@ export default function DJContractForm() {
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
-    color: darkMode ? '#fff' : '#000'
   };
 
   return (
@@ -135,33 +126,19 @@ export default function DJContractForm() {
       />
 
       <div style={pageStyle}>
-        <div style={{ maxWidth: '700px', margin: '0 auto' }}>
-          <button
-            onClick={toggleDarkMode}
-            style={{
-              float: 'right',
-              marginBottom: '1rem',
-              padding: '8px 16px',
-              backgroundColor: '#000',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer'
-            }}
-          >
-            {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
-          </button>
+        <div style={{ maxWidth: '600px', margin: '0 auto', backgroundColor: 'rgba(255,255,255,0.85)', padding: '2rem', borderRadius: '20px', boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
+          <h1 style={{ textAlign: 'center', fontSize: '2rem' }}>Live City DJ Contract</h1>
 
-          <h1 style={{ textAlign: 'center', color: '#fff', textShadow: '0 0 10px #000' }}>🎧 DJ Contract Form</h1>
-          <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: '1rem', fontSize: '1rem' }}>
             <p>
-              📧 <a href="mailto:therealdjbobbydrake@gmail.com" style={{ color: '#fff', textDecoration: 'underline' }}>therealdjbobbydrake@gmail.com</a><br />
-              📞 <a href="tel:+1234567890" style={{ color: '#fff', textDecoration: 'underline' }}>+1 (234) 567-890</a>
+              📞 <a href="tel:+12036949388" style={{ color: '#0070f3', textDecoration: 'none' }}>(203) 694-9388</a><br />
+              📧 <a href="mailto:therealdjbobbydrake@gmail.com" style={{ color: '#0070f3', textDecoration: 'none' }}>therealdjbobbydrake@gmail.com</a>
             </p>
+            <p>Please complete the form below to reserve your event date.</p>
           </div>
 
           {submitted ? (
-            <div style={{ textAlign: 'center', marginTop: '2rem', color: '#fff' }}>
+            <div style={{ textAlign: 'center', marginTop: '2rem' }}>
               <h2>✅ Submitted!</h2>
               <p>Total Due: <strong>${calculateTotal()}</strong></p>
               <p>Send payment to confirm your booking:</p>
@@ -169,20 +146,20 @@ export default function DJContractForm() {
               <p>Cash App: $LiveCity</p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} style={{ backgroundColor: 'rgba(255,255,255,0.95)', borderRadius: '12px', padding: '2rem', marginTop: '2rem', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
+            <form onSubmit={handleSubmit}>
               <label>Client Name:</label>
               <input name="clientName" required style={inputStyle} value={formData.clientName} onChange={handleChange} />
 
               <label>Email:</label>
               <input type="email" name="email" required style={inputStyle} value={formData.email} onChange={handleChange} />
 
-              <label>Phone:</label>
+              <label>Contact Phone:</label>
               <input name="contactPhone" required style={inputStyle} value={formData.contactPhone} onChange={handleChange} />
 
-              <label>Event Type:</label>
+              <label>Type of Event:</label>
               <input name="eventType" required style={inputStyle} value={formData.eventType} onChange={handleChange} />
 
-              <label>Guest Count:</label>
+              <label>Number of Guests:</label>
               <input type="number" name="guestCount" required style={inputStyle} value={formData.guestCount} onChange={handleChange} />
 
               <label>Venue Name:</label>
