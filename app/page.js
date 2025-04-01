@@ -111,13 +111,14 @@ export default function DJContractForm() {
     minHeight: '100vh',
     padding: '2rem',
     fontFamily: 'sans-serif',
-    backgroundImage: `url('/bg-light.jpg')`,
+    backgroundImage: `url('/dj-background.jpg')`, // ✅ use your actual filename
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
     backgroundColor: darkMode ? '#000' : '#f3f4f6',
     transition: 'background-color 0.3s ease-in-out'
   };
+  
 
   return (
     <>
