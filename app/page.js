@@ -31,6 +31,7 @@ export default function DJContractForm() {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [darkMode, setDarkMode] = useState(false); // ✅ dark mode toggle
   const autocompleteInputRef = useRef(null);
 
   const initAutocomplete = () => {
@@ -89,7 +90,7 @@ export default function DJContractForm() {
   };
 
   const itemizedTotal = () => (
-    <ul style={{ listStyle: 'none', padding: 0, marginTop: '1rem', color: '#000' }}>
+    <ul style={{ listStyle: 'none', padding: 0, marginTop: '1rem', color: darkMode ? '#fff' : '#000' }}>
       <li>🎶 Base Package: ${BASE}</li>
       {formData.lighting && <li>💡 Lighting: ${LIGHTING}</li>}
       {formData.photography && <li>📸 Photography: ${PHOTO}</li>}
@@ -99,21 +100,37 @@ export default function DJContractForm() {
     </ul>
   );
 
-  const tooltipContentStyle = {
+  const tooltipContentStyle = (dark) => ({
     maxWidth: '320px',
     padding: '1rem',
-    backgroundColor: 'white',
-    color: '#000',
-    borderRadius: '8px',
-    boxShadow: '0 0 10px rgba(0,0,0,0.25)',
-    overflowY: 'auto',
-    maxHeight: '250px',
-    textAlign: 'center'
-  };
+    backgroundColor: dark ? '#1f2937' : '#fff',
+    color: dark ? '#fff' : '#000',
+    borderRadius: '10px',
+    boxShadow: '0 0 15px rgba(0,0,0,0.3)',
+    textAlign: 'center',
+    zIndex: 9999
+  });
 
   const infoIcon = (text) => (
-    <Tippy placement="right" interactive render={() => <div style={tooltipContentStyle}>{text}</div>}>
-      <span style={{ color: '#0070f3', marginLeft: 8, cursor: 'pointer' }}><FaInfoCircle /></span>
+    <Tippy
+      placement="bottom"
+      interactive
+      offset={[0, 10]}
+      render={() => (
+        <motion.div
+          style={tooltipContentStyle(darkMode)}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.3 }}
+        >
+          {text}
+        </motion.div>
+      )}
+    >
+      <span style={{ color: '#0070f3', marginLeft: 8, cursor: 'pointer' }}>
+        <FaInfoCircle />
+      </span>
     </Tippy>
   );
 
@@ -130,7 +147,7 @@ export default function DJContractForm() {
 
   const labelStyle = {
     fontWeight: 'bold',
-    color: '#111',
+    color: darkMode ? '#fff' : '#111',
     marginBottom: '0.5rem',
     display: 'flex',
     alignItems: 'center',
@@ -144,7 +161,9 @@ export default function DJContractForm() {
     backgroundImage: `url('/dj-background.jpg')`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat'
+    backgroundRepeat: 'no-repeat',
+    backgroundColor: darkMode ? '#000' : '#fff',
+    color: darkMode ? '#fff' : '#000'
   };
 
   const linkButtonStyle = {
@@ -167,6 +186,22 @@ export default function DJContractForm() {
       />
 
       <div style={pageStyle}>
+        <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            style={{
+              backgroundColor: '#333',
+              color: '#fff',
+              padding: '0.5rem 1rem',
+              borderRadius: '10px',
+              border: 'none',
+              cursor: 'pointer'
+            }}
+          >
+            Toggle {darkMode ? 'Light' : 'Dark'} Mode
+          </button>
+        </div>
+
         <div style={{ maxWidth: '700px', margin: '0 auto', backgroundColor: 'rgba(255,255,255,0.9)', padding: '2.5rem', borderRadius: '20px', boxShadow: '0 8px 30px rgba(0,0,0,0.2)' }}>
           <h1 style={{ textAlign: 'center', fontSize: '2.25rem', color: '#000' }}>🎧 Live City DJ Contract</h1>
 
