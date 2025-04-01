@@ -30,20 +30,19 @@ export default function DJContractForm() {
   const [submitted, setSubmitted] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const autocompleteInputRef = useRef(null);
-  const autocompleteRef = useRef(null);
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
   const initAutocomplete = () => {
-    if (!window.google || !autocompleteInputRef.current || autocompleteRef.current) return;
+    if (!window.google || !autocompleteInputRef.current) return;
 
-    autocompleteRef.current = new window.google.maps.places.Autocomplete(autocompleteInputRef.current, {
-      types: ['geocode'],
+    const autocomplete = new window.google.maps.places.Autocomplete(autocompleteInputRef.current, {
+      types: ['address'],
       fields: ['formatted_address']
     });
 
-    autocompleteRef.current.addListener('place_changed', () => {
-      const place = autocompleteRef.current.getPlace();
+    autocomplete.addListener('place_changed', () => {
+      const place = autocomplete.getPlace();
       if (place && place.formatted_address) {
         setFormData(prev => ({ ...prev, venueLocation: place.formatted_address }));
       }
@@ -52,12 +51,19 @@ export default function DJContractForm() {
 
   useEffect(() => {
     if (submitted) {
-      confetti({
-        particleCount: 150,
-        spread: 100,
-        origin: { y: 0.6 },
-        zIndex: 9999
-      });
+      const duration = 2 * 1000;
+      const end = Date.now() + duration;
+
+      const interval = setInterval(() => {
+        if (Date.now() > end) return clearInterval(interval);
+
+        confetti({
+          particleCount: 50,
+          spread: 70,
+          origin: { x: Math.random(), y: Math.random() - 0.2 },
+          zIndex: 9999
+        });
+      }, 250);
     }
   }, [submitted]);
 
@@ -147,6 +153,12 @@ export default function DJContractForm() {
           </button>
 
           <h1 style={{ textAlign: 'center', color: '#fff', textShadow: '0 0 10px #000' }}>🎧 DJ Contract Form</h1>
+          <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+            <p>
+              📧 <a href="mailto:therealdjbobbydrake@gmail.com" style={{ color: '#fff', textDecoration: 'underline' }}>therealdjbobbydrake@gmail.com</a><br />
+              📞 <a href="tel:+1234567890" style={{ color: '#fff', textDecoration: 'underline' }}>+1 (234) 567-890</a>
+            </p>
+          </div>
 
           {submitted ? (
             <div style={{ textAlign: 'center', marginTop: '2rem', color: '#fff' }}>
