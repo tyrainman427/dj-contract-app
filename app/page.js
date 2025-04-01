@@ -140,7 +140,7 @@ export default function DJContractForm() {
   const pageStyle = {
     minHeight: '100vh',
     padding: '2rem',
-    fontFamily: 'sans-serif',
+    fontFamily: 'Helvetica Neue, Segoe UI, Roboto, sans-serif',
     backgroundImage: `url('/dj-background.jpg')`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
@@ -159,27 +159,19 @@ export default function DJContractForm() {
         <div style={{ maxWidth: '700px', margin: '0 auto', backgroundColor: 'rgba(255,255,255,0.9)', padding: '2.5rem', borderRadius: '20px', boxShadow: '0 8px 30px rgba(0,0,0,0.2)' }}>
           <h1 style={{ textAlign: 'center', fontSize: '2.25rem', color: '#000' }}>🎧 Live City DJ Contract</h1>
 
+          <p style={{ textAlign: 'center', color: '#111', marginBottom: '0.5rem' }}>
+            Please complete the contract form below to reserve your event date.
+          </p>
+
           <p style={{ textAlign: 'center', color: '#111', marginBottom: '1.5rem' }}>
             📞 <a href="tel:+12036949388" style={{ color: '#0070f3' }}>(203) 694-9388</a> ·
             📧 <a href="mailto:therealdjbobbydrake@gmail.com" style={{ color: '#0070f3' }}>therealdjbobbydrake@gmail.com</a>
           </p>
 
           {!submitted ? (
-            <motion.form
-              onSubmit={handleSubmit}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.6 }}
-              style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}
-            >
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
               {["clientName", "email", "contactPhone", "eventType", "guestCount", "venueName", "venueLocation", "eventDate", "startTime", "endTime"].map((field) => (
-                <motion.div
-                  key={field}
-                  whileFocus={{ scale: 1.03 }}
-                  whileHover={{ scale: 1.01 }}
-                  transition={{ duration: 0.2 }}
-                >
+                <div key={field}>
                   <label style={labelStyle}>{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</label>
                   <input
                     name={field}
@@ -191,7 +183,7 @@ export default function DJContractForm() {
                     value={formData[field]}
                     onChange={handleChange}
                   />
-                </motion.div>
+                </div>
               ))}
 
               {[{
@@ -207,18 +199,18 @@ export default function DJContractForm() {
                 label: "Video Visuals (+$100)",
                 description: "Includes slideshow or music video projections."
               }].map(({ name, label, description }) => (
-                <motion.div key={name} whileHover={{ scale: 1.01 }}>
+                <div key={name}>
                   <label style={labelStyle}>{label}{infoIcon(description)}</label>
                   <input type="checkbox" name={name} checked={formData[name]} onChange={handleChange} />
-                </motion.div>
+                </div>
               ))}
 
-              <motion.div whileHover={{ scale: 1.01 }}>
+              <div>
                 <label style={labelStyle}>Additional Hours ($75/hr):</label>
                 <input type="number" name="additionalHours" min="0" style={inputStyle} value={formData.additionalHours} onChange={handleChange} />
-              </motion.div>
+              </div>
 
-              <motion.div whileHover={{ scale: 1.01 }}>
+              <div>
                 <label style={labelStyle}>Payment Method:{infoIcon('Select your preferred payment method for booking confirmation.')}</label>
                 <select name="paymentMethod" required style={inputStyle} value={formData.paymentMethod} onChange={handleChange}>
                   <option value="">Choose one</option>
@@ -226,23 +218,18 @@ export default function DJContractForm() {
                   <option value="Cash App - $LiveCity">Cash App</option>
                   <option value="Cash">Cash</option>
                 </select>
-              </motion.div>
+              </div>
 
-              <motion.div whileHover={{ scale: 1.01 }}>
+              <div>
                 <label style={labelStyle}>Terms & Conditions {infoIcon('Non-refundable $100 deposit required. Remaining balance due 2 weeks before event. Cancellations within 30 days require full payment.')}</label>
                 <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
-              </motion.div>
+              </div>
 
               {itemizedTotal()}
-              <motion.button
-                type="submit"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                style={{ ...inputStyle, backgroundColor: '#2563eb', color: '#fff', cursor: 'pointer' }}
-              >
+              <button type="submit" style={{ ...inputStyle, backgroundColor: '#2563eb', color: '#fff', cursor: 'pointer' }}>
                 Submit Contract
-              </motion.button>
-            </motion.form>
+              </button>
+            </form>
           ) : (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
