@@ -5,6 +5,8 @@ import Script from 'next/script';
 import { collection, addDoc } from 'firebase/firestore';
 import db from '../lib/firebase';
 import confetti from 'canvas-confetti';
+import 'tippy.js/dist/tippy.css';
+import Tippy from '@tippyjs/react';
 
 export default function DJContractForm() {
   const [formData, setFormData] = useState({
@@ -107,6 +109,20 @@ export default function DJContractForm() {
     fontSize: '16px',
   };
 
+  const labelStyle = {
+    fontWeight: 'bold',
+    color: '#111',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  };
+
+  const infoStyle = {
+    marginLeft: '8px',
+    color: '#0070f3',
+    cursor: 'pointer'
+  };
+
   const pageStyle = {
     minHeight: '100vh',
     padding: '2rem',
@@ -127,9 +143,9 @@ export default function DJContractForm() {
 
       <div style={pageStyle}>
         <div style={{ maxWidth: '600px', margin: '0 auto', backgroundColor: 'rgba(255,255,255,0.85)', padding: '2rem', borderRadius: '20px', boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
-          <h1 style={{ textAlign: 'center', fontSize: '2rem' }}>Live City DJ Contract</h1>
+          <h1 style={{ textAlign: 'center', fontSize: '2rem', color: '#000' }}>Live City DJ Contract</h1>
 
-          <div style={{ textAlign: 'center', marginBottom: '1rem', fontSize: '1rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: '1rem', fontSize: '1rem', color: '#111' }}>
             <p>
               📞 <a href="tel:+12036949388" style={{ color: '#0070f3', textDecoration: 'none' }}>(203) 694-9388</a><br />
               📧 <a href="mailto:therealdjbobbydrake@gmail.com" style={{ color: '#0070f3', textDecoration: 'none' }}>therealdjbobbydrake@gmail.com</a>
@@ -138,7 +154,7 @@ export default function DJContractForm() {
           </div>
 
           {submitted ? (
-            <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+            <div style={{ textAlign: 'center', marginTop: '2rem', color: '#000' }}>
               <h2>✅ Submitted!</h2>
               <p>Total Due: <strong>${calculateTotal()}</strong></p>
               <p>Send payment to confirm your booking:</p>
@@ -147,25 +163,25 @@ export default function DJContractForm() {
             </div>
           ) : (
             <form onSubmit={handleSubmit}>
-              <label>Client Name:</label>
+              <label style={labelStyle}>Client Name:</label>
               <input name="clientName" required style={inputStyle} value={formData.clientName} onChange={handleChange} />
 
-              <label>Email:</label>
+              <label style={labelStyle}>Email:</label>
               <input type="email" name="email" required style={inputStyle} value={formData.email} onChange={handleChange} />
 
-              <label>Contact Phone:</label>
+              <label style={labelStyle}>Contact Phone:</label>
               <input name="contactPhone" required style={inputStyle} value={formData.contactPhone} onChange={handleChange} />
 
-              <label>Type of Event:</label>
+              <label style={labelStyle}>Type of Event:</label>
               <input name="eventType" required style={inputStyle} value={formData.eventType} onChange={handleChange} />
 
-              <label>Number of Guests:</label>
+              <label style={labelStyle}>Number of Guests:</label>
               <input type="number" name="guestCount" required style={inputStyle} value={formData.guestCount} onChange={handleChange} />
 
-              <label>Venue Name:</label>
+              <label style={labelStyle}>Venue Name:</label>
               <input name="venueName" required style={inputStyle} value={formData.venueName} onChange={handleChange} />
 
-              <label>Venue Location:</label>
+              <label style={labelStyle}>Venue Location:</label>
               <input
                 name="venueLocation"
                 ref={autocompleteInputRef}
@@ -176,16 +192,16 @@ export default function DJContractForm() {
                 required
               />
 
-              <label>Event Date:</label>
+              <label style={labelStyle}>Event Date:</label>
               <input type="date" name="eventDate" required style={inputStyle} value={formData.eventDate} onChange={handleChange} />
 
-              <label>Start Time:</label>
+              <label style={labelStyle}>Start Time:</label>
               <input type="time" name="startTime" required style={inputStyle} value={formData.startTime} onChange={handleChange} />
 
-              <label>End Time:</label>
+              <label style={labelStyle}>End Time:</label>
               <input type="time" name="endTime" required style={inputStyle} value={formData.endTime} onChange={handleChange} />
 
-              <label>Payment Method:</label>
+              <label style={labelStyle}>Payment Method:</label>
               <select name="paymentMethod" required style={inputStyle} value={formData.paymentMethod} onChange={handleChange}>
                 <option value="">Choose one</option>
                 <option value="Venmo - @Bobby-Martin-64">Venmo</option>
@@ -193,23 +209,35 @@ export default function DJContractForm() {
                 <option value="Cash">Cash</option>
               </select>
 
-              <label>
-                <input type="checkbox" name="lighting" checked={formData.lighting} onChange={handleChange} /> Event Lighting (+$100)
-              </label><br />
+              <label style={labelStyle}>
+                <span>
+                  <input type="checkbox" name="lighting" checked={formData.lighting} onChange={handleChange} /> Event Lighting (+$100)
+                  <Tippy content="Add lighting to enhance the dance floor atmosphere with party lights and uplighting."><span style={infoStyle}>ⓘ</span></Tippy>
+                </span>
+              </label>
 
-              <label>
-                <input type="checkbox" name="photography" checked={formData.photography} onChange={handleChange} /> Photography (+$150)
-              </label><br />
+              <label style={labelStyle}>
+                <span>
+                  <input type="checkbox" name="photography" checked={formData.photography} onChange={handleChange} /> Photography (+$150)
+                  <Tippy content="Includes professional photography coverage during your event."><span style={infoStyle}>ⓘ</span></Tippy>
+                </span>
+              </label>
 
-              <label>
-                <input type="checkbox" name="videoVisuals" checked={formData.videoVisuals} onChange={handleChange} /> Video Visuals (+$100)
-              </label><br />
+              <label style={labelStyle}>
+                <span>
+                  <input type="checkbox" name="videoVisuals" checked={formData.videoVisuals} onChange={handleChange} /> Video Visuals (+$100)
+                  <Tippy content="Add a projector with visual loops, event slideshows, or video background."><span style={infoStyle}>ⓘ</span></Tippy>
+                </span>
+              </label>
 
-              <label>Additional Hours ($75/hr):</label>
+              <label style={labelStyle}>Additional Hours ($75/hr):</label>
               <input type="number" name="additionalHours" min="0" style={inputStyle} value={formData.additionalHours} onChange={handleChange} />
 
-              <label>
-                <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required /> I agree to the terms & conditions.
+              <label style={labelStyle}>
+                <span>
+                  <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required /> I agree to the terms & conditions
+                  <Tippy content="By checking this box, you agree to Live City's DJ service agreement including payment terms and cancellation policy."><span style={infoStyle}>ⓘ</span></Tippy>
+                </span>
               </label>
 
               <h3>Total: ${calculateTotal()}</h3>
