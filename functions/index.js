@@ -1,7 +1,7 @@
 const { onSchedule } = require('firebase-functions/v2/scheduler');
 const admin = require('firebase-admin');
-const emailjs = require('@emailjs/nodejs');
 require('dotenv').config();
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args)); // ✅ here
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -9,8 +9,8 @@ const db = admin.firestore();
 exports.sendReminderEmails = onSchedule('every 24 hours', async (event) => {
   const today = new Date();
 
-  // 🧪 FOR TESTING: Use today's date
-  const reminderDate = new Date(today); // 🔄 Change to +14 days later after testing
+  // 🧪 TESTING MODE: Use today's date
+  const reminderDate = new Date(today);
 
   const year = reminderDate.getFullYear();
   const month = String(reminderDate.getMonth() + 1).padStart(2, '0');
@@ -32,22 +32,25 @@ exports.sendReminderEmails = onSchedule('every 24 hours', async (event) => {
     for (const doc of snapshot.docs) {
       const data = doc.data();
 
-      await emailjs.send(
-        process.env.EMAILJS_SERVICE_ID,
-        process.env.EMAILJS_TEMPLATE_ID,
-        {
-          client_name: data.clientName,
-          client_email: data.email,
-          event_date: data.eventDate,
-          event_type: data.eventType,
-          total_due: `$${calculateTotal(data)}`,
+      await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.EMAILJS_PRIVATE_KEY}`
         },
-        {
-          privateKey: process.env.EMAILJS_PRIVATE_KEY  // ✅ CORRECT
-        }
-      );
+        body: JSON.stringify({
+          service_id: process.env.EMAILJS_SERVICE_ID,
+          template_id: process.env.EMAILJS_TEMPLATE_ID,
+          template_params: {
+            client_name: data.clientName,
+            client_email: data.email,
+            event_date: data.eventDate,
+            event_type: data.eventType,
+            total_due: `$${calculateTotal(data)}`
+          }
+        })
+      });
       
-          
 
       console.log(`✅ Reminder sent to ${data.email}`);
     }
