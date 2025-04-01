@@ -6,7 +6,7 @@ import { collection, addDoc } from 'firebase/firestore';
 import db from '../lib/firebase';
 import confetti from 'canvas-confetti';
 import 'tippy.js/dist/tippy.css';
-import Tippy from '@tippyjs/react';
+import Tippy from '@tippyjs/react/headless';
 
 export default function DJContractForm() {
   const [formData, setFormData] = useState({
@@ -112,16 +112,34 @@ export default function DJContractForm() {
   const labelStyle = {
     fontWeight: 'bold',
     color: '#111',
+    marginBottom: '0.5rem',
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    position: 'relative'
   };
 
-  const infoStyle = {
-    marginLeft: '8px',
-    color: '#0070f3',
-    cursor: 'pointer'
+  const tooltipContentStyle = {
+    maxWidth: '300px',
+    padding: '1rem',
+    backgroundColor: 'white',
+    color: '#000',
+    borderRadius: '8px',
+    boxShadow: '0 0 10px rgba(0,0,0,0.3)',
+    overflowY: 'auto',
+    maxHeight: '250px',
+    textAlign: 'center'
   };
+
+  const infoIcon = (text) => (
+    <Tippy
+      interactive
+      placement="right"
+      render={() => <div style={tooltipContentStyle}>{text}</div>}
+    >
+      <span style={{ color: '#0070f3', marginLeft: 8, cursor: 'pointer' }}>ⓘ</span>
+    </Tippy>
+  );
 
   const pageStyle = {
     minHeight: '100vh',
@@ -142,10 +160,10 @@ export default function DJContractForm() {
       />
 
       <div style={pageStyle}>
-        <div style={{ maxWidth: '600px', margin: '0 auto', backgroundColor: 'rgba(255,255,255,0.85)', padding: '2rem', borderRadius: '20px', boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
-          <h1 style={{ textAlign: 'center', fontSize: '2rem', color: '#000' }}>Live City DJ Contract</h1>
+        <div style={{ maxWidth: '700px', margin: '0 auto', backgroundColor: 'rgba(255,255,255,0.85)', padding: '2.5rem', borderRadius: '24px', boxShadow: '0 8px 32px rgba(0,0,0,0.25)' }}>
+          <h1 style={{ textAlign: 'center', fontSize: '2.25rem', color: '#000', marginBottom: '1rem' }}>Live City DJ Contract</h1>
 
-          <div style={{ textAlign: 'center', marginBottom: '1rem', fontSize: '1rem', color: '#111' }}>
+          <div style={{ textAlign: 'center', marginBottom: '2rem', fontSize: '1rem', color: '#111' }}>
             <p>
               📞 <a href="tel:+12036949388" style={{ color: '#0070f3', textDecoration: 'none' }}>(203) 694-9388</a><br />
               📧 <a href="mailto:therealdjbobbydrake@gmail.com" style={{ color: '#0070f3', textDecoration: 'none' }}>therealdjbobbydrake@gmail.com</a>
@@ -210,35 +228,31 @@ export default function DJContractForm() {
               </select>
 
               <label style={labelStyle}>
-                <span>
-                  <input type="checkbox" name="lighting" checked={formData.lighting} onChange={handleChange} /> Event Lighting (+$100)
-                  <Tippy content="Add lighting to enhance the dance floor atmosphere with party lights and uplighting."><span style={infoStyle}>ⓘ</span></Tippy>
-                </span>
+                Event Lighting (+$100)
+                {infoIcon('Add lighting to enhance the dance floor atmosphere with party lights and uplighting.')}
               </label>
+              <input type="checkbox" name="lighting" checked={formData.lighting} onChange={handleChange} />
 
               <label style={labelStyle}>
-                <span>
-                  <input type="checkbox" name="photography" checked={formData.photography} onChange={handleChange} /> Photography (+$150)
-                  <Tippy content="Includes professional photography coverage during your event."><span style={infoStyle}>ⓘ</span></Tippy>
-                </span>
+                Photography (+$150)
+                {infoIcon('Includes professional photography coverage during your event.')}
               </label>
+              <input type="checkbox" name="photography" checked={formData.photography} onChange={handleChange} />
 
               <label style={labelStyle}>
-                <span>
-                  <input type="checkbox" name="videoVisuals" checked={formData.videoVisuals} onChange={handleChange} /> Video Visuals (+$100)
-                  <Tippy content="Add a projector with visual loops, event slideshows, or video background."><span style={infoStyle}>ⓘ</span></Tippy>
-                </span>
+                Video Visuals (+$100)
+                {infoIcon('Add a projector with visual loops, event slideshows, or video background.')}
               </label>
+              <input type="checkbox" name="videoVisuals" checked={formData.videoVisuals} onChange={handleChange} />
 
               <label style={labelStyle}>Additional Hours ($75/hr):</label>
               <input type="number" name="additionalHours" min="0" style={inputStyle} value={formData.additionalHours} onChange={handleChange} />
 
               <label style={labelStyle}>
-                <span>
-                  <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required /> I agree to the terms & conditions
-                  <Tippy content="By checking this box, you agree to Live City's DJ service agreement including payment terms and cancellation policy."><span style={infoStyle}>ⓘ</span></Tippy>
-                </span>
+                I agree to the terms & conditions
+                {infoIcon("By checking this box, you agree to Live City's DJ service agreement including payment terms and cancellation policy.")}
               </label>
+              <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
 
               <h3>Total: ${calculateTotal()}</h3>
               <button type="submit" style={{ ...inputStyle, backgroundColor: '#2563eb', color: '#fff', cursor: 'pointer' }}>
