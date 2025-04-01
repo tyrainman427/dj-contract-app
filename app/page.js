@@ -1,6 +1,8 @@
+// DJContractForm.js — final working version with Google Maps autocomplete fully wired up
+
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Script from 'next/script';
 import { collection, addDoc } from 'firebase/firestore';
 import db from '../lib/firebase';
@@ -32,27 +34,27 @@ export default function DJContractForm() {
   const [submitted, setSubmitted] = useState(false);
   const autocompleteRef = useRef(null);
 
-  // ✅ Initialize PlaceAutocompleteElement once Google loads
   useEffect(() => {
-    const loadAutocomplete = async () => {
-      if (window.google && autocompleteRef.current) {
-        try {
-          const { PlaceAutocompleteElement } = await window.google.maps.importLibrary('places');
-          if (!customElements.get('place-autocomplete')) {
-            customElements.define('place-autocomplete', PlaceAutocompleteElement);
-          }
-
-          const autocomplete = autocompleteRef.current;
-          autocomplete.addEventListener('placechanged', () => {
-            setFormData(prev => ({ ...prev, venueLocation: autocomplete.value }));
-          });
-        } catch (err) {
-          console.error('Failed to initialize Place Autocomplete:', err);
+    const setupAutocomplete = async () => {
+      if (!window.google || !autocompleteRef.current) return;
+      try {
+        const { PlaceAutocompleteElement } = await window.google.maps.importLibrary('places');
+        if (!customElements.get('place-autocomplete')) {
+          customElements.define('place-autocomplete', PlaceAutocompleteElement);
         }
+
+        const input = autocompleteRef.current;
+        input.addEventListener('placechanged', () => {
+          setFormData(prev => ({ ...prev, venueLocation: input.value }));
+        });
+      } catch (err) {
+        console.error('Google Autocomplete failed:', err);
       }
     };
 
-    loadAutocomplete();
+    if (window.google) {
+      setupAutocomplete();
+    }
   }, []);
 
   useEffect(() => {
@@ -77,6 +79,7 @@ export default function DJContractForm() {
     if (!validateEmail(formData.email)) return alert('Enter a valid email.');
     if (!validatePhone(formData.contactPhone)) return alert('Enter a valid phone number.');
     if (!formData.agreeToTerms) return alert('Please agree to the terms.');
+
     try {
       await addDoc(collection(db, 'contracts'), formData);
       setSubmitted(true);
@@ -184,16 +187,9 @@ export default function DJContractForm() {
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        fontFamily: 'Helvetica Neue, Segoe UI, Roboto, sans-serif',
+        fontFamily: 'Helvetica Neue, Segoe UI, Roboto, sans-serif'
       }}>
-        <div style={{
-          maxWidth: '700px',
-          margin: '0 auto',
-          backgroundColor: 'rgba(255,255,255,0.9)',
-          padding: '2.5rem',
-          borderRadius: '20px',
-          boxShadow: '0 8px 30px rgba(0,0,0,0.2)'
-        }}>
+        <div style={{ maxWidth: '700px', margin: '0 auto', backgroundColor: 'rgba(255,255,255,0.9)', padding: '2.5rem', borderRadius: '20px', boxShadow: '0 8px 30px rgba(0,0,0,0.2)' }}>
           <h1 style={{ textAlign: 'center', fontSize: '2.25rem', color: '#000' }}>🎧 Live City DJ Contract</h1>
 
           <p style={{ textAlign: 'center', color: '#111', marginBottom: '0.5rem' }}>
@@ -221,7 +217,6 @@ export default function DJContractForm() {
                 </div>
               ))}
 
-              {/* ✅ Correct position + working autocomplete */}
               <div>
                 <label style={labelStyle}>Venue Location:</label>
                 <place-autocomplete
