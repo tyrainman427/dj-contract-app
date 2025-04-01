@@ -1,11 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Script from 'next/script';
 import { collection, addDoc } from 'firebase/firestore';
 import db from '../lib/firebase';
 import confetti from 'canvas-confetti';
-import 'tippy.js/dist/tippy.css';
 import Tippy from '@tippyjs/react/headless';
 import { motion } from 'framer-motion';
 import { FaInfoCircle } from 'react-icons/fa';
@@ -31,27 +30,29 @@ export default function DJContractForm() {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const autocompleteRef = useRef(null);
 
-  // ✅ Set up PlaceAutocompleteElement
+  // ✅ Register PlaceAutocompleteElement and handle changes
   useEffect(() => {
     const setupAutocomplete = async () => {
-      if ('customElements' in window && !customElements.get('place-autocomplete')) {
-        const { PlaceAutocompleteElement } = await window.google.maps.importLibrary('places');
-        customElements.define('place-autocomplete', PlaceAutocompleteElement);
-      }
+      if (!window.google || !autocompleteRef.current) return;
+      try {
+        if (!customElements.get('place-autocomplete')) {
+          const { PlaceAutocompleteElement } = await window.google.maps.importLibrary('places');
+          customElements.define('place-autocomplete', PlaceAutocompleteElement);
+        }
 
-      const input = document.getElementById('autocomplete');
-      if (input) {
+        const input = autocompleteRef.current;
         input.addEventListener('placechanged', () => {
           const value = input.value;
           setFormData(prev => ({ ...prev, venueLocation: value }));
         });
+      } catch (err) {
+        console.error('Google Maps Autocomplete failed:', err);
       }
     };
 
-    if (window.google) {
-      setupAutocomplete();
-    }
+    if (window.google) setupAutocomplete();
   }, []);
 
   useEffect(() => {
@@ -114,7 +115,7 @@ export default function DJContractForm() {
     borderRadius: '10px',
     boxShadow: '0 0 15px rgba(0,0,0,0.3)',
     textAlign: 'center',
-    zIndex: 9999
+    zIndex: 9999,
   };
 
   const infoIcon = (text) => (
@@ -183,9 +184,8 @@ export default function DJContractForm() {
 
   return (
     <>
-      {/* ✅ Google Maps v=beta required for PlaceAutocompleteElement */}
       <Script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-5o9YY4NS8y8F2ZTg8-zibHYRP_1dOEc&libraries=places&v=beta"
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&v=beta`}
         strategy="beforeInteractive"
       />
 
@@ -218,12 +218,13 @@ export default function DJContractForm() {
                 </div>
               ))}
 
-              {/* ✅ Replaced old autocomplete with new one */}
+              {/* ✅ Properly positioned and working venue location autocomplete */}
               <div>
                 <label style={labelStyle}>Venue Location:</label>
                 <place-autocomplete
                   id="autocomplete"
                   placeholder="Enter venue address"
+                  ref={autocompleteRef}
                   style={inputStyle}
                 />
               </div>
