@@ -32,27 +32,27 @@ export default function DJContractForm() {
   const [submitted, setSubmitted] = useState(false);
   const autocompleteRef = useRef(null);
 
-  // ✅ Register PlaceAutocompleteElement and handle changes
+  // ✅ Initialize PlaceAutocompleteElement once Google loads
   useEffect(() => {
-    const setupAutocomplete = async () => {
-      if (!window.google || !autocompleteRef.current) return;
-      try {
-        if (!customElements.get('place-autocomplete')) {
+    const loadAutocomplete = async () => {
+      if (window.google && autocompleteRef.current) {
+        try {
           const { PlaceAutocompleteElement } = await window.google.maps.importLibrary('places');
-          customElements.define('place-autocomplete', PlaceAutocompleteElement);
-        }
+          if (!customElements.get('place-autocomplete')) {
+            customElements.define('place-autocomplete', PlaceAutocompleteElement);
+          }
 
-        const input = autocompleteRef.current;
-        input.addEventListener('placechanged', () => {
-          const value = input.value;
-          setFormData(prev => ({ ...prev, venueLocation: value }));
-        });
-      } catch (err) {
-        console.error('Google Maps Autocomplete failed:', err);
+          const autocomplete = autocompleteRef.current;
+          autocomplete.addEventListener('placechanged', () => {
+            setFormData(prev => ({ ...prev, venueLocation: autocomplete.value }));
+          });
+        } catch (err) {
+          console.error('Failed to initialize Place Autocomplete:', err);
+        }
       }
     };
 
-    if (window.google) setupAutocomplete();
+    loadAutocomplete();
   }, []);
 
   useEffect(() => {
@@ -107,25 +107,23 @@ export default function DJContractForm() {
     </ul>
   );
 
-  const tooltipContentStyle = {
-    maxWidth: '320px',
-    padding: '1rem',
-    backgroundColor: '#1f2937',
-    color: '#fff',
-    borderRadius: '10px',
-    boxShadow: '0 0 15px rgba(0,0,0,0.3)',
-    textAlign: 'center',
-    zIndex: 9999,
-  };
-
-  const infoIcon = (text) => (
+  const tooltip = (text) => (
     <Tippy
       placement="bottom"
       interactive
       offset={[0, 10]}
       render={() => (
         <motion.div
-          style={tooltipContentStyle}
+          style={{
+            maxWidth: '320px',
+            padding: '1rem',
+            backgroundColor: '#1f2937',
+            color: '#fff',
+            borderRadius: '10px',
+            boxShadow: '0 0 15px rgba(0,0,0,0.3)',
+            textAlign: 'center',
+            zIndex: 9999,
+          }}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
@@ -161,16 +159,6 @@ export default function DJContractForm() {
     justifyContent: 'space-between'
   };
 
-  const pageStyle = {
-    minHeight: '100vh',
-    padding: '2rem',
-    fontFamily: 'Helvetica Neue, Segoe UI, Roboto, sans-serif',
-    backgroundImage: `url('/dj-background.jpg')`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat'
-  };
-
   const linkButtonStyle = {
     display: 'inline-block',
     margin: '0.5rem',
@@ -189,8 +177,23 @@ export default function DJContractForm() {
         strategy="beforeInteractive"
       />
 
-      <div style={pageStyle}>
-        <div style={{ maxWidth: '700px', margin: '0 auto', backgroundColor: 'rgba(255,255,255,0.9)', padding: '2.5rem', borderRadius: '20px', boxShadow: '0 8px 30px rgba(0,0,0,0.2)' }}>
+      <div style={{
+        minHeight: '100vh',
+        padding: '2rem',
+        backgroundImage: "url('/dj-background.jpg')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        fontFamily: 'Helvetica Neue, Segoe UI, Roboto, sans-serif',
+      }}>
+        <div style={{
+          maxWidth: '700px',
+          margin: '0 auto',
+          backgroundColor: 'rgba(255,255,255,0.9)',
+          padding: '2.5rem',
+          borderRadius: '20px',
+          boxShadow: '0 8px 30px rgba(0,0,0,0.2)'
+        }}>
           <h1 style={{ textAlign: 'center', fontSize: '2.25rem', color: '#000' }}>🎧 Live City DJ Contract</h1>
 
           <p style={{ textAlign: 'center', color: '#111', marginBottom: '0.5rem' }}>
@@ -204,12 +207,12 @@ export default function DJContractForm() {
 
           {!submitted ? (
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
-              {["clientName", "email", "contactPhone", "eventType", "guestCount", "venueName", "eventDate", "startTime", "endTime"].map((field) => (
+              {["clientName", "email", "contactPhone", "eventType", "guestCount", "venueName"].map((field) => (
                 <div key={field}>
                   <label style={labelStyle}>{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</label>
                   <input
                     name={field}
-                    type={field.includes('Date') ? 'date' : field.includes('Time') ? 'time' : field.includes('guest') ? 'number' : 'text'}
+                    type={field.includes('guest') ? 'number' : 'text'}
                     required
                     style={inputStyle}
                     value={formData[field]}
@@ -218,7 +221,7 @@ export default function DJContractForm() {
                 </div>
               ))}
 
-              {/* ✅ Properly positioned and working venue location autocomplete */}
+              {/* ✅ Correct position + working autocomplete */}
               <div>
                 <label style={labelStyle}>Venue Location:</label>
                 <place-autocomplete
@@ -228,6 +231,20 @@ export default function DJContractForm() {
                   style={inputStyle}
                 />
               </div>
+
+              {["eventDate", "startTime", "endTime"].map((field) => (
+                <div key={field}>
+                  <label style={labelStyle}>{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</label>
+                  <input
+                    name={field}
+                    type={field.includes("Date") ? "date" : "time"}
+                    required
+                    style={inputStyle}
+                    value={formData[field]}
+                    onChange={handleChange}
+                  />
+                </div>
+              ))}
 
               {[{
                 name: "lighting",
@@ -243,7 +260,7 @@ export default function DJContractForm() {
                 description: "Includes slideshow or music video projections."
               }].map(({ name, label, description }) => (
                 <div key={name}>
-                  <label style={labelStyle}>{label}{infoIcon(description)}</label>
+                  <label style={labelStyle}>{label}{tooltip(description)}</label>
                   <input type="checkbox" name={name} checked={formData[name]} onChange={handleChange} />
                 </div>
               ))}
@@ -254,7 +271,7 @@ export default function DJContractForm() {
               </div>
 
               <div>
-                <label style={labelStyle}>Payment Method:{infoIcon('Select your preferred payment method for booking confirmation.')}</label>
+                <label style={labelStyle}>Payment Method:{tooltip('Select your preferred payment method for booking confirmation.')}</label>
                 <select name="paymentMethod" required style={inputStyle} value={formData.paymentMethod} onChange={handleChange}>
                   <option value="">Choose one</option>
                   <option value="Venmo - @Bobby-Martin-64">Venmo</option>
@@ -264,7 +281,7 @@ export default function DJContractForm() {
               </div>
 
               <div>
-                <label style={labelStyle}>Terms & Conditions {infoIcon('Non-refundable $100 deposit required. Remaining balance due 2 weeks before event. Cancellations within 30 days require full payment.')}</label>
+                <label style={labelStyle}>Terms & Conditions {tooltip('Non-refundable $100 deposit required. Remaining balance due 2 weeks before event. Cancellations within 30 days require full payment.')}</label>
                 <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
               </div>
 
