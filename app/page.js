@@ -5,6 +5,7 @@ import Script from 'next/script';
 import { collection, addDoc } from 'firebase/firestore';
 import db from '../lib/firebase';
 import Image from 'next/image';
+import confetti from 'canvas-confetti';
 
 export default function DJContractForm() {
   const [formData, setFormData] = useState({
@@ -52,6 +53,16 @@ export default function DJContractForm() {
     });
   };
 
+  useEffect(() => {
+    if (submitted) {
+      confetti({
+        particleCount: 150,
+        spread: 80,
+        origin: { y: 0.6 },
+      });
+    }
+  }, [submitted]);
+
   const handleChange = (e) => {
     const { name, type, value, checked } = e.target;
     setFormData((prev) => ({
@@ -94,8 +105,22 @@ export default function DJContractForm() {
     marginBottom: '1rem',
     borderRadius: '8px',
     border: darkMode ? '1px solid #333' : '1px solid #ccc',
-    backgroundColor: darkMode ? '#1f2937' : '#fff',
+    backgroundColor: darkMode ? '#1f2937' : 'rgba(255, 255, 255, 0.8)',
     color: darkMode ? '#f9fafb' : '#111',
+    boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+  };
+
+  const pageStyle = {
+    minHeight: '100vh',
+    padding: '2rem',
+    fontFamily: 'sans-serif',
+    backgroundImage: "url('/bg-light.jpg')",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    backgroundColor: darkMode ? '#000' : '#f3f4f6',
+    position: 'relative',
+    transition: 'background-color 0.3s ease-in-out'
   };
 
   return (
@@ -106,12 +131,7 @@ export default function DJContractForm() {
         onLoad={initAutocomplete}
       />
 
-      <div style={{
-        minHeight: '100vh',
-        background: darkMode ? '#111' : '#f3f4f6',
-        padding: '2rem',
-        fontFamily: 'sans-serif',
-      }}>
+      <div style={pageStyle}>
         <button
           onClick={toggleDarkMode}
           style={{
@@ -139,7 +159,7 @@ export default function DJContractForm() {
             <p>Cash App: $LiveCity</p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} style={{ maxWidth: '600px', margin: '2rem auto' }}>
+          <form onSubmit={handleSubmit} style={{ maxWidth: '600px', margin: '2rem auto', backgroundColor: 'rgba(255, 255, 255, 0.85)', borderRadius: '10px', padding: '2rem', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
             <label>Client Name:</label>
             <input name="clientName" required style={inputStyle} value={formData.clientName} onChange={handleChange} />
 
