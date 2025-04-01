@@ -147,6 +147,17 @@ export default function DJContractForm() {
     backgroundRepeat: 'no-repeat'
   };
 
+  const linkButtonStyle = {
+    display: 'inline-block',
+    margin: '0.5rem',
+    padding: '0.75rem 1.5rem',
+    backgroundColor: '#2563eb',
+    color: '#fff',
+    textDecoration: 'none',
+    borderRadius: '10px',
+    fontWeight: 'bold'
+  };
+
   return (
     <>
       <Script
@@ -238,10 +249,15 @@ export default function DJContractForm() {
               style={{ textAlign: 'center', color: '#000' }}
             >
               <h2>✅ Submitted!</h2>
+              <p style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '1rem' }}>
+                🎉 Congratulations on successfully booking your event. Please submit your deposit or full payment to reserve your date.
+              </p>
               {itemizedTotal()}
-              <p>Send payment to confirm your booking:</p>
-              <p>Venmo: @Bobby-Martin-64</p>
-              <p>Cash App: $LiveCity</p>
+              <p style={{ margin: '1rem 0 0.5rem' }}>Send payment to confirm your booking:</p>
+              <div>
+                <a href="https://venmo.com/Bobby-Martin-64" target="_blank" rel="noopener noreferrer" style={linkButtonStyle}>Pay with Venmo</a>
+                <a href="https://cash.app/$LiveCity" target="_blank" rel="noopener noreferrer" style={linkButtonStyle}>Pay with Cash App</a>
+              </div>
             </motion.div>
           )}
         </div>
