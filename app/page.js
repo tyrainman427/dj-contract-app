@@ -35,20 +35,17 @@ export default function DJContractForm() {
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
   const initAutocomplete = () => {
-    if (!window.google || !window.google.maps || !autocompleteInputRef.current) return;
+    if (!window.google || !autocompleteInputRef.current) return;
 
     const autocomplete = new window.google.maps.places.Autocomplete(autocompleteInputRef.current, {
       types: ['geocode'],
-      fields: ['formatted_address'],
+      fields: ['formatted_address']
     });
 
     autocomplete.addListener('place_changed', () => {
       const place = autocomplete.getPlace();
-      if (place?.formatted_address) {
-        setFormData((prev) => ({
-          ...prev,
-          venueLocation: place.formatted_address,
-        }));
+      if (place && place.formatted_address) {
+        setFormData((prev) => ({ ...prev, venueLocation: place.formatted_address }));
       }
     });
   };
@@ -56,9 +53,9 @@ export default function DJContractForm() {
   useEffect(() => {
     if (submitted) {
       confetti({
-        particleCount: 150,
-        spread: 80,
-        origin: { y: 0.6 },
+        particleCount: 200,
+        spread: 100,
+        origin: { y: 0.6 }
       });
     }
   }, [submitted]);
@@ -105,7 +102,7 @@ export default function DJContractForm() {
     marginBottom: '1rem',
     borderRadius: '8px',
     border: darkMode ? '1px solid #333' : '1px solid #ccc',
-    backgroundColor: darkMode ? '#1f2937' : 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: darkMode ? '#1f2937' : 'rgba(255, 255, 255, 0.85)',
     color: darkMode ? '#f9fafb' : '#111',
     boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
   };
@@ -114,12 +111,11 @@ export default function DJContractForm() {
     minHeight: '100vh',
     padding: '2rem',
     fontFamily: 'sans-serif',
-    backgroundImage: "url('/bg-light.jpg')",
+    backgroundImage: `url('/bg-light.jpg')`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
     backgroundColor: darkMode ? '#000' : '#f3f4f6',
-    position: 'relative',
     transition: 'background-color 0.3s ease-in-out'
   };
 
@@ -142,7 +138,7 @@ export default function DJContractForm() {
             color: darkMode ? '#111' : '#f3f4f6',
             border: 'none',
             borderRadius: '6px',
-            cursor: 'pointer',
+            cursor: 'pointer'
           }}
         >
           {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
@@ -151,7 +147,7 @@ export default function DJContractForm() {
         <h1 style={{ textAlign: 'center', color: darkMode ? '#fff' : '#111' }}>🎧 DJ Contract Form</h1>
 
         {submitted ? (
-          <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+          <div style={{ textAlign: 'center', marginTop: '2rem', color: darkMode ? '#fff' : '#111' }}>
             <h2>✅ Submitted!</h2>
             <p>Total Due: <strong>${calculateTotal()}</strong></p>
             <p>Send payment to confirm your booking:</p>
@@ -183,7 +179,7 @@ export default function DJContractForm() {
               name="venueLocation"
               ref={autocompleteInputRef}
               style={inputStyle}
-              value={formData.venueLocation}
+              defaultValue={formData.venueLocation}
               onChange={handleChange}
               placeholder="Enter venue address"
               required
