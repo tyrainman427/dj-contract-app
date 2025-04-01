@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import Script from 'next/script';
 import { collection, addDoc } from 'firebase/firestore';
 import db from '../lib/firebase';
@@ -31,22 +31,28 @@ export default function DJContractForm() {
   });
 
   const [submitted, setSubmitted] = useState(false);
-  const [darkMode, setDarkMode] = useState(false); // ✅ dark mode toggle
-  const autocompleteInputRef = useRef(null);
 
-  const initAutocomplete = () => {
-    if (!window.google || !autocompleteInputRef.current) return;
-    const autocomplete = new window.google.maps.places.Autocomplete(autocompleteInputRef.current, {
-      types: ['geocode'],
-      fields: ['formatted_address'],
-    });
-    autocomplete.addListener('place_changed', () => {
-      const place = autocomplete.getPlace();
-      if (place?.formatted_address) {
-        setFormData(prev => ({ ...prev, venueLocation: place.formatted_address }));
+  // ✅ Set up PlaceAutocompleteElement
+  useEffect(() => {
+    const setupAutocomplete = async () => {
+      if ('customElements' in window && !customElements.get('place-autocomplete')) {
+        const { PlaceAutocompleteElement } = await window.google.maps.importLibrary('places');
+        customElements.define('place-autocomplete', PlaceAutocompleteElement);
       }
-    });
-  };
+
+      const input = document.getElementById('autocomplete');
+      if (input) {
+        input.addEventListener('placechanged', () => {
+          const value = input.value;
+          setFormData(prev => ({ ...prev, venueLocation: value }));
+        });
+      }
+    };
+
+    if (window.google) {
+      setupAutocomplete();
+    }
+  }, []);
 
   useEffect(() => {
     if (submitted) {
@@ -90,7 +96,7 @@ export default function DJContractForm() {
   };
 
   const itemizedTotal = () => (
-    <ul style={{ listStyle: 'none', padding: 0, marginTop: '1rem', color: darkMode ? '#fff' : '#000' }}>
+    <ul style={{ listStyle: 'none', padding: 0, marginTop: '1rem', color: '#000' }}>
       <li>🎶 Base Package: ${BASE}</li>
       {formData.lighting && <li>💡 Lighting: ${LIGHTING}</li>}
       {formData.photography && <li>📸 Photography: ${PHOTO}</li>}
@@ -100,16 +106,16 @@ export default function DJContractForm() {
     </ul>
   );
 
-  const tooltipContentStyle = (dark) => ({
+  const tooltipContentStyle = {
     maxWidth: '320px',
     padding: '1rem',
-    backgroundColor: dark ? '#1f2937' : '#fff',
-    color: dark ? '#fff' : '#000',
+    backgroundColor: '#1f2937',
+    color: '#fff',
     borderRadius: '10px',
     boxShadow: '0 0 15px rgba(0,0,0,0.3)',
     textAlign: 'center',
     zIndex: 9999
-  });
+  };
 
   const infoIcon = (text) => (
     <Tippy
@@ -118,7 +124,7 @@ export default function DJContractForm() {
       offset={[0, 10]}
       render={() => (
         <motion.div
-          style={tooltipContentStyle(darkMode)}
+          style={tooltipContentStyle}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
@@ -147,7 +153,7 @@ export default function DJContractForm() {
 
   const labelStyle = {
     fontWeight: 'bold',
-    color: darkMode ? '#fff' : '#111',
+    color: '#111',
     marginBottom: '0.5rem',
     display: 'flex',
     alignItems: 'center',
@@ -161,9 +167,7 @@ export default function DJContractForm() {
     backgroundImage: `url('/dj-background.jpg')`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    backgroundColor: darkMode ? '#000' : '#fff',
-    color: darkMode ? '#fff' : '#000'
+    backgroundRepeat: 'no-repeat'
   };
 
   const linkButtonStyle = {
@@ -179,29 +183,13 @@ export default function DJContractForm() {
 
   return (
     <>
+      {/* ✅ Google Maps v=beta required for PlaceAutocompleteElement */}
       <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
-        strategy="lazyOnload"
-        onLoad={initAutocomplete}
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-5o9YY4NS8y8F2ZTg8-zibHYRP_1dOEc&libraries=places&v=beta"
+        strategy="beforeInteractive"
       />
 
       <div style={pageStyle}>
-        <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            style={{
-              backgroundColor: '#333',
-              color: '#fff',
-              padding: '0.5rem 1rem',
-              borderRadius: '10px',
-              border: 'none',
-              cursor: 'pointer'
-            }}
-          >
-            Toggle {darkMode ? 'Light' : 'Dark'} Mode
-          </button>
-        </div>
-
         <div style={{ maxWidth: '700px', margin: '0 auto', backgroundColor: 'rgba(255,255,255,0.9)', padding: '2.5rem', borderRadius: '20px', boxShadow: '0 8px 30px rgba(0,0,0,0.2)' }}>
           <h1 style={{ textAlign: 'center', fontSize: '2.25rem', color: '#000' }}>🎧 Live City DJ Contract</h1>
 
@@ -216,21 +204,29 @@ export default function DJContractForm() {
 
           {!submitted ? (
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
-              {["clientName", "email", "contactPhone", "eventType", "guestCount", "venueName", "venueLocation", "eventDate", "startTime", "endTime"].map((field) => (
+              {["clientName", "email", "contactPhone", "eventType", "guestCount", "venueName", "eventDate", "startTime", "endTime"].map((field) => (
                 <div key={field}>
                   <label style={labelStyle}>{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</label>
                   <input
                     name={field}
                     type={field.includes('Date') ? 'date' : field.includes('Time') ? 'time' : field.includes('guest') ? 'number' : 'text'}
                     required
-                    ref={field === 'venueLocation' ? autocompleteInputRef : null}
-                    placeholder={field === 'venueLocation' ? 'Enter venue address' : ''}
                     style={inputStyle}
                     value={formData[field]}
                     onChange={handleChange}
                   />
                 </div>
               ))}
+
+              {/* ✅ Replaced old autocomplete with new one */}
+              <div>
+                <label style={labelStyle}>Venue Location:</label>
+                <place-autocomplete
+                  id="autocomplete"
+                  placeholder="Enter venue address"
+                  style={inputStyle}
+                />
+              </div>
 
               {[{
                 name: "lighting",
@@ -288,11 +284,9 @@ export default function DJContractForm() {
                 🎉 Congratulations on successfully booking your event. Please submit your deposit or full payment to reserve your date.
               </p>
               {itemizedTotal()}
-              <p style={{ margin: '1rem 0 0.5rem' }}>Send payment to confirm your booking:</p>
-              <div>
-                <a href="https://venmo.com/Bobby-Martin-64" target="_blank" rel="noopener noreferrer" style={linkButtonStyle}>Pay with Venmo</a>
-                <a href="https://cash.app/$LiveCity" target="_blank" rel="noopener noreferrer" style={linkButtonStyle}>Pay with Cash App</a>
-              </div>
+              <p>Send payment to confirm your booking:</p>
+              <a href="https://venmo.com/Bobby-Martin-64" target="_blank" rel="noopener noreferrer" style={linkButtonStyle}>Pay with Venmo</a>
+              <a href="https://cash.app/$LiveCity" target="_blank" rel="noopener noreferrer" style={linkButtonStyle}>Pay with Cash App</a>
             </motion.div>
           )}
         </div>
