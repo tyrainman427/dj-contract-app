@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from 'react';
 import Script from 'next/script';
 import { collection, addDoc } from 'firebase/firestore';
 import db from '../lib/firebase';
-import Image from 'next/image';
 import confetti from 'canvas-confetti';
 
 export default function DJContractForm() {
@@ -39,7 +38,7 @@ export default function DJContractForm() {
 
     const autocomplete = new window.google.maps.places.Autocomplete(autocompleteInputRef.current, {
       types: ['geocode'],
-      fields: ['formatted_address']
+      fields: ['formatted_address'],
     });
 
     autocomplete.addListener('place_changed', () => {
@@ -52,11 +51,33 @@ export default function DJContractForm() {
 
   useEffect(() => {
     if (submitted) {
-      confetti({
-        particleCount: 200,
-        spread: 100,
-        origin: { y: 0.6 }
-      });
+      const duration = 2 * 1000;
+      const animationEnd = Date.now() + duration;
+      const colors = ['#bb0000', '#ffffff'];
+
+      const interval = setInterval(() => {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        confetti({
+          particleCount: 50,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+          colors,
+        });
+
+        confetti({
+          particleCount: 50,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+          colors,
+        });
+      }, 250);
     }
   }, [submitted]);
 
@@ -101,24 +122,23 @@ export default function DJContractForm() {
     padding: '12px',
     marginBottom: '1rem',
     borderRadius: '8px',
-    border: darkMode ? '1px solid #333' : '1px solid #ccc',
-    backgroundColor: darkMode ? '#1f2937' : 'rgba(255, 255, 255, 0.85)',
-    color: darkMode ? '#f9fafb' : '#111',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+    border: darkMode ? '1px solid #ccc' : '1px solid #333',
+    backgroundColor: darkMode ? 'rgba(20,20,20,0.85)' : 'rgba(255, 255, 255, 0.85)',
+    color: darkMode ? '#fff' : '#000',
+    boxShadow: '0 2px 6px rgba(0,0,0,0.2)'
   };
 
   const pageStyle = {
     minHeight: '100vh',
     padding: '2rem',
     fontFamily: 'sans-serif',
-    backgroundImage: `url('/dj-background.jpg')`, // ✅ use your actual filename
+    backgroundImage: `url('/dj-background.jpg')`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
     backgroundColor: darkMode ? '#000' : '#f3f4f6',
     transition: 'background-color 0.3s ease-in-out'
   };
-  
 
   return (
     <>
@@ -156,7 +176,7 @@ export default function DJContractForm() {
             <p>Cash App: $LiveCity</p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} style={{ maxWidth: '600px', margin: '2rem auto', backgroundColor: 'rgba(255, 255, 255, 0.85)', borderRadius: '10px', padding: '2rem', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
+          <form onSubmit={handleSubmit} style={{ maxWidth: '600px', margin: '2rem auto', backgroundColor: 'rgba(255, 255, 255, 0.85)', borderRadius: '10px', padding: '2rem', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', color: darkMode ? '#fff' : '#111' }}>
             <label>Client Name:</label>
             <input name="clientName" required style={inputStyle} value={formData.clientName} onChange={handleChange} />
 
@@ -180,7 +200,7 @@ export default function DJContractForm() {
               name="venueLocation"
               ref={autocompleteInputRef}
               style={inputStyle}
-              defaultValue={formData.venueLocation}
+              value={formData.venueLocation}
               onChange={handleChange}
               placeholder="Enter venue address"
               required
