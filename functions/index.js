@@ -1,16 +1,16 @@
 const { onSchedule } = require('firebase-functions/v2/scheduler');
 const admin = require('firebase-admin');
 require('dotenv').config();
-const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args)); // ✅ here
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 admin.initializeApp();
 const db = admin.firestore();
 
-exports.sendReminderEmails = onSchedule('every 24 hours', async (event) => {
+exports.sendReminderEmails = onSchedule('every 24 hours', async () => {
   const today = new Date();
 
-  // 🧪 TESTING MODE: Use today's date
-  const reminderDate = new Date(today);
+  // ✅ Production: look ahead 14 days
+  const reminderDate = new Date(today.setDate(today.getDate() + 14));
 
   const year = reminderDate.getFullYear();
   const month = String(reminderDate.getMonth() + 1).padStart(2, '0');
@@ -32,6 +32,13 @@ exports.sendReminderEmails = onSchedule('every 24 hours', async (event) => {
     for (const doc of snapshot.docs) {
       const data = doc.data();
 
+      // ✅ Skip if already sent
+      if (data.reminderSent) {
+        console.log(`⏭ Already sent to ${data.email}, skipping.`);
+        continue;
+      }
+
+      // ✅ Send the reminder email via EmailJS REST API
       await fetch('https://api.emailjs.com/api/v1.0/email/send', {
         method: 'POST',
         headers: {
@@ -40,7 +47,7 @@ exports.sendReminderEmails = onSchedule('every 24 hours', async (event) => {
         },
         body: JSON.stringify({
           service_id: process.env.EMAILJS_SERVICE_ID,
-          template_id: process.env.EMAILJS_TEMPLATE_ID,
+          template_id: process.env.EMAILJS_REMINDER_TEMPLATE_ID,
           template_params: {
             client_name: data.clientName,
             client_email: data.email,
@@ -50,7 +57,11 @@ exports.sendReminderEmails = onSchedule('every 24 hours', async (event) => {
           }
         })
       });
-      
+
+      // ✅ Mark reminder as sent
+      await db.collection('contracts').doc(doc.id).update({
+        reminderSent: true
+      });
 
       console.log(`✅ Reminder sent to ${data.email}`);
     }

@@ -1,0 +1,16 @@
+[debug] [2025-04-01T01:10:19.842Z] ----------------------------------------------------------------------
+[debug] [2025-04-01T01:10:19.844Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\B.Martin\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions
+[debug] [2025-04-01T01:10:19.844Z] CLI Version:   14.0.1
+[debug] [2025-04-01T01:10:19.844Z] Platform:      win32
+[debug] [2025-04-01T01:10:19.844Z] Node Version:  v22.14.0
+[debug] [2025-04-01T01:10:19.845Z] Time:          Mon Mar 31 2025 21:10:19 GMT-0400 (Eastern Daylight Time)
+[debug] [2025-04-01T01:10:19.845Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-04-01T01:10:20.020Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-04-01T01:10:20.020Z] > authorizing via signed-in user (lcityfilms@gmail.com)
+[debug] [2025-04-01T01:10:20.020Z] [iam] checking project dj-contract-app for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2025-04-01T01:10:20.021Z] Checked if tokens are valid: true, expires at: 1743472947985
+[debug] [2025-04-01T01:10:20.022Z] Checked if tokens are valid: true, expires at: 1743472947985
+[debug] [2025-04-01T01:10:20.022Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/dj-contract-app:testIamPermissions [none]
+[debug] [2025-04-01T01:10:20.022Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/dj-contract-app:testIamPermissions x-goog-quota-user=projects/dj-contract-app
+[debug] [2025-04-01T01:10:20.023Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/dj-contract-app:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
