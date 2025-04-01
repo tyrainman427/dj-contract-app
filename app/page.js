@@ -7,7 +7,8 @@ import db from '../lib/firebase';
 import confetti from 'canvas-confetti';
 import 'tippy.js/dist/tippy.css';
 import Tippy from '@tippyjs/react/headless';
-import { FaInfoCircle, FaCalendarAlt, FaClock, FaUser, FaMapMarkerAlt, FaCamera, FaVideo, FaLightbulb } from 'react-icons/fa';
+import { motion } from 'framer-motion';
+import { FaInfoCircle } from 'react-icons/fa';
 
 export default function DJContractForm() {
   const [formData, setFormData] = useState({
@@ -25,7 +26,6 @@ export default function DJContractForm() {
     lighting: false,
     photography: false,
     videoVisuals: false,
-    standardPackage: true,
     agreeToTerms: false,
     additionalHours: 0,
   });
@@ -88,6 +88,17 @@ export default function DJContractForm() {
     return total;
   };
 
+  const itemizedTotal = () => (
+    <ul style={{ listStyle: 'none', padding: 0, marginTop: '1rem', color: '#000' }}>
+      <li>🎶 Base Package: ${BASE}</li>
+      {formData.lighting && <li>💡 Lighting: ${LIGHTING}</li>}
+      {formData.photography && <li>📸 Photography: ${PHOTO}</li>}
+      {formData.videoVisuals && <li>📽️ Video Visuals: ${VIDEO}</li>}
+      {formData.additionalHours > 0 && <li>⏱️ Additional Hours: ${formData.additionalHours * EXTRA_HOUR}</li>}
+      <li><strong>Total: ${calculateTotal()}</strong></li>
+    </ul>
+  );
+
   const tooltipContentStyle = {
     maxWidth: '320px',
     padding: '1rem',
@@ -136,17 +147,6 @@ export default function DJContractForm() {
     backgroundRepeat: 'no-repeat'
   };
 
-  const itemizedTotal = () => (
-    <ul style={{ listStyle: 'none', padding: 0, marginTop: '1rem', color: '#000' }}>
-      <li>🎶 Base Package: ${BASE}</li>
-      {formData.lighting && <li>💡 Lighting: ${LIGHTING}</li>}
-      {formData.photography && <li>📸 Photography: ${PHOTO}</li>}
-      {formData.videoVisuals && <li>📽️ Video Visuals: ${VIDEO}</li>}
-      {formData.additionalHours > 0 && <li>⏱️ Additional Hours: ${formData.additionalHours * EXTRA_HOUR}</li>}
-      <li><strong>Total: ${calculateTotal()}</strong></li>
-    </ul>
-  );
-
   return (
     <>
       <Script
@@ -164,34 +164,98 @@ export default function DJContractForm() {
             📧 <a href="mailto:therealdjbobbydrake@gmail.com" style={{ color: '#0070f3' }}>therealdjbobbydrake@gmail.com</a>
           </p>
 
-          {submitted ? (
-            <div style={{ textAlign: 'center' }}>
+          {!submitted ? (
+            <motion.form
+              onSubmit={handleSubmit}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.6 }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}
+            >
+              {["clientName", "email", "contactPhone", "eventType", "guestCount", "venueName", "venueLocation", "eventDate", "startTime", "endTime"].map((field) => (
+                <motion.div
+                  key={field}
+                  whileFocus={{ scale: 1.03 }}
+                  whileHover={{ scale: 1.01 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <label style={labelStyle}>{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</label>
+                  <input
+                    name={field}
+                    type={field.includes('Date') ? 'date' : field.includes('Time') ? 'time' : field.includes('guest') ? 'number' : 'text'}
+                    required
+                    ref={field === 'venueLocation' ? autocompleteInputRef : null}
+                    placeholder={field === 'venueLocation' ? 'Enter venue address' : ''}
+                    style={inputStyle}
+                    value={formData[field]}
+                    onChange={handleChange}
+                  />
+                </motion.div>
+              ))}
+
+              {[{
+                name: "lighting",
+                label: "Event Lighting (+$100)",
+                description: "Includes setup 2 hours early and dance floor lighting."
+              }, {
+                name: "photography",
+                label: "Photography (+$150)",
+                description: "Includes 50 high-quality candid shots delivered within 48 hours."
+              }, {
+                name: "videoVisuals",
+                label: "Video Visuals (+$100)",
+                description: "Includes slideshow or music video projections."
+              }].map(({ name, label, description }) => (
+                <motion.div key={name} whileHover={{ scale: 1.01 }}>
+                  <label style={labelStyle}>{label}{infoIcon(description)}</label>
+                  <input type="checkbox" name={name} checked={formData[name]} onChange={handleChange} />
+                </motion.div>
+              ))}
+
+              <motion.div whileHover={{ scale: 1.01 }}>
+                <label style={labelStyle}>Additional Hours ($75/hr):</label>
+                <input type="number" name="additionalHours" min="0" style={inputStyle} value={formData.additionalHours} onChange={handleChange} />
+              </motion.div>
+
+              <motion.div whileHover={{ scale: 1.01 }}>
+                <label style={labelStyle}>Payment Method:{infoIcon('Select your preferred payment method for booking confirmation.')}</label>
+                <select name="paymentMethod" required style={inputStyle} value={formData.paymentMethod} onChange={handleChange}>
+                  <option value="">Choose one</option>
+                  <option value="Venmo - @Bobby-Martin-64">Venmo</option>
+                  <option value="Cash App - $LiveCity">Cash App</option>
+                  <option value="Cash">Cash</option>
+                </select>
+              </motion.div>
+
+              <motion.div whileHover={{ scale: 1.01 }}>
+                <label style={labelStyle}>Terms & Conditions {infoIcon('Non-refundable $100 deposit required. Remaining balance due 2 weeks before event. Cancellations within 30 days require full payment.')}</label>
+                <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
+              </motion.div>
+
+              {itemizedTotal()}
+              <motion.button
+                type="submit"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                style={{ ...inputStyle, backgroundColor: '#2563eb', color: '#fff', cursor: 'pointer' }}
+              >
+                Submit Contract
+              </motion.button>
+            </motion.form>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              style={{ textAlign: 'center', color: '#000' }}
+            >
               <h2>✅ Submitted!</h2>
               {itemizedTotal()}
               <p>Send payment to confirm your booking:</p>
               <p>Venmo: @Bobby-Martin-64</p>
               <p>Cash App: $LiveCity</p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit}>
-              {/* ... form fields remain unchanged ... */}
-
-              <label style={labelStyle}>Payment Method:{infoIcon('Select your preferred payment method for booking confirmation.')}</label>
-              <select name="paymentMethod" required style={inputStyle} value={formData.paymentMethod} onChange={handleChange}>
-                <option value="">Choose one</option>
-                <option value="Venmo - @Bobby-Martin-64">Venmo</option>
-                <option value="Cash App - $LiveCity">Cash App</option>
-                <option value="Cash">Cash</option>
-              </select>
-
-              <label style={labelStyle}>Terms & Conditions {infoIcon('Non-refundable $100 deposit required. Remaining balance due 2 weeks before event. Cancellations within 30 days require full payment.')}</label>
-              <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
-
-              {itemizedTotal()}
-              <button type="submit" style={{ ...inputStyle, backgroundColor: '#2563eb', color: '#fff', cursor: 'pointer' }}>
-                Submit Contract
-              </button>
-            </form>
+            </motion.div>
           )}
         </div>
       </div>
