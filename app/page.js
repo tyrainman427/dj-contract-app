@@ -5,7 +5,22 @@ import { collection, addDoc } from 'firebase/firestore';
 import db from '../lib/firebase';
 import confetti from 'canvas-confetti';
 import { motion } from 'framer-motion';
-import { FaInfoCircle } from 'react-icons/fa';
+import { 
+  FaInfoCircle, 
+  FaUser, 
+  FaEnvelope, 
+  FaPhone, 
+  FaCalendarAlt, 
+  FaUsers, 
+  FaBuilding, 
+  FaMapMarkerAlt, 
+  FaClock, 
+  FaLightbulb, 
+  FaCamera, 
+  FaVideo, 
+  FaMoneyCheckAlt, 
+  FaFileContract 
+} from 'react-icons/fa';
 
 export default function DJContractForm() {
   const [formData, setFormData] = useState({
@@ -29,6 +44,36 @@ export default function DJContractForm() {
 
   const [submitted, setSubmitted] = useState(false);
   const [infoPopup, setInfoPopup] = useState(null);
+
+  // Icon mappings for the main fields
+  const fieldIcons = {
+    clientName: <FaUser style={{ color: '#ff6347', marginRight: '0.5rem' }} />,
+    email: <FaEnvelope style={{ color: '#1e90ff', marginRight: '0.5rem' }} />,
+    contactPhone: <FaPhone style={{ color: '#32cd32', marginRight: '0.5rem' }} />,
+    eventType: <FaCalendarAlt style={{ color: '#ffa500', marginRight: '0.5rem' }} />,
+    guestCount: <FaUsers style={{ color: '#8a2be2', marginRight: '0.5rem' }} />,
+    venueName: <FaBuilding style={{ color: '#ff4500', marginRight: '0.5rem' }} />,
+  };
+
+  // Icons for time related fields.
+  const timeIcons = {
+    eventDate: <FaCalendarAlt style={{ color: '#ff1493', marginRight: '0.5rem' }} />,
+    startTime: <FaClock style={{ color: '#20b2aa', marginRight: '0.5rem' }} />,
+    endTime: <FaClock style={{ color: '#20b2aa', marginRight: '0.5rem' }} />,
+  };
+
+  // Icons for service checkboxes.
+  const serviceIcons = {
+    lighting: <FaLightbulb style={{ color: '#ffd700', marginRight: '0.5rem' }} />,
+    photography: <FaCamera style={{ color: '#ff69b4', marginRight: '0.5rem' }} />,
+    videoVisuals: <FaVideo style={{ color: '#00bfff', marginRight: '0.5rem' }} />,
+  };
+
+  // Additional icons for other fields.
+  const venueLocationIcon = <FaMapMarkerAlt style={{ color: '#dc143c', marginRight: '0.5rem' }} />;
+  const additionalHoursIcon = <FaClock style={{ color: '#6a5acd', marginRight: '0.5rem' }} />;
+  const paymentIcon = <FaMoneyCheckAlt style={{ color: '#008000', marginRight: '0.5rem' }} />;
+  const termsIcon = <FaFileContract style={{ color: '#00008b', marginRight: '0.5rem' }} />;
 
   useEffect(() => {
     if (submitted) {
@@ -226,7 +271,9 @@ export default function DJContractForm() {
           borderRadius: '20px',
           boxShadow: '0 8px 30px rgba(0,0,0,0.2)'
         }}>
-          <h1 style={{ textAlign: 'center', fontSize: '2.25rem', color: '#000' }}>🎧 Live City DJ Contract</h1>
+          <h1 style={{ textAlign: 'center', fontSize: '2.25rem', color: '#000' }}>
+            🎧 Live City DJ Contract
+          </h1>
 
           {/* Only show the instruction text when the form is not submitted */}
           {!submitted && (
@@ -245,7 +292,10 @@ export default function DJContractForm() {
               {['clientName', 'email', 'contactPhone', 'eventType', 'guestCount', 'venueName'].map((field) => (
                 <div key={field}>
                   <label style={labelStyle}>
-                    {field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:
+                    <span style={{ display: 'flex', alignItems: 'center' }}>
+                      {fieldIcons[field]} 
+                      {field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:
+                    </span>
                   </label>
                   <input
                     name={field}
@@ -259,7 +309,11 @@ export default function DJContractForm() {
               ))}
 
               <div>
-                <label style={labelStyle}>Venue Location:</label>
+                <label style={labelStyle}>
+                  <span style={{ display: 'flex', alignItems: 'center' }}>
+                    {venueLocationIcon} Venue Location:
+                  </span>
+                </label>
                 <input
                   name="venueLocation"
                   type="text"
@@ -273,7 +327,9 @@ export default function DJContractForm() {
               {['eventDate', 'startTime', 'endTime'].map((field) => (
                 <div key={field}>
                   <label style={labelStyle}>
-                    {field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:
+                    <span style={{ display: 'flex', alignItems: 'center' }}>
+                      {timeIcons[field]} {field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:
+                    </span>
                   </label>
                   <input
                     name={field}
@@ -305,7 +361,9 @@ export default function DJContractForm() {
               ].map(({ name, label, description }) => (
                 <div key={name}>
                   <label style={labelStyle}>
-                    {label}
+                    <span style={{ display: 'flex', alignItems: 'center' }}>
+                      {serviceIcons[name]} {label}
+                    </span>
                     <span onClick={() => setInfoPopup(description)} style={{ color: '#0070f3', marginLeft: 8, cursor: 'pointer' }}>
                       <FaInfoCircle />
                     </span>
@@ -314,9 +372,13 @@ export default function DJContractForm() {
                 </div>
               ))}
 
-              {/* Redesigned compact Additional Hours Field */}
+              {/* Redesigned compact Additional Hours Field with icon */}
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
-                <label style={labelStyle}>Additional Hours ($75/hr):</label>
+                <label style={labelStyle}>
+                  <span style={{ display: 'flex', alignItems: 'center' }}>
+                    {additionalHoursIcon} Additional Hours ($75/hr):
+                  </span>
+                </label>
                 <div style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -368,7 +430,9 @@ export default function DJContractForm() {
 
               <div>
                 <label style={labelStyle}>
-                  Payment Method:
+                  <span style={{ display: 'flex', alignItems: 'center' }}>
+                    {paymentIcon} Payment Method:
+                  </span>
                   <span onClick={() => setInfoPopup('Select your preferred payment method for booking confirmation.')} style={{ color: '#0070f3', marginLeft: 8, cursor: 'pointer' }}>
                     <FaInfoCircle />
                   </span>
@@ -383,7 +447,9 @@ export default function DJContractForm() {
 
               <div>
                 <label style={labelStyle}>
-                  Terms & Conditions{' '}
+                  <span style={{ display: 'flex', alignItems: 'center' }}>
+                    {termsIcon} Terms & Conditions
+                  </span>
                   <span onClick={() => setInfoPopup('Non-refundable $100 deposit required. Remaining balance due 2 weeks before event. Cancellations within 30 days require full payment.')} style={{ color: '#0070f3', marginLeft: 8, cursor: 'pointer' }}>
                     <FaInfoCircle />
                   </span>
