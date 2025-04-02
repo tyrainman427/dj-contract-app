@@ -45,7 +45,7 @@ export default function DJContractForm() {
   const [submitted, setSubmitted] = useState(false);
   const [infoPopup, setInfoPopup] = useState(null);
 
-  // Icon mappings for the main fields
+  // Icon mappings for the main fields.
   const fieldIcons = {
     clientName: <FaUser style={{ color: '#ff6347', marginRight: '0.5rem' }} />,
     email: <FaEnvelope style={{ color: '#1e90ff', marginRight: '0.5rem' }} />,
@@ -346,7 +346,7 @@ export default function DJContractForm() {
                 {
                   name: 'lighting',
                   label: 'Event Lighting (+$100)',
-                  description: 'Requires 2 hour early entry to venue for setup',
+                  description: 'Requires 2 hour early entry to venue for setup. Includes sound activated strobing lights.',
                 },
                 {
                   name: 'photography',
