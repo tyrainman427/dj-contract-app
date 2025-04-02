@@ -49,16 +49,35 @@ export default function DJContractForm() {
     }));
   };
 
+  // Basic manual address validation:
+  // Checks if the address contains at least one letter, one number, and is at least 5 characters long.
+  const validateAddress = (address) => {
+    const regex = /^(?=.*[a-zA-Z])(?=.*\d).{5,}$/;
+    return regex.test(address);
+  };
+
   const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
   const validatePhone = (phone) =>
     /^[0-9]{10}$/.test(phone.replace(/\D/g, ''));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate start and end times
+    if (formData.startTime && formData.endTime) {
+      // Construct temporary Date objects (assuming same day)
+      const start = new Date(`1970-01-01T${formData.startTime}:00`);
+      const end = new Date(`1970-01-01T${formData.endTime}:00`);
+      if (start >= end) {
+        return alert('Start time must be before end time.');
+      }
+    }
+
     if (!validateEmail(formData.email)) return alert('Enter a valid email.');
-    if (!validatePhone(formData.contactPhone))
-      return alert('Enter a valid phone number.');
+    if (!validatePhone(formData.contactPhone)) return alert('Enter a valid phone number.');
+    if (!validateAddress(formData.venueLocation)) return alert('Please enter a valid address.');
     if (!formData.agreeToTerms) return alert('Please agree to the terms.');
+
     try {
       await addDoc(collection(db, 'contracts'), formData);
       setSubmitted(true);
@@ -266,7 +285,7 @@ export default function DJContractForm() {
                 </div>
               ))}
 
-              {/* Redesigned Additional Hours Field */}
+              {/* Redesigned Additional Hours Field with improved contrast */}
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
                 <label style={labelStyle}>Additional Hours ($75/hr):</label>
                 <div style={{
@@ -275,24 +294,43 @@ export default function DJContractForm() {
                   border: '1px solid #ccc',
                   borderRadius: '8px',
                   overflow: 'hidden',
-                  width: '100px',
-                  marginLeft: '1rem'
+                  width: '120px',
+                  marginLeft: '1rem',
+                  backgroundColor: '#e2e8f0'
                 }}>
-                  <button type="button" onClick={() => setFormData(prev => ({ ...prev, additionalHours: Math.max(prev.additionalHours - 1, 0) }))} style={{
-                    padding: '0.25rem 0.5rem',
-                    backgroundColor: '#f0f0f0',
-                    border: 'none',
-                    cursor: 'pointer'
-                  }}>-</button>
-                  <span style={{ padding: '0.25rem 0.5rem', minWidth: '30px', textAlign: 'center' }}>
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, additionalHours: Math.max(prev.additionalHours - 1, 0) }))}
+                    style={{
+                      padding: '0.5rem',
+                      backgroundColor: '#cbd5e0',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    -
+                  </button>
+                  <span style={{
+                    padding: '0.5rem',
+                    minWidth: '30px',
+                    textAlign: 'center',
+                    color: '#000',
+                    fontWeight: 'bold'
+                  }}>
                     {formData.additionalHours}
                   </span>
-                  <button type="button" onClick={() => setFormData(prev => ({ ...prev, additionalHours: prev.additionalHours + 1 }))} style={{
-                    padding: '0.25rem 0.5rem',
-                    backgroundColor: '#f0f0f0',
-                    border: 'none',
-                    cursor: 'pointer'
-                  }}>+</button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, additionalHours: prev.additionalHours + 1 }))}
+                    style={{
+                      padding: '0.5rem',
+                      backgroundColor: '#cbd5e0',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    +
+                  </button>
                 </div>
               </div>
 
