@@ -1,4 +1,4 @@
-// DJContractForm.js — updated with stylish modal popups and redesigned additional hours field
+// DJContractForm.js — full version with redesigned tooltips and additional hours UI
 
 'use client';
 
@@ -95,7 +95,6 @@ export default function DJContractForm() {
   );
 
   const showModal = (text) => setModalContent(text);
-
   const closeModal = () => setModalContent(null);
 
   const tooltip = (text) => (
@@ -124,17 +123,6 @@ export default function DJContractForm() {
     justifyContent: 'space-between'
   };
 
-  const linkButtonStyle = {
-    display: 'inline-block',
-    margin: '0.5rem',
-    padding: '0.75rem 1.5rem',
-    backgroundColor: '#2563eb',
-    color: '#fff',
-    textDecoration: 'none',
-    borderRadius: '10px',
-    fontWeight: 'bold'
-  };
-
   const hourButtonStyle = {
     padding: '6px 12px',
     margin: '0 5px',
@@ -144,6 +132,17 @@ export default function DJContractForm() {
     fontWeight: 'bold',
     border: 'none',
     cursor: 'pointer'
+  };
+
+  const linkButtonStyle = {
+    display: 'inline-block',
+    margin: '0.5rem',
+    padding: '0.75rem 1.5rem',
+    backgroundColor: '#2563eb',
+    color: '#fff',
+    textDecoration: 'none',
+    borderRadius: '10px',
+    fontWeight: 'bold'
   };
 
   return (
@@ -202,7 +201,7 @@ export default function DJContractForm() {
             📧 <a href="mailto:therealdjbobbydrake@gmail.com" style={{ color: '#0070f3' }}>therealdjbobbydrake@gmail.com</a>
           </p>
 
-          {/* FORM CODE CONTINUES */}
+          {/* Continue rendering your form fields and buttons below here... */}
         </div>
       </div>
     </>
