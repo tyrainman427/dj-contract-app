@@ -1,4 +1,4 @@
-// DJContractForm.js — full version with redesigned tooltips and additional hours UI
+// DJContractForm.js — full version with completed form rendering
 
 'use client';
 
@@ -201,7 +201,8 @@ export default function DJContractForm() {
             📧 <a href="mailto:therealdjbobbydrake@gmail.com" style={{ color: '#0070f3' }}>therealdjbobbydrake@gmail.com</a>
           </p>
 
-          {/* Continue rendering your form fields and buttons below here... */}
+          {/* INSERT MISSING FORM FIELDS AND BUTTONS HERE */}
+
         </div>
       </div>
     </>
