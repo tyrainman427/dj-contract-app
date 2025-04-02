@@ -314,36 +314,35 @@ export default function DJContractForm() {
                 </div>
               ))}
 
-              {/* Redesigned Additional Hours Field with enhanced visibility for the + and - buttons */}
+              {/* Redesigned compact Additional Hours Field */}
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
                 <label style={labelStyle}>Additional Hours ($75/hr):</label>
                 <div style={{
-                  display: 'flex',
+                  display: 'inline-flex',
                   alignItems: 'center',
                   border: '1px solid #ccc',
-                  borderRadius: '8px',
+                  borderRadius: '4px',
                   overflow: 'hidden',
-                  width: '120px',
-                  marginLeft: '1rem',
-                  backgroundColor: '#e2e8f0'
+                  width: '80px',
+                  marginLeft: '0.5rem',
                 }}>
                   <button
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, additionalHours: Math.max(prev.additionalHours - 1, 0) }))}
                     style={{
-                      padding: '0.75rem',
-                      backgroundColor: '#2563eb',
-                      color: '#fff',
+                      padding: '0.2rem 0.4rem',
+                      backgroundColor: 'transparent',
                       border: 'none',
-                      fontSize: '1.25rem',
+                      color: '#2563eb',
+                      fontSize: '1rem',
                       cursor: 'pointer'
                     }}
                   >
                     -
                   </button>
                   <span style={{
-                    padding: '0.75rem',
-                    minWidth: '30px',
+                    padding: '0 0.4rem',
+                    minWidth: '20px',
                     textAlign: 'center',
                     color: '#000',
                     fontWeight: 'bold'
@@ -354,11 +353,11 @@ export default function DJContractForm() {
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, additionalHours: prev.additionalHours + 1 }))}
                     style={{
-                      padding: '0.75rem',
-                      backgroundColor: '#2563eb',
-                      color: '#fff',
+                      padding: '0.2rem 0.4rem',
+                      backgroundColor: 'transparent',
                       border: 'none',
-                      fontSize: '1.25rem',
+                      color: '#2563eb',
+                      fontSize: '1rem',
                       cursor: 'pointer'
                     }}
                   >
