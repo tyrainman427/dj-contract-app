@@ -552,4 +552,75 @@ export default function DJContractForm() {
 
               <div>
                 <label style={labelStyle}>
-                  <span style={{ display: 'flex', align
+                  <span style={{ display: 'flex', alignItems: 'center' }}>
+                    {termsIcon} Terms & Conditions
+                  </span>
+                  <span
+                    onClick={() =>
+                      setInfoPopup(
+                        'Non-refundable $100 deposit required. Remaining balance due 2 weeks before event. Cancellations within 30 days require full payment.'
+                      )
+                    }
+                    style={{ color: '#0070f3', marginLeft: 8, cursor: 'pointer' }}
+                  >
+                    <FaInfoCircle />
+                  </span>
+                </label>
+                <input
+                  type="checkbox"
+                  name="agreeToTerms"
+                  checked={formData.agreeToTerms}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              {itemizedTotal()}
+              <button
+                type="submit"
+                style={{
+                  ...inputStyle,
+                  backgroundColor: '#2563eb',
+                  color: '#fff',
+                  cursor: 'pointer',
+                }}
+              >
+                Submit Contract
+              </button>
+            </form>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              style={{ textAlign: 'center', color: '#000' }}
+            >
+              <h2>✅ Submitted!</h2>
+              <p style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '1rem' }}>
+                🎉 Congratulations on successfully booking your event. Please submit your deposit or full payment to reserve your date.
+              </p>
+              {itemizedTotal()}
+              <p>Send payment to confirm your booking:</p>
+              <a
+                href="https://venmo.com/Bobby-Martin-64"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={linkButtonStyle}
+              >
+                Pay with Venmo
+              </a>
+              <a
+                href="https://cash.app/$LiveCity"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={linkButtonStyle}
+              >
+                Pay with Cash App
+              </a>
+            </motion.div>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
