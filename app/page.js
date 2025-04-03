@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
 import db from '../lib/firebase';
 import confetti from 'canvas-confetti';
@@ -44,6 +44,28 @@ export default function DJContractForm() {
 
   const [submitted, setSubmitted] = useState(false);
   const [infoPopup, setInfoPopup] = useState(null);
+
+  // Create a ref for the venue location input.
+  const venueLocationInputRef = useRef(null);
+
+  // Initialize Google Places Autocomplete for the venueLocation input.
+  useEffect(() => {
+    if (window.google && venueLocationInputRef.current) {
+      const autocomplete = new window.google.maps.places.Autocomplete(
+        venueLocationInputRef.current,
+        { types: ['geocode'] }
+      );
+      autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace();
+        if (place && place.formatted_address) {
+          setFormData(prev => ({
+            ...prev,
+            venueLocation: place.formatted_address,
+          }));
+        }
+      });
+    }
+  }, []);
 
   // Icon mappings for the main fields.
   const fieldIcons = {
@@ -186,35 +208,44 @@ export default function DJContractForm() {
   // InfoModal component for displaying info popups with an "Ok" button.
   function InfoModal({ text, onClose }) {
     return (
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 10000,
-      }}>
-        <div style={{
-          backgroundColor: '#fff',
-          padding: '2rem',
-          borderRadius: '8px',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
-          maxWidth: '400px',
-          textAlign: 'center',
-        }}>
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 10000,
+        }}
+      >
+        <div
+          style={{
+            backgroundColor: '#fff',
+            padding: '2rem',
+            borderRadius: '8px',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
+            maxWidth: '400px',
+            textAlign: 'center',
+          }}
+        >
           <p style={{ marginBottom: '1.5rem', color: '#333' }}>{text}</p>
-          <button onClick={onClose} style={{
-            padding: '0.5rem 1rem',
-            border: 'none',
-            borderRadius: '4px',
-            backgroundColor: '#2563eb',
-            color: '#fff',
-            cursor: 'pointer',
-          }}>Ok</button>
+          <button
+            onClick={onClose}
+            style={{
+              padding: '0.5rem 1rem',
+              border: 'none',
+              borderRadius: '4px',
+              backgroundColor: '#2563eb',
+              color: '#fff',
+              cursor: 'pointer',
+            }}
+          >
+            Ok
+          </button>
         </div>
       </div>
     );
@@ -237,7 +268,7 @@ export default function DJContractForm() {
     marginBottom: '0.5rem',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   };
 
   const linkButtonStyle = {
@@ -248,29 +279,33 @@ export default function DJContractForm() {
     color: '#fff',
     textDecoration: 'none',
     borderRadius: '10px',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   };
 
   return (
     <>
       {infoPopup && <InfoModal text={infoPopup} onClose={() => setInfoPopup(null)} />}
-      <div style={{
-        minHeight: '100vh',
-        padding: '2rem',
-        backgroundImage: "url('/dj-background.jpg')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        fontFamily: 'Helvetica Neue, Segoe UI, Roboto, sans-serif',
-      }}>
-        <div style={{
-          maxWidth: '700px',
-          margin: '0 auto',
-          backgroundColor: 'rgba(255,255,255,0.9)',
-          padding: '2.5rem',
-          borderRadius: '20px',
-          boxShadow: '0 8px 30px rgba(0,0,0,0.2)'
-        }}>
+      <div
+        style={{
+          minHeight: '100vh',
+          padding: '2rem',
+          backgroundImage: "url('/dj-background.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          fontFamily: 'Helvetica Neue, Segoe UI, Roboto, sans-serif',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '700px',
+            margin: '0 auto',
+            backgroundColor: 'rgba(255,255,255,0.9)',
+            padding: '2.5rem',
+            borderRadius: '20px',
+            boxShadow: '0 8px 30px rgba(0,0,0,0.2)',
+          }}
+        >
           <h1 style={{ textAlign: 'center', fontSize: '2.25rem', color: '#000' }}>
             🎧 Live City DJ Contract
           </h1>
@@ -283,30 +318,49 @@ export default function DJContractForm() {
           )}
 
           <p style={{ textAlign: 'center', color: '#111', marginBottom: '1.5rem' }}>
-            📞 <a href="tel:+12036949388" style={{ color: '#0070f3' }}>(203) 694-9388</a> ·
-            📧 <a href="mailto:therealdjbobbydrake@gmail.com" style={{ color: '#0070f3' }}>therealdjbobbydrake@gmail.com</a>
+            📞{' '}
+            <a href="tel:+12036949388" style={{ color: '#0070f3' }}>
+              (203) 694-9388
+            </a>{' '}
+            ·{' '}
+            <a href="mailto:therealdjbobbydrake@gmail.com" style={{ color: '#0070f3' }}>
+              therealdjbobbydrake@gmail.com
+            </a>
           </p>
 
           {!submitted ? (
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
-              {['clientName', 'email', 'contactPhone', 'eventType', 'guestCount', 'venueName'].map((field) => (
-                <div key={field}>
-                  <label style={labelStyle}>
-                    <span style={{ display: 'flex', alignItems: 'center' }}>
-                      {fieldIcons[field]} 
-                      {field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:
-                    </span>
-                  </label>
-                  <input
-                    name={field}
-                    type={field.includes('guest') ? 'number' : 'text'}
-                    required
-                    style={inputStyle}
-                    value={formData[field]}
-                    onChange={handleChange}
-                  />
-                </div>
-              ))}
+            <form
+              onSubmit={handleSubmit}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1rem',
+                width: '100%',
+              }}
+            >
+              {['clientName', 'email', 'contactPhone', 'eventType', 'guestCount', 'venueName'].map(
+                (field) => (
+                  <div key={field}>
+                    <label style={labelStyle}>
+                      <span style={{ display: 'flex', alignItems: 'center' }}>
+                        {fieldIcons[field]}{' '}
+                        {field
+                          .replace(/([A-Z])/g, ' $1')
+                          .replace(/^./, (str) => str.toUpperCase())}
+                        :
+                      </span>
+                    </label>
+                    <input
+                      name={field}
+                      type={field.includes('guest') ? 'number' : 'text'}
+                      required
+                      style={inputStyle}
+                      value={formData[field]}
+                      onChange={handleChange}
+                    />
+                  </div>
+                )
+              )}
 
               <div>
                 <label style={labelStyle}>
@@ -315,6 +369,7 @@ export default function DJContractForm() {
                   </span>
                 </label>
                 <input
+                  ref={venueLocationInputRef}
                   name="venueLocation"
                   type="text"
                   required
@@ -328,7 +383,11 @@ export default function DJContractForm() {
                 <div key={field}>
                   <label style={labelStyle}>
                     <span style={{ display: 'flex', alignItems: 'center' }}>
-                      {timeIcons[field]} {field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:
+                      {timeIcons[field]}{' '}
+                      {field
+                        .replace(/([A-Z])/g, ' $1')
+                        .replace(/^./, (str) => str.toUpperCase())}
+                      :
                     </span>
                   </label>
                   <input
@@ -346,12 +405,14 @@ export default function DJContractForm() {
                 {
                   name: 'lighting',
                   label: 'Event Lighting (+$100)',
-                  description: 'Requires 2 hour early entry to venue for setup. Includes sound activated strobing lights.',
+                  description:
+                    'Requires 2 hour early entry to venue for setup. Includes sound activated strobing lights.',
                 },
                 {
                   name: 'photography',
                   label: 'Photography (+$150)',
-                  description: 'Includes 50 high-quality candid shots delivered within 48 hours.',
+                  description:
+                    'Includes 50 high-quality candid shots delivered within 48 hours.',
                 },
                 {
                   name: 'videoVisuals',
@@ -364,11 +425,19 @@ export default function DJContractForm() {
                     <span style={{ display: 'flex', alignItems: 'center' }}>
                       {serviceIcons[name]} {label}
                     </span>
-                    <span onClick={() => setInfoPopup(description)} style={{ color: '#0070f3', marginLeft: 8, cursor: 'pointer' }}>
+                    <span
+                      onClick={() => setInfoPopup(description)}
+                      style={{ color: '#0070f3', marginLeft: 8, cursor: 'pointer' }}
+                    >
                       <FaInfoCircle />
                     </span>
                   </label>
-                  <input type="checkbox" name={name} checked={formData[name]} onChange={handleChange} />
+                  <input
+                    type="checkbox"
+                    name={name}
+                    checked={formData[name]}
+                    onChange={handleChange}
+                  />
                 </div>
               ))}
 
@@ -379,48 +448,62 @@ export default function DJContractForm() {
                     {additionalHoursIcon} Additional Hours ($75/hr):
                   </span>
                 </label>
-                <div style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  overflow: 'hidden',
-                  width: '80px',
-                  marginLeft: '0.5rem',
-                }}>
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                    overflow: 'hidden',
+                    width: '80px',
+                    marginLeft: '0.5rem',
+                  }}
+                >
                   <button
                     type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, additionalHours: Math.max(prev.additionalHours - 1, 0) }))}
+                    onClick={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        additionalHours: Math.max(prev.additionalHours - 1, 0),
+                      }))
+                    }
                     style={{
                       padding: '0.2rem 0.4rem',
                       backgroundColor: 'transparent',
                       border: 'none',
                       color: '#2563eb',
                       fontSize: '1rem',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
                     }}
                   >
                     -
                   </button>
-                  <span style={{
-                    padding: '0 0.4rem',
-                    minWidth: '20px',
-                    textAlign: 'center',
-                    color: '#000',
-                    fontWeight: 'bold'
-                  }}>
+                  <span
+                    style={{
+                      padding: '0 0.4rem',
+                      minWidth: '20px',
+                      textAlign: 'center',
+                      color: '#000',
+                      fontWeight: 'bold',
+                    }}
+                  >
                     {formData.additionalHours}
                   </span>
                   <button
                     type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, additionalHours: prev.additionalHours + 1 }))}
+                    onClick={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        additionalHours: prev.additionalHours + 1,
+                      }))
+                    }
                     style={{
                       padding: '0.2rem 0.4rem',
                       backgroundColor: 'transparent',
                       border: 'none',
                       color: '#2563eb',
                       fontSize: '1rem',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
                     }}
                   >
                     +
@@ -433,11 +516,24 @@ export default function DJContractForm() {
                   <span style={{ display: 'flex', alignItems: 'center' }}>
                     {paymentIcon} Payment Method:
                   </span>
-                  <span onClick={() => setInfoPopup('Select your preferred payment method for booking confirmation.')} style={{ color: '#0070f3', marginLeft: 8, cursor: 'pointer' }}>
+                  <span
+                    onClick={() =>
+                      setInfoPopup(
+                        'Select your preferred payment method for booking confirmation.'
+                      )
+                    }
+                    style={{ color: '#0070f3', marginLeft: 8, cursor: 'pointer' }}
+                  >
                     <FaInfoCircle />
                   </span>
                 </label>
-                <select name="paymentMethod" required style={inputStyle} value={formData.paymentMethod} onChange={handleChange}>
+                <select
+                  name="paymentMethod"
+                  required
+                  style={inputStyle}
+                  value={formData.paymentMethod}
+                  onChange={handleChange}
+                >
                   <option value="">Choose one</option>
                   <option value="Venmo - @Bobby-Martin-64">Venmo</option>
                   <option value="Cash App - $LiveCity">Cash App</option>
@@ -450,15 +546,36 @@ export default function DJContractForm() {
                   <span style={{ display: 'flex', alignItems: 'center' }}>
                     {termsIcon} Terms & Conditions
                   </span>
-                  <span onClick={() => setInfoPopup('Non-refundable $100 deposit required. Remaining balance due 2 weeks before event. Cancellations within 30 days require full payment.')} style={{ color: '#0070f3', marginLeft: 8, cursor: 'pointer' }}>
+                  <span
+                    onClick={() =>
+                      setInfoPopup(
+                        'Non-refundable $100 deposit required. Remaining balance due 2 weeks before event. Cancellations within 30 days require full payment.'
+                      )
+                    }
+                    style={{ color: '#0070f3', marginLeft: 8, cursor: 'pointer' }}
+                  >
                     <FaInfoCircle />
                   </span>
                 </label>
-                <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
+                <input
+                  type="checkbox"
+                  name="agreeToTerms"
+                  checked={formData.agreeToTerms}
+                  onChange={handleChange}
+                  required
+                />
               </div>
 
               {itemizedTotal()}
-              <button type="submit" style={{ ...inputStyle, backgroundColor: '#2563eb', color: '#fff', cursor: 'pointer' }}>
+              <button
+                type="submit"
+                style={{
+                  ...inputStyle,
+                  backgroundColor: '#2563eb',
+                  color: '#fff',
+                  cursor: 'pointer',
+                }}
+              >
                 Submit Contract
               </button>
             </form>
@@ -475,10 +592,20 @@ export default function DJContractForm() {
               </p>
               {itemizedTotal()}
               <p>Send payment to confirm your booking:</p>
-              <a href="https://venmo.com/Bobby-Martin-64" target="_blank" rel="noopener noreferrer" style={linkButtonStyle}>
+              <a
+                href="https://venmo.com/Bobby-Martin-64"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={linkButtonStyle}
+              >
                 Pay with Venmo
               </a>
-              <a href="https://cash.app/$LiveCity" target="_blank" rel="noopener noreferrer" style={linkButtonStyle}>
+              <a
+                href="https://cash.app/$LiveCity"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={linkButtonStyle}
+              >
                 Pay with Cash App
               </a>
             </motion.div>
