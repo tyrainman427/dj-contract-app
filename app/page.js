@@ -48,8 +48,8 @@ export default function DJContractForm() {
   // Create a ref for the venue location input.
   const venueLocationInputRef = useRef(null);
 
-  // Initialize Google Places Autocomplete for the venueLocation input.
-  useEffect(() => {
+  // Function to initialize Google Places Autocomplete.
+  const initAutocomplete = () => {
     if (window.google && venueLocationInputRef.current) {
       const autocomplete = new window.google.maps.places.Autocomplete(
         venueLocationInputRef.current,
@@ -58,12 +58,23 @@ export default function DJContractForm() {
       autocomplete.addListener('place_changed', () => {
         const place = autocomplete.getPlace();
         if (place && place.formatted_address) {
-          setFormData(prev => ({
+          setFormData((prev) => ({
             ...prev,
             venueLocation: place.formatted_address,
           }));
         }
       });
+    }
+  };
+
+  // useEffect to initialize autocomplete after the script is loaded.
+  useEffect(() => {
+    if (!window.google) {
+      // Wait for the script to load if it's not available immediately.
+      window.addEventListener('load', initAutocomplete);
+      return () => window.removeEventListener('load', initAutocomplete);
+    } else {
+      initAutocomplete();
     }
   }, []);
 
@@ -310,7 +321,6 @@ export default function DJContractForm() {
             🎧 Live City DJ Contract
           </h1>
 
-          {/* Only show the instruction text when the form is not submitted */}
           {!submitted && (
             <p style={{ textAlign: 'center', color: '#111', marginBottom: '0.5rem' }}>
               Please complete the contract form below to reserve your event date.
@@ -441,7 +451,6 @@ export default function DJContractForm() {
                 </div>
               ))}
 
-              {/* Redesigned compact Additional Hours Field with icon */}
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
                 <label style={labelStyle}>
                   <span style={{ display: 'flex', alignItems: 'center' }}>
@@ -543,75 +552,4 @@ export default function DJContractForm() {
 
               <div>
                 <label style={labelStyle}>
-                  <span style={{ display: 'flex', alignItems: 'center' }}>
-                    {termsIcon} Terms & Conditions
-                  </span>
-                  <span
-                    onClick={() =>
-                      setInfoPopup(
-                        'Non-refundable $100 deposit required. Remaining balance due 2 weeks before event. Cancellations within 30 days require full payment.'
-                      )
-                    }
-                    style={{ color: '#0070f3', marginLeft: 8, cursor: 'pointer' }}
-                  >
-                    <FaInfoCircle />
-                  </span>
-                </label>
-                <input
-                  type="checkbox"
-                  name="agreeToTerms"
-                  checked={formData.agreeToTerms}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              {itemizedTotal()}
-              <button
-                type="submit"
-                style={{
-                  ...inputStyle,
-                  backgroundColor: '#2563eb',
-                  color: '#fff',
-                  cursor: 'pointer',
-                }}
-              >
-                Submit Contract
-              </button>
-            </form>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              style={{ textAlign: 'center', color: '#000' }}
-            >
-              <h2>✅ Submitted!</h2>
-              <p style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '1rem' }}>
-                🎉 Congratulations on successfully booking your event. Please submit your deposit or full payment to reserve your date.
-              </p>
-              {itemizedTotal()}
-              <p>Send payment to confirm your booking:</p>
-              <a
-                href="https://venmo.com/Bobby-Martin-64"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={linkButtonStyle}
-              >
-                Pay with Venmo
-              </a>
-              <a
-                href="https://cash.app/$LiveCity"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={linkButtonStyle}
-              >
-                Pay with Cash App
-              </a>
-            </motion.div>
-          )}
-        </div>
-      </div>
-    </>
-  );
-}
+                  <span style={{ display: 'flex', align
