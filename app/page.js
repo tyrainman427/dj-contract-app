@@ -109,15 +109,44 @@ export default function DJContractForm() {
   const termsIcon = <FaFileContract style={{ color: '#00008b', marginRight: '0.5rem' }} />;
 
   useEffect(() => {
-    if (submitted) {
-      confetti({
-        particleCount: 200,
-        spread: 80,
-        origin: { y: 0.6 },
-        zIndex: 9999,
+    if (typeof window !== 'undefined') {
+      setIsClient(true); // This ensures the Google Places code runs only on the client
+    }
+  }, []);
+
+  // Loading Google Maps API and initializing the autocomplete feature
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !window.google) {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&libraries=places`;
+      script.async = true;
+      script.onload = () => initializeAutocomplete();
+      document.head.appendChild(script);
+    } else {
+      initializeAutocomplete();
+    }
+  }, []);
+
+  // Function to initialize Google Places Autocomplete
+  const initializeAutocomplete = () => {
+    if (window.google && venueLocationRef.current) {
+      const autocomplete = new window.google.maps.places.Autocomplete(venueLocationRef.current, {
+        types: ['geocode'],
+        componentRestrictions: { country: 'us' },
+      });
+
+      autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace();
+        if (place.geometry) {
+          setFormData(prev => ({
+            ...prev,
+            venueLocation: place.formatted_address,
+          }));
+        }
       });
     }
-  }, [submitted]);
+  };
+
 
   const handleChange = (e) => {
     const { name, type, value, checked } = e.target;
