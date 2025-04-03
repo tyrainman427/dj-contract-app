@@ -2,6 +2,12 @@ import Script from 'next/script';
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+// Ensure the API key is defined
+const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+if (!googleMapsApiKey) {
+  console.warn("Google Maps API key is not defined. Please check your .env.local file.");
+}
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -23,7 +29,7 @@ export default function RootLayout({ children }) {
       <head>
         {/* Load Google Maps API with the Places library */}
         <Script
-          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
+          src={`https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=places`}
           strategy="beforeInteractive"
         />
       </head>
